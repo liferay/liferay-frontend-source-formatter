@@ -1,0 +1,20 @@
+{
+  "name": "check-source-formatting",
+  "version": "0.0.1",
+  "description": "Check the source formatting of HTML/JS/CSS",
+  "main": "index.js",
+  "bin": {
+    "check_sf": "./index.js"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nate Cavanaugh",
+  "license": "BSD",
+  "dependencies": {
+    "colors": "^0.6.2",
+    "async": "^0.7.0",
+    "optimist": "^0.6.1",
+    "cli": "^0.5.0"
+  }
+}
