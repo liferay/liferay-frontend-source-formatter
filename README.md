@@ -27,7 +27,7 @@ This will scan through HTML(-like) files, JS files, and CSS files and detect man
 ## Installation
 
 ```
-<sudo> npm install -g https://github.com/natecavanaugh/check-source-formatting
+<sudo> npm install -g https://github.com/natecavanaugh/check-source-formatting/tarball/master
 ```
 
 ## Running
