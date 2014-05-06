@@ -11,6 +11,11 @@
   },
   "author": "Nate Cavanaugh",
   "license": "BSD",
+  "os" : [ "darwin", "linux" ],
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "preferGlobal": "true",
   "dependencies": {
     "colors": "^0.6.2",
     "async": "^0.7.0",
