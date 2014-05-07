@@ -8,13 +8,8 @@ var path = require('path');
 var argv = require('optimist').usage('Usage: $0 -qo')
 			.options(
 				{
-					q: {
-						alias: 'quiet',
-						boolean: true,
-						default: false
-					},
-					v: {
-						alias: 'verbose',
+					i: {
+						alias: 'inline-edit',
 						boolean: true,
 						default: false
 					},
@@ -23,8 +18,18 @@ var argv = require('optimist').usage('Usage: $0 -qo')
 						boolean: true,
 						default: false
 					},
+					q: {
+						alias: 'quiet',
+						boolean: true,
+						default: false
+					},
 					r: {
 						alias: 'relative',
+						boolean: true,
+						default: false
+					},
+					v: {
+						alias: 'verbose',
 						boolean: true,
 						default: false
 					}
@@ -45,6 +50,7 @@ var INDENT = '    ';
 var QUIET = argv.q;
 var VERBOSE = argv.v;
 var RELATIVE = argv.r;
+var INLINE_REPLACE = argv.i;
 
 var CWD = process.env.GIT_PWD || process.cwd();
 var TOP_LEVEL;
@@ -60,7 +66,7 @@ var REGEX_PROP_KEY = /^\s*(?:@include\s)?([^:]+)(?:)/;
 var REGEX_PROPERTY = /^\t*([^:]+:|@include\s)[^;]+;$/;
 var REGEX_SUB = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 // var REGEX_ZERO_UNIT = /\b0(?!s\b)[a-zA-Z]{1,}\b/;
-var REGEX_INTEGER_DECIMAL = /[^0-9]\.\d+\b/;
+var REGEX_INTEGER_DECIMAL = /([^0-9])(\.\d+)/;
 var REGEX_DOUBLE_QUOTES = /"[^"]*"/;
 var REGEX_SINGLE_QUOTES = /'[^']*'/g;
 var REGEX_ZERO_UNIT = /(#?)(\b0(?!s\b)[a-zA-Z]{1,}\b)/;
@@ -153,11 +159,11 @@ var sub = function(str, obj) {
 var iterateLines = function(contents, iterator) {
 	var lines = contents.split('\n');
 
-	lines.forEach(iterator);
+	return lines.map(iterator).join('\n');
 };
 
 var checkCss = function(contents, file) {
-	iterateLines(
+	return iterateLines(
 		contents,
 		function(item, index, collection) {
 			var fullItem = item;
@@ -193,30 +199,56 @@ var checkCss = function(contents, file) {
 
 				if (hasLowerCaseRegex(hexMatch)) {
 					trackErr(sub('Line {0} Hex code should be all uppercase: {1}', lineNum, item).warn, file);
+
+					var newHex = hexMatch.toUpperCase();
+
+					fullItem = fullItem.replace(hexMatch, newHex);
+
+					hexMatch = newHex;
+
+					item = fullItem.trim();
 				}
 
 				if (hasRedundantRegex(hexMatch)) {
-					trackErr(sub('Line {0} Hex code can be reduced to {2}: {1}', lineNum, item, hexMatch.replace(REGEX_HEX_REDUNDANT, REPLACE_REGEX_REDUNDANT)).warn, file);
+					var reducedHex = hexMatch.replace(REGEX_HEX_REDUNDANT, REPLACE_REGEX_REDUNDANT);
+
+					trackErr(sub('Line {0} Hex code can be reduced to {2}: {1}', lineNum, item, reducedHex).warn, file);
+
+					fullItem = fullItem.replace(hexMatch, reducedHex);
+
+					hexMatch = reducedHex;
+
+					item = fullItem.trim();
 				}
 			}
 
 			if (hasNeedlessUnit(item)) {
 				trackErr(sub('Line {0} Needless unit: {1}', lineNum, item).warn, file);
+
+				fullItem = fullItem.replace(REGEX_ZERO_UNIT, '0');
+
+				item = fullItem.trim();
 			}
 
 			if (hasMissingInteger(item)) {
 				trackErr(sub('Line {0} Missing integer: {1}', lineNum, item).warn, file);
+
+				fullItem = fullItem.replace(REGEX_INTEGER_DECIMAL, '$10$2');
+
+				item = fullItem.trim();
 			}
 
 			if (hasMixedSpaces(fullItem)) {
 				trackErr(sub('Line {0} Mixed spaces and tabs: {1}', lineNum, item).warn, file);
 			}
+
+			return fullItem;
 		}
 	);
 };
 
 var checkJs = function(contents, file) {
-	iterateLines(
+	return iterateLines(
 		contents,
 		function(item, index, collection) {
 			var fullItem = item;
@@ -232,12 +264,14 @@ var checkJs = function(contents, file) {
 			if (hasDoubleQuotes(fullItem)) {
 				trackErr(sub('Line {0} Strings should be single quoted: {1}', lineNum, item).warn, file);
 			}
+
+			return fullItem;
 		}
 	);
 };
 
 var checkHTML = function(contents, file) {
-	iterateLines(
+	return iterateLines(
 		contents,
 		function(item, index, collection) {
 			var fullItem = item;
@@ -294,6 +328,8 @@ var checkHTML = function(contents, file) {
 					}
 				);
 			}
+
+			return fullItem;
 		}
 	);
 };
@@ -307,15 +343,17 @@ var series = args.map(
 				}
 
 				if (REGEX_EXT_CSS.test(file)) {
-					checkCss(data, file);
+					formatter = checkCss;
 				}
 				else if (REGEX_EXT_JS.test(file)) {
-					checkJs(data, file);
+					formatter = checkJs;
 				}
 				else if (REGEX_EXT_HTML.test(file)) {
-					checkHTML(data, file);
+					formatter = checkHTML;
 				}
 
+				var content = formatter(data, file);
+// console.log(content == data, file);
 				var errors = fileErrors[file] || [];
 
 				var includeHeaderFooter = (errors.length || !QUIET);
@@ -341,7 +379,20 @@ var series = args.map(
 					console.log('----'.subtle);
 				}
 
-				cb();
+				var changed = (content != data);
+
+				if (INLINE_REPLACE && changed) {
+					fs.writeFile(file, content, function(err, result) {
+						if (err) {
+							return cb(err);
+						}
+
+						cb(null, content);
+					});
+				}
+				else {
+					cb(null, content);
+				}
 			});
 		}
 	}
