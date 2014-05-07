@@ -63,6 +63,8 @@ There are some options that you can pass to the command:
 
 `-o, --open` If you have an editor specified in your gitconfig (under user.editor), this will open all of the files that have errors in your editor.
 
+`-i, --inline-edit` For some of the errors (mainly the ones that can be safely changed), if you pass this option, it will modify the file and convert the error to a valid value.
+
 ### Experimental or less used options
 
 `-r, --relative` This will display the files passed in as relative to you current directory.
