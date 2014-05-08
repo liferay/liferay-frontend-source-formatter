@@ -69,6 +69,8 @@ var REGEX_SUB = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 var REGEX_INTEGER_DECIMAL = /([^0-9])(\.\d+)/;
 var REGEX_DOUBLE_QUOTES = /"[^"]*"/;
 var REGEX_SINGLE_QUOTES = /'[^']*'/g;
+var REGEX_REGEX = /\/[^\/]+\//g;
+var REGEX_COMMENT = /\/(\/|\*).*/g;
 var REGEX_ZERO_UNIT = /(#?)(\b0(?!s\b)[a-zA-Z]{1,}\b)/;
 var REGEX_HEX_REDUNDANT = /#([0-9A-Fa-f])\1([0-9A-Fa-f])\2([0-9A-Fa-f])\3/;
 var REGEX_HEX_LOWER = /[a-f]/;
@@ -120,9 +122,16 @@ var hasDoubleQuotes = function(item) {
 	var doubleQuoted = false;
 
 	if (_testDoubleQuotes(item)) {
-		// Remove single quoted strings from the line to
-		// handle cases where we have var = '<img src="" />'
-		var newItem = item.replace(REGEX_SINGLE_QUOTES, '');
+		// Remove the following from the line:
+		// single quoted strings (e.g. var = '<img src="" />')
+		// regular expressions (e.g. var = /"[^"]+"/)
+		// comments (e.g. // some "comment" here or
+		//  /* some "comment" here */)
+
+		var newItem = item
+			.replace(REGEX_SINGLE_QUOTES, '')
+			.replace(REGEX_COMMENT, '')
+			.replace(REGEX_REGEX, '');
 
 		doubleQuoted = _testDoubleQuotes(newItem);
 	}
@@ -240,6 +249,14 @@ var checkCss = function(contents, file) {
 
 			if (hasMixedSpaces(fullItem)) {
 				trackErr(sub('Line {0} Mixed spaces and tabs: {1}', lineNum, item).warn, file);
+
+				console.log(fullItem.replace(/\s/g, '-'));
+				fullItem = fullItem.replace(/(.*)( +\t|\t +)(.*)/g, function(str, prefix, problem, suffix) {
+					// console.log(problem.split('\t').join('').length);
+					problem = problem.replace(/ {4}| {2}/g, '\t').replace(/ /g, '');
+					return prefix + problem + suffix;
+				});
+				console.log(fullItem.replace(/\s/g, '+'));
 			}
 
 			return fullItem;
@@ -287,10 +304,18 @@ var checkHTML = function(contents, file) {
 
 				attrs.forEach(
 					function(item, index, collection) {
-						var pieces = item.trim().split('=');
+						var oldItem = item;
+						// item = item.trim();
+						// console.log(item.match(/^([^=]+)=["'](.*)["']$/));
+						// var pieces = item.trim().split('=');
 
-						var attrName = pieces[0];
-						var attrValue = pieces[1].trim().replace(/(^["']|["']$)/g, '');
+						// var attrName = pieces[0];
+						// var attrValue = pieces[1].trim().replace(/(^["']|["']$)/g, '');
+
+						var pieces = item.trim().match(/^([^=]+)=["'](.*)["']$/);
+
+						var attrName = pieces[1];
+						var attrValue = pieces[2];
 
 						if (lastAttr > attrName) {
 							var re = new RegExp('\\b' + lastAttr + '\\b.*?> ?<.*?' + attrName);
@@ -306,17 +331,50 @@ var checkHTML = function(contents, file) {
 							}
 						}
 
-						var attrValuePieces = attrValue.split(' ');
+						var styleAttr = (attrName == 'style');
+						var onAttr = (attrName.indexOf('on') === 0);
+						var labelAttr = (attrName.indexOf('label') === 0);
+
+						var id = 0;
+						var token = String.fromCharCode(-1);
+
+						var m = attrValue.match(/<%.*?%>/g);
+
+						var matches = m && m.map(
+							function(item, index, collection) {
+								attrValue = attrValue.replace(item, token + index + token);
+
+								return item;
+							}
+						);
+
+						// while (m = attrValue.match(/<%.*?%>/g)) {
+						//	console.log(m[0]);
+						//	id++;
+						// }
+
+						var attrSep = ' ';
+
+						if (styleAttr) {
+							attrSep = /\s?;\s?/;
+						}
+
+						var attrValuePieces = attrValue.split(attrSep);
 
 						var lastAttrPiece = -1;
 
+						var sort = false;
+
 						attrValuePieces.forEach(
 							function(item, index, collection) {
+								item = item.trim();
 								if (/^[A-Za-z]/.test(item)) {
 									// Skip event handlers like onClick, etc since they will have
 									// complex values that probably shouldn't be sorted
-									if (attrName.indexOf('on') !== 0 && lastAttrPiece > item) {
+									if (!onAttr && !labelAttr && lastAttrPiece > item) {
 										trackErr(sub('Line {0} Sort attribute values: {1} {2}', lineNum, lastAttrPiece, item).warn, file);
+
+										sort = true;
 									}
 
 									lastAttrPiece = item;
@@ -325,6 +383,38 @@ var checkHTML = function(contents, file) {
 						);
 
 						lastAttr = attrName;
+
+						var newAttrValue;
+
+						if (sort) {
+							attrValuePieces = attrValuePieces.filter(
+								function(item, index, collection) {
+									return !!item.trim();
+								}
+							);
+
+							attrValuePieces.sort();
+
+							if (styleAttr) {
+								newAttrValue = attrValuePieces.join('; ') + ';';
+							}
+							else {
+								newAttrValue = attrValuePieces.join(' ');
+							}
+
+							item = item.replace(attrValue, newAttrValue);
+						}
+
+						if (matches) {
+							newAttrValue = attrValue.replace(new RegExp(token + '(\\d+)' + token, 'g'), function(str, id){
+								return matches[id];
+							});
+
+							item = item.replace(attrValue, newAttrValue)
+							// console.log(fullItem);
+						}
+
+						fullItem = fullItem.replace(oldItem, item);
 					}
 				);
 			}
