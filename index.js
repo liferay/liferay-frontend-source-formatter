@@ -268,13 +268,14 @@ var checkCss = function(contents, file) {
 			if (hasMixedSpaces(fullItem)) {
 				trackErr(sub('Line {0} Mixed spaces and tabs: {1}', lineNum, item).warn, file);
 
-				console.log(fullItem.replace(/\s/g, '-'));
+				// console.log(fullItem.replace(/\s/g, '-'));
 				fullItem = fullItem.replace(/(.*)( +\t|\t +)(.*)/g, function(str, prefix, problem, suffix) {
 					// console.log(problem.split('\t').join('').length);
 					problem = problem.replace(/ {4}| {2}/g, '\t').replace(/ /g, '');
+
 					return prefix + problem + suffix;
 				});
-				console.log(fullItem.replace(/\s/g, '+'));
+				// console.log(fullItem.replace(/\s/g, '+'));
 			}
 
 			return fullItem;
