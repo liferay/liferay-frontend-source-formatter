@@ -68,6 +68,7 @@ var REGEX_SUB = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 // var REGEX_ZERO_UNIT = /\b0(?!s\b)[a-zA-Z]{1,}\b/;
 var REGEX_INTEGER_DECIMAL = /([^0-9])(\.\d+)/;
 var REGEX_BORDER_UNSET = /border:\s?(none|0);/;
+var REGEX_PROPERTY_FORMAT = /^\t*([^:]+:(?=\s))[^;]+;$/;
 var REGEX_DOUBLE_QUOTES = /"[^"]*"/;
 var REGEX_SINGLE_QUOTES = /'[^']*'/g;
 var REGEX_REGEX = /\/[^\/]+\//g;
@@ -98,6 +99,10 @@ var hasLowerCaseRegex = function(item) {
 
 var hasInvalidBorderReset = function(item) {
 	return REGEX_BORDER_UNSET.test(item);
+};
+
+var hasInvalidFormat = function(item) {
+	return !REGEX_PROPERTY_FORMAT.test(item);
 };
 
 var hasRedundantRegex = function(item) {
@@ -207,6 +212,10 @@ var checkCss = function(contents, file) {
 
 				if (hasInvalidBorderReset(item)) {
 					trackErr(sub('Line: {0} You should use {2}: {1}', lineNum, item, '"border-width: 0;"'.error).warn, file);
+				}
+
+				if (hasInvalidFormat(item)) {
+					trackErr(sub('Line: {0} Add space after ":": {1}', lineNum, item).warn, file);
 				}
 			}
 
