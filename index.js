@@ -67,7 +67,7 @@ var REGEX_PROPERTY = /^\t*([^:]+:|@include\s)[^;]+;$/;
 var REGEX_SUB = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 // var REGEX_ZERO_UNIT = /\b0(?!s\b)[a-zA-Z]{1,}\b/;
 var REGEX_INTEGER_DECIMAL = /([^0-9])(\.\d+)/;
-var REGEX_BORDER_UNSET = /border:\s?(none|0);/;
+var REGEX_BORDER_UNSET = /(border(-(?:right|left|top|bottom))?):\s?(none|0)(\s?(none|0))?;/;
 var REGEX_PROPERTY_FORMAT = /^\t*([^:]+:(?=\s))[^;]+;$/;
 var REGEX_DOUBLE_QUOTES = /"[^"]*"/;
 var REGEX_SINGLE_QUOTES = /'[^']*'/g;
@@ -98,7 +98,7 @@ var hasLowerCaseRegex = function(item) {
 };
 
 var hasInvalidBorderReset = function(item) {
-	return REGEX_BORDER_UNSET.test(item);
+	return item.match(REGEX_BORDER_UNSET);
 };
 
 var hasInvalidFormat = function(item) {
@@ -210,8 +210,12 @@ var checkCss = function(contents, file) {
 					}
 				}
 
-				if (hasInvalidBorderReset(item)) {
-					trackErr(sub('Line: {0} You should use {2}: {1}', lineNum, item, '"border-width: 0;"'.error).warn, file);
+				var invalidBorderMatch = hasInvalidBorderReset(item);
+
+				if (invalidBorderMatch) {
+					var borderProperty = invalidBorderMatch[1] || 'border';
+
+					trackErr(sub('Line: {0} You should use {2}: {1}', lineNum, item, ('"' + borderProperty + '-width: 0;"').error).warn, file);
 				}
 
 				if (hasInvalidFormat(item)) {
