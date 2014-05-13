@@ -68,7 +68,7 @@ var REGEX_SUB = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
 // var REGEX_ZERO_UNIT = /\b0(?!s\b)[a-zA-Z]{1,}\b/;
 var REGEX_INTEGER_DECIMAL = /([^0-9])(\.\d+)/;
 var REGEX_BORDER_UNSET = /(border(-(?:right|left|top|bottom))?):\s?(none|0)(\s?(none|0))?;/;
-var REGEX_PROPERTY_FORMAT = /^\t*([^:]+:(?=\s))[^;]+;$/;
+var REGEX_PROPERTY_FORMAT = /^\t*([^:]+:(?!\s))[^;]+;$/;
 var REGEX_DOUBLE_QUOTES = /"[^"]*"/;
 var REGEX_SINGLE_QUOTES = /'[^']*'/g;
 var REGEX_REGEX = /\/[^\/]+\//g;
@@ -102,7 +102,7 @@ var hasInvalidBorderReset = function(item) {
 };
 
 var hasInvalidFormat = function(item) {
-	return item.indexOf(':') > -1 && !REGEX_PROPERTY_FORMAT.test(item);
+	return item.indexOf(':') > -1 && REGEX_PROPERTY_FORMAT.test(item);
 };
 
 var hasRedundantRegex = function(item) {
@@ -163,6 +163,10 @@ var trackErr = function(err, file) {
 	errors.push(err);
 }
 
+var formatPropertyItem = function(item) {
+	return item.replace(REGEX_LEADING_SPACE, '').replace(REGEX_LEADING_INCLUDE, '');
+};
+
 var sub = function(str, obj) {
 	var objType = typeof obj;
 
@@ -193,7 +197,28 @@ var checkCss = function(contents, file) {
 			var nextItem = collection[lineNum] && collection[lineNum].trim();
 
 			if (hasProperty(item)) {
-				item = item.replace(REGEX_LEADING_SPACE, '').replace(REGEX_LEADING_INCLUDE, '');
+				item = formatPropertyItem(item);
+
+				var invalidBorderMatch = hasInvalidBorderReset(item);
+
+				if (invalidBorderMatch) {
+					var borderProperty = invalidBorderMatch[1] || 'border';
+					var borderReplacement = '' + borderProperty + '-width: 0;';
+
+					trackErr(sub('Line: {0} You should use "{2}": {1}', lineNum, item, borderReplacement.error).warn, file);
+
+					fullItem = fullItem.replace(invalidBorderMatch[0], borderReplacement);
+
+					item = formatPropertyItem(fullItem.trim());
+				}
+
+				if (hasInvalidFormat(item)) {
+					trackErr(sub('Line: {0} Add space after ":": {1}', lineNum, item).warn, file);
+
+					fullItem = fullItem.replace(':', ': ');
+
+					item = formatPropertyItem(fullItem.trim());
+				}
 
 				var nextItemMatch;
 
@@ -208,18 +233,6 @@ var checkCss = function(contents, file) {
 					if (itemMatch[1] > nextItemMatch[1]) {
 						trackErr(sub('Line: {0} Sort: {1} {2}', lineNum, item, nextItem).warn, file);
 					}
-				}
-
-				var invalidBorderMatch = hasInvalidBorderReset(item);
-
-				if (invalidBorderMatch) {
-					var borderProperty = invalidBorderMatch[1] || 'border';
-
-					trackErr(sub('Line: {0} You should use {2}: {1}', lineNum, item, ('"' + borderProperty + '-width: 0;"').error).warn, file);
-				}
-
-				if (hasInvalidFormat(item)) {
-					trackErr(sub('Line: {0} Add space after ":": {1}', lineNum, item).warn, file);
 				}
 			}
 
