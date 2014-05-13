@@ -102,7 +102,7 @@ var hasInvalidBorderReset = function(item) {
 };
 
 var hasInvalidFormat = function(item) {
-	return !REGEX_PROPERTY_FORMAT.test(item);
+	return item.indexOf(':') > -1 && !REGEX_PROPERTY_FORMAT.test(item);
 };
 
 var hasRedundantRegex = function(item) {
