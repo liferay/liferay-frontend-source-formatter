@@ -5,6 +5,8 @@ var cli = require('cli');
 var colors = require('colors');
 var fs = require('fs');
 var path = require('path');
+var updateNotifier = require('update-notifier');
+
 var argv = require('optimist').usage('Usage: $0 -qo')
 			.options(
 				{
@@ -35,6 +37,12 @@ var argv = require('optimist').usage('Usage: $0 -qo')
 					}
 				}
 			).argv;
+
+var notifier = updateNotifier();
+
+if (notifier.update) {
+	notifier.notify(true);
+}
 
 colors.setTheme({
 	help: 'cyan',
