@@ -341,7 +341,7 @@ var checkHTML = function(contents, file) {
 
 			var lineNum = index + 1;
 
-			var attrs = fullItem.match(/(?: )([A-Za-z0-9-]+=["'][^"']+["'])/g);
+			var attrs = fullItem.match(/(?: )([A-Za-z0-9-]+=(["']).+?\2)/g);
 
 			if (attrs) {
 				var lastAttr = -1;
@@ -356,10 +356,10 @@ var checkHTML = function(contents, file) {
 						// var attrName = pieces[0];
 						// var attrValue = pieces[1].trim().replace(/(^["']|["']$)/g, '');
 
-						var pieces = item.trim().match(/^([^=]+)=["'](.*)["']$/);
+						var pieces = item.trim().match(/^([^=]+)=(["'])(.*)\2$/);
 
 						var attrName = pieces[1];
-						var attrValue = pieces[2];
+						var attrValue = pieces[3];
 
 						if (lastAttr > attrName) {
 							var re = new RegExp('\\b' + lastAttr + '\\b.*?> ?<.*?' + attrName);
