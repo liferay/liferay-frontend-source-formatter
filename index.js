@@ -473,7 +473,7 @@ var series = args.map(
 		return function(cb) {
 			fs.readFile(file, 'utf-8', function (err, data) {
 				if (err) {
-					return cb(err);
+					return cb(null, '');
 				}
 
 				if (REGEX_EXT_CSS.test(file)) {
@@ -487,7 +487,7 @@ var series = args.map(
 				}
 
 				var content = formatter(data, file);
-// console.log(content == data, file);
+
 				var errors = fileErrors[file] || [];
 
 				var includeHeaderFooter = (errors.length || !QUIET);
@@ -518,7 +518,7 @@ var series = args.map(
 				if (INLINE_REPLACE && changed) {
 					fs.writeFile(file, content, function(err, result) {
 						if (err) {
-							return cb(err);
+							return cb(null, '');
 						}
 
 						cb(null, content);
