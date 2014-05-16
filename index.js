@@ -88,6 +88,8 @@ var REGEX_HEX = /#[0-9A-Fa-f]{3,6}/;
 
 var REGEX_MIXED_SPACES = /^.*( \t|\t ).*$/;
 
+var REGEX_MISSING_LIST_VALUES_SPACE = /,(?=[^\s])/g;
+
 var REPLACE_REGEX_REDUNDANT = '#$1$2$3';
 
 var hasProperty = function(item) {
@@ -130,6 +132,10 @@ var hasNeedlessUnit = function(item) {
 
 var hasMixedSpaces = function(item) {
 	return REGEX_MIXED_SPACES.test(item);
+};
+
+var hasMissingListValuesSpace = function(item) {
+	return REGEX_MISSING_LIST_VALUES_SPACE.test(item);
 };
 
 var _testDoubleQuotes = function(item) {
@@ -286,6 +292,14 @@ var checkCss = function(contents, file) {
 				trackErr(sub('Line {0} Missing integer: {1}', lineNum, item).warn, file);
 
 				fullItem = fullItem.replace(REGEX_INTEGER_DECIMAL, '$10$2');
+
+				item = fullItem.trim();
+			}
+
+			if (hasMissingListValuesSpace(item)) {
+				trackErr(sub('Line {0} Needs space between comma-separated values: {1}', lineNum, item).warn, file);
+
+				fullItem = fullItem.replace(REGEX_MISSING_LIST_VALUES_SPACE, ', ');
 
 				item = fullItem.trim();
 			}
