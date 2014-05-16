@@ -15,6 +15,7 @@ This will scan through HTML(-like) files, JS files, and CSS files and detect man
 - Missing integers, in cases such as `opacity: .4;`
 - Lower or mixed case hex codes, such as `#fff`
 - Mixed spaces and tabs
+- Comma separated lists that are missing spaces, such as `rgb(0,0,0)`
 
 #### HTML(-like) files, such as JSP, VM, FTL, etc
 - Attributes that are unalphabetized, such as `<span id="test" class="foo">`
@@ -23,6 +24,10 @@ This will scan through HTML(-like) files, JS files, and CSS files and detect man
 #### JavaScript
 - Mixed spaces and tabs
 - Double quoted strings that should be single quoted
+- Stray debugging calls, such as `console.log`, `console.info`, etc
+- Functions that are improperly formatted, such as `function (`
+- Function arguments that are improperly formatted, such as `.on('foo', function(event) {`
+- Invalid bracket placement, such as `){` or `} else {`
 
 ## Installation
 
