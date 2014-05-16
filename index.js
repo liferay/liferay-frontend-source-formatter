@@ -95,6 +95,7 @@ var REGEX_INVALID_ARGUMENT_FORMAT = /(\w+)\((?!(?:$|.*?\);))/;
 var REGEX_INVALID_FUNCTION_FORMAT = /function\s+\(/;
 var REGEX_INVALID_CONDITIONAL_FORMAT = /\)\{(?!\})/;
 var REGEX_INVALID_ELSE_FORMAT = /\} ?(else|catch|finally)/;
+var REGEX_INVALID_KEYWORD_FORMAT = /\b(try|catch|if|for|else|switch|while)(\(|\{)/;
 
 var REPLACE_REGEX_REDUNDANT = '#$1$2$3';
 
@@ -150,6 +151,12 @@ var hasLogging = function(item) {
 
 var hasInvalidConditional = function(item) {
 	return REGEX_INVALID_CONDITIONAL_FORMAT.test(item);
+};
+
+var hasInvalidKeywordFormat = function(item) {
+	var m = item.match(REGEX_INVALID_KEYWORD_FORMAT);
+
+	return m && m[1];
 };
 
 var hasInvalidFunctionFormat = function(item) {
@@ -391,6 +398,12 @@ var checkJs = function(contents, file) {
 
 			if (elseType) {
 				trackErr(sub('Line {0} "{2}" should be on it\'s own line: {1}', lineNum, item, elseType).warn, file);
+			}
+
+			var keywordType = hasInvalidKeywordFormat(fullItem);
+
+			if (keywordType) {
+				trackErr(sub('Line {0} "{2}" should have a space after it: {1}', lineNum, item, keywordType).warn, file);
 			}
 
 			if (hasInvalidFunctionFormat(fullItem)) {
