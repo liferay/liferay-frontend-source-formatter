@@ -91,6 +91,10 @@ var REGEX_MIXED_SPACES = /^.*( \t|\t ).*$/;
 var REGEX_MISSING_LIST_VALUES_SPACE = /,(?=[^\s])/g;
 
 var REGEX_LOGGING = /\bconsole\.[^\(]+?\(/;
+var REGEX_INVALID_ARGUMENT_FORMAT = /(\w+)\((?!(?:$|.*?\);))/;
+var REGEX_INVALID_FUNCTION_FORMAT = /function\s+\(/;
+var REGEX_INVALID_CONDITIONAL_FORMAT = /\)\{(?!\})/;
+var REGEX_INVALID_ELSE_FORMAT = /\} ?else/;
 
 var REPLACE_REGEX_REDUNDANT = '#$1$2$3';
 
@@ -142,6 +146,33 @@ var hasMissingListValuesSpace = function(item) {
 
 var hasLogging = function(item) {
 	return REGEX_LOGGING.test(item);
+};
+
+var hasInvalidConditional = function(item) {
+	return REGEX_INVALID_CONDITIONAL_FORMAT.test(item);
+};
+
+var hasInvalidFunctionFormat = function(item) {
+	return REGEX_INVALID_FUNCTION_FORMAT.test(item);
+};
+
+var hasInvalidElse = function(item) {
+	return REGEX_INVALID_ELSE_FORMAT.test(item);
+};
+
+var hasInvalidArgumentFormat = function(item) {
+	var invalid = false;
+
+	item.match(
+		REGEX_INVALID_ARGUMENT_FORMAT,
+		function(str, fnName) {
+			if (fnName !== 'function') {
+				invalid = true;
+			}
+		}
+	);
+
+	return invalid;
 };
 
 var _testDoubleQuotes = function(item) {
@@ -344,6 +375,22 @@ var checkJs = function(contents, file) {
 
 			if (hasLogging(fullItem)) {
 				trackErr(sub('Line {0} Debugging statement: {1}', lineNum, item).warn, file);
+			}
+
+			if (hasInvalidConditional(fullItem)) {
+				trackErr(sub('Line {0} Needs a space between ")" and "{1}": {2}', lineNum, '{', item).warn, file);
+			}
+
+			if (hasInvalidArgumentFormat(fullItem)) {
+				trackErr(sub('Line {0} These arguments should each be on their own line: {1}', lineNum, '{', item).warn, file);
+			}
+
+			if (hasInvalidElse(fullItem)) {
+				trackErr(sub('Line {0} "else/else if" should be on it\'s own line: {1}', lineNum, item).warn, file);
+			}
+
+			if (hasInvalidFunctionFormat(fullItem)) {
+				trackErr(sub('Line {0} Functions should be formatted as function(: {1}', lineNum, item).warn, file);
 			}
 
 			if (hasDoubleQuotes(fullItem)) {
