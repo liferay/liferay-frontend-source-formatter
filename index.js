@@ -94,7 +94,7 @@ var REGEX_LOGGING = /\bconsole\.[^\(]+?\(/;
 var REGEX_INVALID_ARGUMENT_FORMAT = /(\w+)\((?!(?:$|.*?\);))/;
 var REGEX_INVALID_FUNCTION_FORMAT = /function\s+\(/;
 var REGEX_INVALID_CONDITIONAL_FORMAT = /\)\{(?!\})/;
-var REGEX_INVALID_ELSE_FORMAT = /\} ?else/;
+var REGEX_INVALID_ELSE_FORMAT = /\} ?(else|catch|finally)/;
 
 var REPLACE_REGEX_REDUNDANT = '#$1$2$3';
 
@@ -157,7 +157,9 @@ var hasInvalidFunctionFormat = function(item) {
 };
 
 var hasInvalidElse = function(item) {
-	return REGEX_INVALID_ELSE_FORMAT.test(item);
+	var m = item.match(REGEX_INVALID_ELSE_FORMAT);
+
+	return m && m[1];
 };
 
 var hasInvalidArgumentFormat = function(item) {
@@ -385,8 +387,10 @@ var checkJs = function(contents, file) {
 				trackErr(sub('Line {0} These arguments should each be on their own line: {1}', lineNum, '{', item).warn, file);
 			}
 
-			if (hasInvalidElse(fullItem)) {
-				trackErr(sub('Line {0} "else/else if" should be on it\'s own line: {1}', lineNum, item).warn, file);
+			var elseType = hasInvalidElse(fullItem);
+
+			if (elseType) {
+				trackErr(sub('Line {0} "{2}" should be on it\'s own line: {1}', lineNum, item, elseType).warn, file);
 			}
 
 			if (hasInvalidFunctionFormat(fullItem)) {
