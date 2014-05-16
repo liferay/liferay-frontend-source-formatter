@@ -90,6 +90,8 @@ var REGEX_MIXED_SPACES = /^.*( \t|\t ).*$/;
 
 var REGEX_MISSING_LIST_VALUES_SPACE = /,(?=[^\s])/g;
 
+var REGEX_LOGGING = /\bconsole\.[^\(]+?\(/;
+
 var REPLACE_REGEX_REDUNDANT = '#$1$2$3';
 
 var hasProperty = function(item) {
@@ -136,6 +138,10 @@ var hasMixedSpaces = function(item) {
 
 var hasMissingListValuesSpace = function(item) {
 	return REGEX_MISSING_LIST_VALUES_SPACE.test(item);
+};
+
+var hasLogging = function(item) {
+	return REGEX_LOGGING.test(item);
 };
 
 var _testDoubleQuotes = function(item) {
@@ -334,6 +340,10 @@ var checkJs = function(contents, file) {
 
 			if (hasMixedSpaces(fullItem)) {
 				trackErr(sub('Line {0} Mixed spaces and tabs: {1}', lineNum, item).warn, file);
+			}
+
+			if (hasLogging(fullItem)) {
+				trackErr(sub('Line {0} Debugging statement: {1}', lineNum, item).warn, file);
 			}
 
 			if (hasDoubleQuotes(fullItem)) {
