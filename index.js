@@ -6,6 +6,8 @@ var colors = require('colors');
 var fs = require('fs');
 var path = require('path');
 var updateNotifier = require('update-notifier');
+var YUI = require('yui').YUI;
+var A = YUI().use('yui-base', 'oop', 'array-extras');
 
 var argv = require('optimist').usage('Usage: $0 -qo')
 			.options(
@@ -63,150 +65,307 @@ var INLINE_REPLACE = argv.i;
 var CWD = process.env.GIT_PWD || process.cwd();
 var TOP_LEVEL;
 
-var REGEX_EXT_CSS = /\.(s)?css$/;
-var REGEX_EXT_HTML = /\.(jsp.?|html|vm|ftl)$/;
-var REGEX_EXT_JS = /\.js$/;
+var re = {
+	REGEX_EXT_CSS: /\.(s)?css$/,
+	REGEX_EXT_HTML: /\.(jsp.?|html|vm|ftl)$/,
+	REGEX_EXT_JS: /\.js$/,
 
-var REGEX_LEADING_SPACE = /^\s+/;
-var REGEX_LEADING_INCLUDE = /^@include /;
-var REGEX_PROP_KEY = /^\s*(?:@include\s)?([^:]+)(?:)/;
+	REGEX_LEADING_SPACE: /^\s+/,
+	REGEX_LEADING_INCLUDE: /^@include /,
+	REGEX_PROP_KEY: /^\s*(?:@include\s)?([^:]+)(?:)/,
 
-var REGEX_PROPERTY = /^\t*([^:]+:|@include\s)[^;]+;$/;
-var REGEX_SUB = /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g;
-// var REGEX_ZERO_UNIT = /\b0(?!s\b)[a-zA-Z]{1,}\b/;
-var REGEX_INTEGER_DECIMAL = /([^0-9])(\.\d+)/;
-var REGEX_BORDER_UNSET = /(border(-(?:right|left|top|bottom))?):\s?(none|0)(\s?(none|0))?;/;
-var REGEX_PROPERTY_FORMAT = /^\t*([^:]+:(?!\s))[^;]+;$/;
-var REGEX_DOUBLE_QUOTES = /"[^"]*"/;
-var REGEX_SINGLE_QUOTES = /'[^']*'/g;
-var REGEX_REGEX = /\/[^\/]+\//g;
-var REGEX_COMMENT = /\/(\/|\*).*/g;
-var REGEX_ZERO_UNIT = /(#?)(\b0(?!s\b)[a-zA-Z]{1,}\b)/;
-var REGEX_HEX_REDUNDANT = /#([0-9A-Fa-f])\1([0-9A-Fa-f])\2([0-9A-Fa-f])\3/;
-var REGEX_HEX_LOWER = /[a-f]/;
-var REGEX_HEX = /#[0-9A-Fa-f]{3,6}/;
+	REGEX_PROPERTY: /^\t*([^:]+:|@include\s)[^;]+;$/,
+	REGEX_SUB: /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
 
-var REGEX_MIXED_SPACES = /^.*( \t|\t ).*$/;
+	REGEX_SINGLE_QUOTES: /'[^']*'/g,
+	REGEX_REGEX: /\/[^\/]+\//g,
+	REGEX_COMMENT: /\/(\/|\*).*/g,
 
-var REGEX_MISSING_LIST_VALUES_SPACE = /,(?=[^\s])/g;
+	REGEX_HEX_REDUNDANT: /#([0-9A-Fa-f])\1([0-9A-Fa-f])\2([0-9A-Fa-f])\3/,
+	REGEX_HEX: /#[0-9A-Fa-f]{3,6}\b/,
 
-var REGEX_LOGGING = /\bconsole\.[^\(]+?\(/;
-var REGEX_INVALID_ARGUMENT_FORMAT = /(\w+)\((?!(?:$|.*?\);))/;
-var REGEX_INVALID_FUNCTION_FORMAT = /function\s+\(/;
-var REGEX_INVALID_CONDITIONAL_FORMAT = /\)\{(?!\})/;
-var REGEX_INVALID_ELSE_FORMAT = /\} ?(else|catch|finally)/;
-var REGEX_INVALID_KEYWORD_FORMAT = /\b(try|catch|if|for|else|switch|while)(\(|\{)/;
+	REPLACE_REGEX_REDUNDANT: '#$1$2$3',
 
-var REPLACE_REGEX_REDUNDANT = '#$1$2$3';
+	common: {
+		mixedSpaces: {
+			regex: /^.*( \t|\t ).*$/,
+			replacer: function(fullItem, result, rule) {
+				// console.log(fullItem.replace(/\s/g, '-'));
+				fullItem = fullItem.replace(/(.*)( +\t|\t +)(.*)/g, function(str, prefix, problem, suffix) {
+					// console.log(problem.split('\t').join('').length);
+					problem = problem.replace(/ {4}| {2}/g, '\t').replace(/ /g, '');
 
-var hasProperty = function(item) {
-	return REGEX_PROPERTY.test(item);
-};
+					return prefix + problem + suffix;
+				});
 
-var hasLowerCaseRegex = function(item) {
-	var match = item.match(REGEX_HEX);
-	var lowerCaseRegex = false;
+				return fullItem;
+			},
+			testFullItem: true,
+			message: 'Mixed spaces and tabs: {1}',
+		}
+	},
 
-	if (match) {
-		lowerCaseRegex = REGEX_HEX_LOWER.test(match);
-	}
+	css: {
+		hexRedundant: {
+			regex: /#([0-9A-Fa-f])\1([0-9A-Fa-f])\2([0-9A-Fa-f])\3/,
+			test: function(item, regex) {
+				var match = re.hasHex(item);
 
-	return lowerCaseRegex;
-};
+				return match && re.test(match, regex);
+			},
+			message: function(lineNum, item, result, rule) {
+				var match = re.hasHex(item);
 
-var hasInvalidBorderReset = function(item) {
-	return item.match(REGEX_BORDER_UNSET);
-};
+				var message = 'Hex code can be reduced to ' + rule._reduceHex(match) + ': {1}';
 
-var hasInvalidFormat = function(item) {
-	return item.indexOf(':') > -1 && REGEX_PROPERTY_FORMAT.test(item);
-};
+				return re.message(message, lineNum, item, result, rule);
+			},
+			replacer: function(fullItem, result, rule) {
+				var hexMatch = re.hasHex(fullItem);
 
-var hasRedundantRegex = function(item) {
-	return REGEX_HEX_REDUNDANT.test(item);
-};
+				if (hexMatch) {
+					fullItem = fullItem.replace(hexMatch, rule._reduceHex(hexMatch));
+				}
 
-var hasMissingInteger = function(item) {
-	return REGEX_INTEGER_DECIMAL.test(item);
-};
+				return fullItem;
+			},
+			_reduceHex: function(hex) {
+				return hex ? hex.replace(re.REGEX_HEX_REDUNDANT, re.REPLACE_REGEX_REDUNDANT) : '';
+			},
+		},
+		hexLowerCase: {
+			regex: /[a-f]/,
+			test: function(item, regex) {
+				var match = re.hasHex(item);
 
-var hasNeedlessUnit = function(item) {
-	var m = item.match(REGEX_ZERO_UNIT);
+				return match && re.test(match, regex);
+			},
+			replacer: function(fullItem, result, rule) {
+				var hexMatch = re.hasHex(fullItem);
 
-	return m && !m[1];
-	// return REGEX_ZERO_UNIT.test(item);
-};
+				if (hexMatch) {
+					fullItem = fullItem.replace(hexMatch, hexMatch.toUpperCase());
+				}
 
-var hasMixedSpaces = function(item) {
-	return REGEX_MIXED_SPACES.test(item);
-};
+				return fullItem;
+			},
+			message: 'Hex code should be all uppercase: {1}',
+		},
 
-var hasMissingListValuesSpace = function(item) {
-	return REGEX_MISSING_LIST_VALUES_SPACE.test(item);
-};
+		missingNewlines: {
+			test: function(item, regex, rule, context) {
+				var hasCloser = item.indexOf('}') > -1;
+				var hasOpener = item.indexOf('{') > -1;
 
-var hasLogging = function(item) {
-	return REGEX_LOGGING.test(item);
-};
+				var previousItem = context.previousItem || '';
+				var nextItem = context.nextItem || '';
 
-var hasInvalidConditional = function(item) {
-	return REGEX_INVALID_CONDITIONAL_FORMAT.test(item);
-};
+				var missingNewlines = false;
 
-var hasInvalidKeywordFormat = function(item) {
-	var m = item.match(REGEX_INVALID_KEYWORD_FORMAT);
+				if ((hasCloser && (nextItem.trim() != '' && nextItem.indexOf('}') === -1)) ||
+					(hasOpener && (previousItem.trim() != '' && previousItem.indexOf('{') === -1))) {
+					missingNewlines = true;
+				}
 
-	return m && m[1];
-};
+				return missingNewlines;
+			},
+			message: function(lineNum, item, result, rule, context) {
+				var message = 'There should be a newline between } and "{rule}"';
 
-var hasInvalidFunctionFormat = function(item) {
-	return REGEX_INVALID_FUNCTION_FORMAT.test(item);
-};
+				message = re.message(message, lineNum, item, result, rule);
 
-var hasInvalidElse = function(item) {
-	var m = item.match(REGEX_INVALID_ELSE_FORMAT);
+				return sub(message, {rule: context.nextItem.trim()});
+			},
+			regex: /.*?(\}|\{)/,
+			replacer: function(fullItem, result, rule, context) {
+				if (result) {
+					fullItem = fullItem.replace(rule.regex, function(m, bracket) {
+						if (bracket == '{') {
+							m = '\n' + m;
+						}
 
-	return m && m[1];
-};
+						return m;
+					});
+				}
 
-var hasInvalidArgumentFormat = function(item) {
-	var invalid = false;
+				return fullItem;
+			}
+		},
 
-	item.match(
-		REGEX_INVALID_ARGUMENT_FORMAT,
-		function(str, fnName) {
-			if (fnName !== 'function') {
-				invalid = true;
+		needlessUnit: {
+			regex: /(#?)(\b0(?!s\b)[a-zA-Z]{1,}\b)/,
+			test: function(item, regex) {
+				var m = item.match(regex);
+
+				return m && !m[1];
+			},
+			message: 'Needless unit: {1}',
+			replacer: '0'
+		},
+		missingInteger: {
+			regex: /([^0-9])(\.\d+)/,
+			message: 'Missing integer: {1}',
+			replacer: '$10$2',
+		},
+		missingListValuesSpace: {
+			regex: /,(?=[^\s])/g,
+			replacer: ', ',
+			message: 'Needs space between comma-separated values: {1}'
+		},
+		_properties: {
+			invalidBorderReset: {
+				regex: /(border(-(?:right|left|top|bottom))?):\s?(none|0)(\s?(none|0))?;/,
+				test: 'match',
+				message: function(lineNum, item, result, rule) {
+					var borderReplacement = rule._getValidReplacement(result);
+
+					var message = sub('You should use "{1}": {0}', item, borderReplacement.error);
+
+					return re.message(message, lineNum, item, rule);
+				},
+				replacer: function(fullItem, result, rule) {
+					return fullItem.replace(result[0], rule._getValidReplacement(result));
+				},
+				_getValidReplacement: function(result) {
+					var borderProperty = result[1] || 'border';
+
+					return '' + borderProperty + '-width: 0;';
+				},
+			},
+
+			invalidFormat: {
+				regex: /^\t*([^:]+:(?!\s))[^;]+;$/,
+				test: function(item, regex) {
+					return item.indexOf(':') > -1 && regex.test(item);
+				},
+				message: 'Add space after ":": {1}',
+				replacer: function(fullItem, result, rule) {
+					return fullItem.replace(':', ': ');
+				}
 			}
 		}
-	);
+	},
 
-	return invalid;
-};
+	html: {
 
-var _testDoubleQuotes = function(item) {
-	return REGEX_DOUBLE_QUOTES.test(item);
-};
+	},
 
-var hasDoubleQuotes = function(item) {
-	var doubleQuoted = false;
+	js: {
+		IGNORE: /^(\t| )*(\*|\/\/)/,
+		logging: {
+			regex: /\bconsole\.[^\(]+?\(/,
+			// replacer: ,
+			message: 'Debugging statement: {1}',
+		},
+		invalidConditional: {
+			regex: /\)\{(?!\})/,
+			replacer: ') {',
+			message: function(lineNum, item, result, rule) {
+				var message = 'Needs a space between ")" and "{bracket}": {1}';
 
-	if (_testDoubleQuotes(item)) {
-		// Remove the following from the line:
-		// single quoted strings (e.g. var = '<img src="" />')
-		// regular expressions (e.g. var = /"[^"]+"/)
-		// comments (e.g. // some "comment" here or
-		//  /* some "comment" here */)
+				return sub(re.message(message, lineNum, item, rule), rule._bracket);
+			},
+			_bracket: {
+				bracket: '{'
+			}
+		},
+		invalidArgumentFormat: {
+			regex: /(\w+)\((?!(?:$|.*?\);?))/,
+			test: function(item, regex) {
+				var invalid = false;
 
-		var newItem = item
-			.replace(REGEX_SINGLE_QUOTES, '')
-			.replace(REGEX_COMMENT, '')
-			.replace(REGEX_REGEX, '');
+				item.replace(
+					regex,
+					function(str, fnName) {
+						if (fnName !== 'function') {
+							invalid = true;
+						}
+					}
+				);
 
-		doubleQuoted = _testDoubleQuotes(newItem);
-	}
+				return invalid;
+			},
+			// replacer: ,
+			message: 'These arguments should each be on their own line: {1}',
+		},
+		invalidFunctionFormat: {
+			regex: /function\s+\(/,
+			replacer: 'function(',
+			message: 'Anonymous function expressions should be formatted as function(: {1}',
+		},
+		doubleQuotes: {
+			regex: /"[^"]*"/,
+			test: function(item, regex, rule) {
+				var doubleQuoted = false;
 
-	return doubleQuoted;
+				if (re.test(item, regex)) {
+					// Remove the following from the line:
+					// single quoted strings (e.g. var = '<img src="" />')
+					// regular expressions (e.g. var = /"[^"]+"/)
+					// comments (e.g. // some "comment" here or
+					//  /* some "comment" here */)
+
+					var newItem = item
+						.replace(re.REGEX_SINGLE_QUOTES, '')
+						.replace(re.REGEX_COMMENT, '')
+						.replace(re.REGEX_REGEX, '');
+
+					doubleQuoted = re.test(newItem, regex);
+				}
+
+				return doubleQuoted;
+			},
+			// replacer: ,
+			message: 'Strings should be single quoted: {1}'
+		},
+
+		elseFormat: {
+			regex: /^(\s+)?\} ?(else|catch|finally)/,
+			test: 'match',
+			replacer: '$1}\n$1$2',
+			message: function(lineNum, item, result, rule) {
+				var message = '"' + result[2] + '" should be on it\'s own line: {1}';
+
+				return re.message(message, lineNum, item, rule);
+			},
+			testFullItem: true
+		},
+
+		keywordFormat: {
+			regex: /\b(try|catch|if|for|else|switch|while)(\(|\{)/,
+			test: 'match',
+			replacer: '$1 $2',
+			message: function(lineNum, item, result, rule) {
+				var message = '"' + result[1] + '" should have a space after it: {1}';
+
+				return re.message(message, lineNum, item, rule);
+			},
+		},
+	},
+
+	hasHex: function(item) {
+		var match = item.match(re.REGEX_HEX);
+
+		return match && match[0];
+	},
+
+	hasProperty: function(item) {
+		return re.REGEX_PROPERTY.test(item);
+	},
+
+	match: function(item, re) {
+		return item.match(re);
+	},
+
+	message: function(message, lineNum, item, result, rule) {
+		var instance = this;
+
+		return sub('Line: {0} ', lineNum) + sub(message, lineNum, item);
+	},
+
+	test: function(item, regex) {
+		return regex.test(item);
+	},
 };
 
 var fileErrors = {};
@@ -224,7 +383,7 @@ var trackErr = function(err, file) {
 }
 
 var formatPropertyItem = function(item) {
-	return item.replace(REGEX_LEADING_SPACE, '').replace(REGEX_LEADING_INCLUDE, '');
+	return item.replace(re.REGEX_LEADING_SPACE, '').replace(re.REGEX_LEADING_INCLUDE, '');
 };
 
 var sub = function(str, obj) {
@@ -234,7 +393,7 @@ var sub = function(str, obj) {
 		obj = Array.prototype.slice.call(arguments, 1);
 	}
 
-	return str.replace ? str.replace(REGEX_SUB, function(match, key) {
+	return str.replace ? str.replace(re.REGEX_SUB, function(match, key) {
 		return (typeof obj[key] !== 'undefined') ? obj[key] : match;
 	}) : s;
 };
@@ -243,6 +402,99 @@ var iterateLines = function(contents, iterator) {
 	var lines = contents.split('\n');
 
 	return lines.map(iterator).join('\n');
+};
+
+var getValue = function(object, path) {
+	if (A.Lang.isString(path)) {
+		path = path.split('.');
+	}
+
+	return A.Object.getValue(object, path);
+};
+
+var iterateRules = function(rules, fullItem, context) {
+	var instance = this;
+
+	if (A.Lang.isString(rules)) {
+		rules = getValue(re, rules);
+	}
+
+	var item = context.item;
+	var lineNum = context.lineNum;
+	var file = context.file;
+	var formatItem = context.formatItem;
+	var customIgnore = context.customIgnore;
+
+	if (A.Lang.isObject(rules)) {
+		var ignore = rules.IGNORE;
+
+		if ((!ignore || (ignore && !ignore.test(fullItem))) &&
+			(!customIgnore || (customIgnore && !customIgnore.test(fullItem)))) {
+
+			A.Object.each(
+				rules,
+				function(rule, ruleName) {
+					if (ruleName === 'IGNORE' || ruleName.indexOf('_') === 0) {
+						return;
+					}
+
+					var regex = rule.regex;
+					var test = rule.test || re.test;
+
+					if (test === 'match') {
+						test = re.match;
+					}
+
+					var testItem = item;
+
+					if (rule.testFullItem) {
+						testItem = fullItem;
+					}
+
+					var result = test(testItem, regex, rule, context);
+
+					var message = rule.message || re.message;
+
+					if (result) {
+						var warning;
+
+						if (A.Lang.isString(message)) {
+							warning = re.message(message, lineNum, item, result, rule, context);
+						}
+						else if (A.Lang.isFunction(message)) {
+							warning = message(lineNum, item, result, rule, context);
+						}
+
+						trackErr(warning.warn, file);
+
+						var replacer = rule.replacer;
+
+						if (replacer) {
+							if (A.Lang.isString(replacer)) {
+								fullItem = fullItem.replace(regex, replacer);
+							}
+							else if (A.Lang.isFunction(replacer)) {
+								fullItem = replacer(fullItem, result, rule, context);
+							}
+
+							if (formatItem) {
+								item = formatItem(fullItem, context);
+							}
+							else if (formatItem !== false) {
+								item = fullItem.trim();
+							}
+						}
+					}
+				}
+			);
+		}
+	}
+
+	return fullItem;
+};
+
+var postFormatPropertyItem = function(fullItem) {
+	return formatPropertyItem(fullItem.trim());
 };
 
 var checkCss = function(contents, file) {
@@ -255,38 +507,49 @@ var checkCss = function(contents, file) {
 
 			var lineNum = index + 1;
 			var nextItem = collection[lineNum] && collection[lineNum].trim();
+			var previousItem = null;
 
-			if (hasProperty(item)) {
+			if (index > 0) {
+				previousItem = collection[index - 1];
+				previousItem = previousItem && previousItem.trim();
+			}
+
+			var rules = re.css;
+
+			var propertyRules = rules._properties;
+
+			var context = {
+				item: item,
+				lineNum: lineNum,
+				file: file,
+				previousItem: previousItem,
+				nextItem: nextItem
+			};
+
+			fullItem = iterateRules('common', fullItem, context);
+
+			item = context.item = fullItem.trim();
+
+			if (re.hasProperty(item)) {
 				item = formatPropertyItem(item);
 
-				var invalidBorderMatch = hasInvalidBorderReset(item);
+				var propertyContext = A.merge(
+					context,
+					{
+						item: item,
+						formatItem: postFormatPropertyItem
+					}
+				);
 
-				if (invalidBorderMatch) {
-					var borderProperty = invalidBorderMatch[1] || 'border';
-					var borderReplacement = '' + borderProperty + '-width: 0;';
-
-					trackErr(sub('Line: {0} You should use "{2}": {1}', lineNum, item, borderReplacement.error).warn, file);
-
-					fullItem = fullItem.replace(invalidBorderMatch[0], borderReplacement);
-
-					item = formatPropertyItem(fullItem.trim());
-				}
-
-				if (hasInvalidFormat(item)) {
-					trackErr(sub('Line: {0} Add space after ":": {1}', lineNum, item).warn, file);
-
-					fullItem = fullItem.replace(':', ': ');
-
-					item = formatPropertyItem(fullItem.trim());
-				}
+				fullItem = iterateRules('css._properties', fullItem, propertyContext);
 
 				var nextItemMatch;
 
-				var itemMatch = item.match(REGEX_PROP_KEY);
+				var itemMatch = item.match(re.REGEX_PROP_KEY);
 
-				if (nextItem && hasProperty(nextItem)) {
-					nextItem = nextItem.replace(REGEX_LEADING_SPACE, '');
-					nextItemMatch = nextItem && hasProperty(nextItem) && nextItem.match(REGEX_PROP_KEY);
+				if (nextItem && re.hasProperty(nextItem)) {
+					nextItem = nextItem.replace(re.REGEX_LEADING_SPACE, '');
+					nextItemMatch = nextItem && re.hasProperty(nextItem) && nextItem.match(re.REGEX_PROP_KEY);
 				}
 
 				if (itemMatch && nextItemMatch) {
@@ -296,72 +559,11 @@ var checkCss = function(contents, file) {
 				}
 			}
 
-			var hexMatch = item.match(REGEX_HEX);
+			context.item = item;
 
-			if (hexMatch) {
-				hexMatch = hexMatch[0];
+			fullItem = iterateRules('css', fullItem, context);
 
-				if (hasLowerCaseRegex(hexMatch)) {
-					trackErr(sub('Line {0} Hex code should be all uppercase: {1}', lineNum, item).warn, file);
-
-					var newHex = hexMatch.toUpperCase();
-
-					fullItem = fullItem.replace(hexMatch, newHex);
-
-					hexMatch = newHex;
-
-					item = fullItem.trim();
-				}
-
-				if (hasRedundantRegex(hexMatch)) {
-					var reducedHex = hexMatch.replace(REGEX_HEX_REDUNDANT, REPLACE_REGEX_REDUNDANT);
-
-					trackErr(sub('Line {0} Hex code can be reduced to {2}: {1}', lineNum, item, reducedHex).warn, file);
-
-					fullItem = fullItem.replace(hexMatch, reducedHex);
-
-					hexMatch = reducedHex;
-
-					item = fullItem.trim();
-				}
-			}
-
-			if (hasNeedlessUnit(item)) {
-				trackErr(sub('Line {0} Needless unit: {1}', lineNum, item).warn, file);
-
-				fullItem = fullItem.replace(REGEX_ZERO_UNIT, '0');
-
-				item = fullItem.trim();
-			}
-
-			if (hasMissingInteger(item)) {
-				trackErr(sub('Line {0} Missing integer: {1}', lineNum, item).warn, file);
-
-				fullItem = fullItem.replace(REGEX_INTEGER_DECIMAL, '$10$2');
-
-				item = fullItem.trim();
-			}
-
-			if (hasMissingListValuesSpace(item)) {
-				trackErr(sub('Line {0} Needs space between comma-separated values: {1}', lineNum, item).warn, file);
-
-				fullItem = fullItem.replace(REGEX_MISSING_LIST_VALUES_SPACE, ', ');
-
-				item = fullItem.trim();
-			}
-
-			if (hasMixedSpaces(fullItem)) {
-				trackErr(sub('Line {0} Mixed spaces and tabs: {1}', lineNum, item).warn, file);
-
-				// console.log(fullItem.replace(/\s/g, '-'));
-				fullItem = fullItem.replace(/(.*)( +\t|\t +)(.*)/g, function(str, prefix, problem, suffix) {
-					// console.log(problem.split('\t').join('').length);
-					problem = problem.replace(/ {4}| {2}/g, '\t').replace(/ /g, '');
-
-					return prefix + problem + suffix;
-				});
-				// console.log(fullItem.replace(/\s/g, '+'));
-			}
+			item = fullItem.trim();
 
 			return fullItem;
 		}
@@ -378,41 +580,20 @@ var checkJs = function(contents, file) {
 
 			var lineNum = index + 1;
 
-			if (hasMixedSpaces(fullItem)) {
-				trackErr(sub('Line {0} Mixed spaces and tabs: {1}', lineNum, item).warn, file);
-			}
+			var context = {
+				item: item,
+				lineNum: lineNum,
+				file: file,
+				customIgnore: re.js.IGNORE
+			};
 
-			if (hasLogging(fullItem)) {
-				trackErr(sub('Line {0} Debugging statement: {1}', lineNum, item).warn, file);
-			}
+			fullItem = iterateRules('common', fullItem, context);
 
-			if (hasInvalidConditional(fullItem)) {
-				trackErr(sub('Line {0} Needs a space between ")" and "{1}": {2}', lineNum, '{', item).warn, file);
-			}
+			item = context.item = fullItem.trim();
 
-			if (hasInvalidArgumentFormat(fullItem)) {
-				trackErr(sub('Line {0} These arguments should each be on their own line: {1}', lineNum, '{', item).warn, file);
-			}
+			fullItem = iterateRules('js', fullItem, context);
 
-			var elseType = hasInvalidElse(fullItem);
-
-			if (elseType) {
-				trackErr(sub('Line {0} "{2}" should be on it\'s own line: {1}', lineNum, item, elseType).warn, file);
-			}
-
-			var keywordType = hasInvalidKeywordFormat(fullItem);
-
-			if (keywordType) {
-				trackErr(sub('Line {0} "{2}" should have a space after it: {1}', lineNum, item, keywordType).warn, file);
-			}
-
-			if (hasInvalidFunctionFormat(fullItem)) {
-				trackErr(sub('Line {0} Functions should be formatted as function(: {1}', lineNum, item).warn, file);
-			}
-
-			if (hasDoubleQuotes(fullItem)) {
-				trackErr(sub('Line {0} Strings should be single quoted: {1}', lineNum, item).warn, file);
-			}
+			item = context.item = fullItem.trim();
 
 			return fullItem;
 		}
@@ -564,13 +745,13 @@ var series = args.map(
 					return cb(null, '');
 				}
 
-				if (REGEX_EXT_CSS.test(file)) {
+				if (re.REGEX_EXT_CSS.test(file)) {
 					formatter = checkCss;
 				}
-				else if (REGEX_EXT_JS.test(file)) {
+				else if (re.REGEX_EXT_JS.test(file)) {
 					formatter = checkJs;
 				}
-				else if (REGEX_EXT_HTML.test(file)) {
+				else if (re.REGEX_EXT_HTML.test(file)) {
 					formatter = checkHTML;
 				}
 
