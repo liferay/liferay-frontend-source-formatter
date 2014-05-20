@@ -191,6 +191,26 @@ var re = {
 				return fullItem;
 			}
 		},
+		trailingNewlines: {
+			test: function(item, regex, rule, context) {
+				var hasCloser = item.indexOf('}') > -1;
+				var hasOpener = item.indexOf('{') > -1;
+
+				var previousItem = context.previousItem;
+				var nextItem = context.nextItem;
+
+				var trailingNewlines = false;
+
+				if (hasCloser && (previousItem === '')) {
+					trailingNewlines = true;
+				}
+
+				return trailingNewlines;
+			},
+			message: function(lineNum, item, result, rule, context) {
+				return re.message('Trailing new line', lineNum - 1, item, result, rule);
+			}
+		},
 
 		needlessUnit: {
 			regex: /(#?)(\b0(?!s\b)[a-zA-Z]{1,}\b)/,
@@ -234,13 +254,13 @@ var re = {
 			},
 
 			invalidFormat: {
-				regex: /^\t*([^:]+:(?!\s))[^;]+;$/,
+				regex: /^\t*([^:]+:(?:(?!\s)|(?=\s{2,})))[^;]+;$/,
 				test: function(item, regex) {
 					return item.indexOf(':') > -1 && regex.test(item);
 				},
-				message: 'Add space after ":": {1}',
+				message: 'There should be one space after ":": {1}',
 				replacer: function(fullItem, result, rule) {
-					return fullItem.replace(':', ': ');
+					return fullItem.replace(/:\s+/, ': ');
 				}
 			}
 		}
