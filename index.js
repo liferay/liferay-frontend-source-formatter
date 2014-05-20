@@ -634,7 +634,7 @@ var checkHTML = function(contents, file) {
 
 			var lineNum = index + 1;
 
-			var attrs = fullItem.match(/(?: )([A-Za-z0-9-]+=(["']).+?\2)/g);
+			var attrs = fullItem.match(/(?: )([A-Za-z0-9-]+=(["']).*?\2)/g);
 
 			if (attrs) {
 				var lastAttr = -1;
