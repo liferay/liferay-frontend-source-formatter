@@ -313,6 +313,10 @@ var re = {
 			replacer: 'function(',
 			message: 'Anonymous function expressions should be formatted as function(: {1}',
 		},
+		liferayLanguageVar: {
+			regex: /Liferay\.Language\.get\((?!['"])/,
+			message: 'You should never pass variables to Liferay.Language.get(): {1}'
+		},
 		doubleQuotes: {
 			regex: /"[^"]*"/,
 			test: function(item, regex, rule) {
