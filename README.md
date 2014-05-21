@@ -16,6 +16,8 @@ This will scan through HTML(-like) files, JS files, and CSS files and detect man
 - Lower or mixed case hex codes, such as `#fff`
 - Mixed spaces and tabs
 - Comma separated lists that are missing spaces, such as `rgb(0,0,0)`
+- Trailing new lines in nested rules
+- Misc. property formatting/spacing
 
 #### HTML(-like) files, such as JSP, VM, FTL, etc
 - Attributes that are unalphabetized, such as `<span id="test" class="foo">`
@@ -28,6 +30,10 @@ This will scan through HTML(-like) files, JS files, and CSS files and detect man
 - Functions that are improperly formatted, such as `function (`
 - Function arguments that are improperly formatted, such as `.on('foo', function(event) {`
 - Invalid bracket placement, such as `){` or `} else {`
+- Properties or methods that are non-alphabetically listed
+- Trailing commas in arrays and objects
+- Variables that are all defined in one statement
+- Variables being passed to `Liferay.Language.get()`
 
 ## Installation
 
