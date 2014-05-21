@@ -702,6 +702,7 @@ var processor = {
 	ObjectExpression: function(node, parent, file) {
 		var prev = null;
 		var collection = node._col;
+
 		if (!collection) {
 			return;
 		}
@@ -733,8 +734,6 @@ var processor = {
 								needsSort = true;
 							}
 						}
-
-						// console.log('-- At least one of these is custom: (%s, %s)', propName, prevPropName);
 					}
 					else {
 						if ((privateProp === privatePrevProp) && propName < prevPropName) {
@@ -744,6 +743,7 @@ var processor = {
 
 					if (needsSort) {
 						var note = lifecyleMethod ? '(Lifecycle methods should come first)' : '';
+
 						trackErr(sub('Line: {0} Sort properties: {1} {2} {3}', item.loc.start.line, prevPropName, propName, note).warn, file);
 					}
 				}
