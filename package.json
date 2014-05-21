@@ -1,6 +1,6 @@
 {
   "name": "check-source-formatting",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Check the source formatting of HTML/JS/CSS",
   "main": "index.js",
   "bin": {
@@ -23,6 +23,7 @@
     "async": "^0.7.0",
     "cli": "^0.5.0",
     "colors": "^0.6.2",
+    "falafel": "^0.3.1",
     "optimist": "^0.6.1",
     "update-notifier": "^0.1.8",
     "yui": "^3.17.0-rc-1"

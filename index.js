@@ -591,9 +591,6 @@ var checkCss = function(contents, file) {
 	);
 };
 
-var esprima = require('esprima');
-var escodegen = require('escodegen');
-var estraverse = require('estraverse');
 var falafel = require('falafel');
 
 var isPrivate = function(str) {
