@@ -86,6 +86,8 @@ var re = {
 
 	REPLACE_REGEX_REDUNDANT: '#$1$2$3',
 
+	REGEX_TRAILING_COMMA: /,(\s*(?:\]|\}))$/,
+
 	common: {
 		mixedSpaces: {
 			regex: /^.*( \t|\t ).*$/,
@@ -797,6 +799,37 @@ var checkJs = function(contents, file) {
 		function(node){
 			var parent = node.parent;
 			var type = node.type;
+
+			// Check for trailing commas
+			if (/(Object|Array)Expression/.test(type)) {
+				var source = node.source();
+
+				if (re.REGEX_TRAILING_COMMA.test(source)) {
+					var start = node.loc.start.line;
+					var end = node.loc.end.line;
+
+					var lineNum = end;
+
+					var trailingStr = '';
+
+					source = source.replace(
+						re.REGEX_TRAILING_COMMA,
+						function(str, closingBracket, index, fullString) {
+							// Count the number of new lines between the trailing comma
+							// and the end of the block, and update the lineNumber
+							lineNum -= (fullString.substring(index, fullString.length).split('\n').length - 1);
+
+							trailingStr = str.replace(/\n|\t/g, '');
+
+							return closingBracket;
+						}
+					);
+
+					trackErr(sub('Line: {0} Trailing comma: {1}', lineNum, trailingStr).warn, file);
+
+					node.update(source);
+				}
+			}
 
 			var processorFn = processor[type];
 
