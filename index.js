@@ -603,156 +603,28 @@ var isPrivate = function(str) {
 	return str.charAt(0) === '_';
 };
 
-var processObject = function(node, parent, file) {
-	// if (node.type == 'ObjectExpression') {
-		// console.log(collection.join() == collection.sort().join());
-		var prev = null;
-		var collection = node._col;
-		var LIFECYCLE_METHODS = {
-			init: -1100,
-			initializer: -1000,
-			renderUI: -900,
-			bindUI: -800,
-			syncUI: -700
-		};
-
-		collection.forEach(
-			function(item, index, collection) {
-				if (index > 0) {
-					var needsSort = false;
-
-					var propName = item.name || item.value;
-					var prevPropName = prev.name || prev.value;
-
-					var privateProp = isPrivate(propName);
-					var privatePrevProp = isPrivate(prevPropName);
-
-					var lifecyleMethod = (propName in LIFECYCLE_METHODS || prevPropName in LIFECYCLE_METHODS);
-// console.log(propName, prevPropName);
-// if (A.Lang.isUndefined(propName) || A.Lang.isUndefined(prevPropName)) {
-// 	console.log(prev, node, collection);
-// }
-					if (lifecyleMethod) {
-						var customPropName = LIFECYCLE_METHODS[propName];
-						var customPrevPropName = LIFECYCLE_METHODS[prevPropName];
-
-						if (customPropName && customPrevPropName) {
-							if (customPropName < customPrevPropName) {
-								needsSort = true;
-							}
-						}
-						else {
-							// console.log('-:', customPropName, customPrevPropName);
-							if (customPropName) {
-								needsSort = true;
-							}
-						}
-
-						// if (customPropName && customPrevPropName) {
-						// 	customPropName += ' and ' + customPrevPropName;
-						// }
-						// else if (!customPropName && customPrevPropName) {
-						// 	customPropName = customPrevPropName;
-						// }
-
-						// if both are custom
-							// compare their map values
-						// if one is custom
-							// check which one, and make sure the custom is the prev
-								// if prev is custom
-									// good to go
-								// if curr is custom
-									// no go, let's remove it
-
-						console.log('-- At least one of these is custom: (%s, %s)', propName, prevPropName);
-					}
-					else {
-						if ((privateProp === privatePrevProp) && propName < prevPropName) {
-							needsSort = true;
-						}
-					}
-
-
-
-					// TODO: Currently it says that _a should come before a, but for our case, we need the opposite
-					// TODO: We allow this order: initializer, then renderUI, then bindUI, then syncUI
-
-					if (needsSort) {
-						var note = lifecyleMethod ? '(Lifecycle methods should come first)' : '';
-						trackErr(sub('Line: {0} Sort properties: {1} {2} {3}', item.loc.start.line, prevPropName, propName, note).warn, file);
-					}
-				}
-
-				prev = item;
-			}
-		);
-
-		delete node._col;
-	// }
+var LIFECYCLE_METHODS = {
+	init: -1100,
+	initializer: -1000,
+	renderUI: -900,
+	bindUI: -800,
+	syncUI: -700
 };
 
-var processVars = function(node, parent, file) {
-	// console.log(node.declarations.length);
-	var declarations = node.declarations;
+var processor = {
+	ExpressionStatement: function(node, parent, file) {
+		if (node.expression.type == 'CallExpression') {
+			var expression = node.expression;
+			var callee = expression.callee;
 
-	if (declarations.length > 1) {
-		var lines = [];
-		var low = declarations[0].loc.start.line;
-		var high = low;
+			var args = expression.arguments;
 
-		var vars = declarations.map(
-			function(item, index, collection) {
-				// lines.push(item.loc.start.line);
-				var line = item.loc.start.line;
-				if (line > high) {
-					high = line;
-				}
-				else if (line < low) {
-					low = line;
-				}
+			var fnStart = node.loc.start.line;
+			var fnEnd = node.loc.end.line;
 
-				return item.id.name;
-			}
-		);
+			var multiLineFn = (fnEnd > fnStart);
 
-		lines.push(low);
-
-		if (low !== high) {
-			lines.push(high);
-		}
-
-		var lineText = lines.length > 1 ? 'Lines' : 'Line';
-
-		trackErr(sub('{0}: {1} Each variable should have it\'s own var statement: {2}', lineText, lines.join('-'), vars.join(', ')).warn, file);
-		// console.log(vars);
-	}
-};
-
-var processExpression = function(node, parent, file) {
-	// if (!node.expression.arguments) {
-	// 	console.log(node);
-	// }
-	// console.log(node.expression.type);
-	if (node.expression.type == 'CallExpression') {
-		// console.log(node.expression.arguments);
-
-		var expression = node.expression;
-		var callee = expression.callee;
-
-		var args = expression.arguments;
-
-		var fnStart = node.loc.start.line;
-		var fnEnd = node.loc.end.line;
-
-		var multiLineFn = (fnEnd > fnStart);
-
-		if (args.length) {
-			// console.log('%s: fn start/end: %s, %s', callee.name, fnStart, fnEnd);
-
-			// console.log(multiLineFn);
-
-			// if (multiLineFn) {
-				// For multiline function calls, are all of the args on it's own line?
+			if (args.length) {
 				var lastArgStartLine = 0;
 				var lastArgEndLine = 0;
 
@@ -767,9 +639,6 @@ var processExpression = function(node, parent, file) {
 
 				args.forEach(
 					function(item, index, collection) {
-						// console.log(item);
-						// console.log('argument start/end',item.loc.start.line, item.loc.end.line, lastArgStartLine);
-						// console.log(item);
 						var loc = item.loc;
 
 						var argStart = loc.start.line;
@@ -788,11 +657,9 @@ var processExpression = function(node, parent, file) {
 
 						if (multiLineFn) {
 							if (argStart == fnStart) {
-								// console.log('Args should each be on their own line (args on start line)'.error, item);
 								error = 'Args should each be on their own line (args on start line)';
 							}
 							else if (argStart == fnStart || argEnd == fnEnd) {
-								// console.log('Args should each be on their own line (args on end line)'.error, item);
 								error = 'Args should each be on their own line (args on end line)';
 							}
 						}
@@ -810,11 +677,9 @@ var processExpression = function(node, parent, file) {
 					var argLines = argLineStarts.concat(argLineEnds);
 
 					if (hasNonEmptyFunctionArg || hasNonEmptyObjectArg || A.Array.dedupe(argLines).length > 1) {
-						// console.log('Args should each be on their own line (args on same line)'.error);
 						error = 'Args should each be on their own line (args on same line)';
 					}
 					else if (multiLineFn) {
-						// console.log('Function call can be all on one line: %s'.error);
 						error = 'Function call can be all on one line';
 					}
 				}
@@ -825,386 +690,130 @@ var processExpression = function(node, parent, file) {
 					var lineText = lines.length > 1 ? 'Lines' : 'Line';
 
 					trackErr(sub('{0}: {1} {2}: {3}(...)', lineText, lines.join('-'), error, callee.name).warn, file);
-					// console.log(('Error: ' + error + ': ' + callee.name).error);
 				}
-			// }
-			// else {
-			// 	// For single line function calls, should they be on multiple lines?
-			// 	var shouldBeMultiLine = false;
-
-			// 	args.forEach(
-			// 		function(item, index, collection) {
-			// 			console.log('single line fn',item.type);
-
-			// 			if (item.type == 'ObjectExpression') {
-			// 				if (item.properties.length) {
-			// 					// console.log('Probably should be on it\'s own line'.error);
-			// 					shouldBeMultiLine = true;
-			// 				}
-			// 			}
-			// 			else if (item.type == 'FunctionExpression') {
-			// 				console.log('FnExp',item);
-
-			// 				if (item.body.body.length) {
-			// 					// console.log('Probably should be on it\'s own line'.error);
-			// 					shouldBeMultiLine = true;
-			// 				}
-			// 			}
-			// 		}
-			// 	);
-
-			// 	if (shouldBeMultiLine) {
-			// 		console.log('Probably should be on it\'s own line'.error);
-			// 	}
-			// }
-
-			// console.log(args);
-			// args.forEach(
-			// 	function(item, index, collection) {
-			// 			// console.log(item);
-			// 		if (item.loc.start.line < item.loc.end.line) {
-			// 			// console.log(JSON.stringify(item, null, 4));
-			// 		}
-			// 	}
-			// );
+			}
+			else if (multiLineFn) {
+				trackErr(sub('Lines: {0} Function call without arguments should be on one line: {1}', [fnStart, fnEnd].join('-'), callee.name).warn, file);
+			}
 		}
-		else if (multiLineFn) {
-			trackErr(sub('Lines: {0} Function call without arguments should be on one line: {1}', [fnStart, fnEnd].join('-'), callee.name).warn, file);
+	},
+	ObjectExpression: function(node, parent, file) {
+		var prev = null;
+		var collection = node._col;
+		if (!collection) {
+			return;
+		}
+
+		collection.forEach(
+			function(item, index, collection) {
+				if (index > 0) {
+					var needsSort = false;
+
+					var propName = item.name || item.value;
+					var prevPropName = prev.name || prev.value;
+
+					var privateProp = isPrivate(propName);
+					var privatePrevProp = isPrivate(prevPropName);
+
+					var lifecyleMethod = (propName in LIFECYCLE_METHODS || prevPropName in LIFECYCLE_METHODS);
+
+					if (lifecyleMethod) {
+						var customPropName = LIFECYCLE_METHODS[propName];
+						var customPrevPropName = LIFECYCLE_METHODS[prevPropName];
+
+						if (customPropName && customPrevPropName) {
+							if (customPropName < customPrevPropName) {
+								needsSort = true;
+							}
+						}
+						else {
+							if (customPropName) {
+								needsSort = true;
+							}
+						}
+
+						// console.log('-- At least one of these is custom: (%s, %s)', propName, prevPropName);
+					}
+					else {
+						if ((privateProp === privatePrevProp) && propName < prevPropName) {
+							needsSort = true;
+						}
+					}
+
+					if (needsSort) {
+						var note = lifecyleMethod ? '(Lifecycle methods should come first)' : '';
+						trackErr(sub('Line: {0} Sort properties: {1} {2} {3}', item.loc.start.line, prevPropName, propName, note).warn, file);
+					}
+				}
+
+				prev = item;
+			}
+		);
+
+		delete node._col;
+	},
+	VariableDeclaration: function(node, parent, file) {
+		var declarations = node.declarations;
+
+		if (declarations.length > 1) {
+			var lines = [];
+			var low = declarations[0].loc.start.line;
+			var high = low;
+
+			var vars = declarations.map(
+				function(item, index, collection) {
+					var line = item.loc.start.line;
+					if (line > high) {
+						high = line;
+					}
+					else if (line < low) {
+						low = line;
+					}
+
+					return item.id.name;
+				}
+			);
+
+			lines.push(low);
+
+			if (low !== high) {
+				lines.push(high);
+			}
+
+			var lineText = lines.length > 1 ? 'Lines' : 'Line';
+
+			trackErr(sub('{0}: {1} Each variable should have it\'s own var statement: {2}', lineText, lines.join('-'), vars.join(', ')).warn, file);
 		}
 	}
-	// console.log(JSON.stringify(node, null, 4));
-	// console.log(node.expression.arguments);
-	// node._lines = [];
 };
 
 var checkJs = function(contents, file) {
-	// contents = checkHTML(contents, file);
-	var ast = esprima.parse('var x = {y: 1};', {tokens: true, tolerant: true, loc: true});
-
-// var collection = [];
-contents = falafel(contents, {tolerant: true, loc: true}, function(node){
-	var parent = node.parent;
-
-	if (node.type == 'ObjectExpression') {
-		processObject(node, parent, file);
-	}
-	else if (node.type == 'Property') {
-		if (!parent._col) {
-			parent._col = [];
-		}
-		parent._col.push(node.key);
-	}
-	else if (node.type == 'VariableDeclaration') {
-		processVars(node, parent, file);
-	}
-	else if (node.type == 'ExpressionStatement') {
-		processExpression(node, parent, file);
-	}
-	// else if (node.type == '') {
-
-	// }
-});
-return contents;
-	// return escodegen.generate(esprima.parse(contents));
-var ast = esprima.parse(contents, { tolerant: true, loc: true });
-
-
-	// console.log(JSON.stringify(ast, null, 4));
-
-	/*var collection = [];
-
-	estraverse.traverse(
-		ast,
+	contents = falafel(
+		contents,
 		{
-			enter: function(node, parent) {
-				// console.log(node.type, parent && parent.type);
-				if (node.type == 'ObjectExpression') {
-					// console.log('entered Object');
-					if (!node._col) {
-						node._col = [];
+			loc: true,
+			tolerant: true
+		},
+		function(node){
+			var parent = node.parent;
+			var type = node.type;
+
+			var processorFn = processor[type];
+
+			if (!processorFn) {
+				if (node.type == 'Property') {
+					if (!parent._col) {
+						parent._col = [];
 					}
-				}
-				else if (node.type == 'Property') {
 					parent._col.push(node.key);
 				}
-				else if (node.type == 'VariableDeclaration') {
-					// console.log(node.declarations.length);
-					var declarations = node.declarations;
-
-					if (declarations.length > 1) {
-						var lines = [];
-						var low = declarations[0].loc.start.line;
-						var high = low;
-
-						var vars = declarations.map(
-							function(item, index, collection) {
-								// lines.push(item.loc.start.line);
-								var line = item.loc.start.line;
-								if (line > high) {
-									high = line;
-								}
-								else if (line < low) {
-									low = line;
-								}
-
-								return item.id.name;
-							}
-						);
-
-						lines.push(low);
-
-						if (low !== high) {
-							lines.push(high);
-						}
-
-						var lineText = lines.length > 1 ? 'Lines' : 'Line';
-
-						trackErr(sub('{0}: {1} Each variable should have it\'s own var statement: {2}', lineText, lines.join('-'), vars.join(', ')).warn, file);
-						// console.log(vars);
-					}
-				}
-				else if (node.type == 'ExpressionStatement') {
-					// if (!node.expression.arguments) {
-					// 	console.log(node);
-					// }
-					// console.log(node.expression.type);
-					if (node.expression.type == 'CallExpression') {
-						// console.log(node.expression.arguments);
-
-						var expression = node.expression;
-						var callee = expression.callee;
-
-						var args = expression.arguments;
-
-						var fnStart = node.loc.start.line;
-						var fnEnd = node.loc.end.line;
-
-						var multiLineFn = (fnEnd > fnStart);
-
-						if (args.length) {
-							// console.log('%s: fn start/end: %s, %s', callee.name, fnStart, fnEnd);
-
-							// console.log(multiLineFn);
-
-							// if (multiLineFn) {
-								// For multiline function calls, are all of the args on it's own line?
-								var lastArgStartLine = 0;
-								var lastArgEndLine = 0;
-
-								var hasNonEmptyFunctionArg = false;
-								var hasNonEmptyObjectArg = false;
-
-								var testLineEndings = false;
-								var argLineStarts = [];
-								var argLineEnds = [];
-
-								var error = '';
-
-								args.forEach(
-									function(item, index, collection) {
-										// console.log(item);
-										// console.log('argument start/end',item.loc.start.line, item.loc.end.line, lastArgStartLine);
-										// console.log(item);
-										var loc = item.loc;
-
-										var argStart = loc.start.line;
-										var argEnd = loc.end.line;
-
-										argLineStarts.push(argStart);
-										argLineEnds.push(argEnd);
-
-										if (item.type == 'FunctionExpression' && item.body.body.length) {
-											hasNonEmptyFunctionArg = true;
-										}
-
-										if (item.type == 'ObjectExpression' && item.properties.length) {
-											hasNonEmptyObjectArg = true;
-										}
-
-										if (multiLineFn) {
-											if (argStart == fnStart) {
-												// console.log('Args should each be on their own line (args on start line)'.error, item);
-												error = 'Args should each be on their own line (args on start line)';
-											}
-											else if (argStart == fnStart || argEnd == fnEnd) {
-												// console.log('Args should each be on their own line (args on end line)'.error, item);
-												error = 'Args should each be on their own line (args on end line)';
-											}
-										}
-
-										if (argStart == lastArgStartLine || argStart == lastArgEndLine) {
-											testLineEndings = true;
-										}
-
-										lastArgStartLine = argStart;
-										lastArgEndLine = argEnd;
-									}
-								);
-
-								if (testLineEndings) {
-									var argLines = argLineStarts.concat(argLineEnds);
-
-									if (hasNonEmptyFunctionArg || hasNonEmptyObjectArg || A.Array.dedupe(argLines).length > 1) {
-										// console.log('Args should each be on their own line (args on same line)'.error);
-										error = 'Args should each be on their own line (args on same line)';
-									}
-									else if (multiLineFn) {
-										// console.log('Function call can be all on one line: %s'.error);
-										error = 'Function call can be all on one line';
-									}
-								}
-
-								if (error) {
-									var lines = A.Array.dedupe([fnStart, fnEnd]);
-
-									var lineText = lines.length > 1 ? 'Lines' : 'Line';
-
-									trackErr(sub('{0}: {1} {2}: {3}(...)', lineText, lines.join('-'), error, callee.name).warn, file);
-									// console.log(('Error: ' + error + ': ' + callee.name).error);
-								}
-							// }
-							// else {
-							// 	// For single line function calls, should they be on multiple lines?
-							// 	var shouldBeMultiLine = false;
-
-							// 	args.forEach(
-							// 		function(item, index, collection) {
-							// 			console.log('single line fn',item.type);
-
-							// 			if (item.type == 'ObjectExpression') {
-							// 				if (item.properties.length) {
-							// 					// console.log('Probably should be on it\'s own line'.error);
-							// 					shouldBeMultiLine = true;
-							// 				}
-							// 			}
-							// 			else if (item.type == 'FunctionExpression') {
-							// 				console.log('FnExp',item);
-
-							// 				if (item.body.body.length) {
-							// 					// console.log('Probably should be on it\'s own line'.error);
-							// 					shouldBeMultiLine = true;
-							// 				}
-							// 			}
-							// 		}
-							// 	);
-
-							// 	if (shouldBeMultiLine) {
-							// 		console.log('Probably should be on it\'s own line'.error);
-							// 	}
-							// }
-
-							// console.log(args);
-							// args.forEach(
-							// 	function(item, index, collection) {
-							// 			// console.log(item);
-							// 		if (item.loc.start.line < item.loc.end.line) {
-							// 			// console.log(JSON.stringify(item, null, 4));
-							// 		}
-							// 	}
-							// );
-						}
-						else if (multiLineFn) {
-							trackErr(sub('Lines: {0} Function call without arguments should be on one line: {1}', [fnStart, fnEnd].join('-'), callee.name).warn, file);
-						}
-					}
-					// console.log(JSON.stringify(node, null, 4));
-					// console.log(node.expression.arguments);
-					// node._lines = [];
-				}
-				// else if (node.type == '') {
-
-				// }
-			},
-			leave: function(node, parent) {
-				if (node.type == 'ObjectExpression') {
-					// console.log(collection.join() == collection.sort().join());
-					var prev = null;
-					var collection = node._col;
-					var LIFECYCLE_METHODS = {
-						init: -1100,
-						initializer: -1000,
-						renderUI: -900,
-						bindUI: -800,
-						syncUI: -700
-					};
-
-					collection.forEach(
-						function(item, index, collection) {
-							if (index > 0) {
-								var needsSort = false;
-
-								var propName = item.name || item.value;
-								var prevPropName = prev.name || prev.value;
-
-								var privateProp = isPrivate(propName);
-								var privatePrevProp = isPrivate(prevPropName);
-
-								var lifecyleMethod = (propName in LIFECYCLE_METHODS || prevPropName in LIFECYCLE_METHODS);
-// console.log(propName, prevPropName);
-// if (A.Lang.isUndefined(propName) || A.Lang.isUndefined(prevPropName)) {
-// 	console.log(prev, node, collection);
-// }
-								if (lifecyleMethod) {
-									var customPropName = LIFECYCLE_METHODS[propName];
-									var customPrevPropName = LIFECYCLE_METHODS[prevPropName];
-
-									if (customPropName && customPrevPropName) {
-										if (customPropName < customPrevPropName) {
-											needsSort = true;
-										}
-									}
-									else {
-										// console.log('-:', customPropName, customPrevPropName);
-										if (customPropName) {
-											needsSort = true;
-										}
-									}
-
-									// if (customPropName && customPrevPropName) {
-									// 	customPropName += ' and ' + customPrevPropName;
-									// }
-									// else if (!customPropName && customPrevPropName) {
-									// 	customPropName = customPrevPropName;
-									// }
-
-									// if both are custom
-										// compare their map values
-									// if one is custom
-										// check which one, and make sure the custom is the prev
-											// if prev is custom
-												// good to go
-											// if curr is custom
-												// no go, let's remove it
-
-									console.log('-- At least one of these is custom: (%s, %s)', propName, prevPropName);
-								}
-								else {
-									if ((privateProp === privatePrevProp) && propName < prevPropName) {
-										needsSort = true;
-									}
-								}
-
-
-
-								// TODO: Currently it says that _a should come before a, but for our case, we need the opposite
-								// TODO: We allow this order: initializer, then renderUI, then bindUI, then syncUI
-
-								if (needsSort) {
-									var note = lifecyleMethod ? '(Lifecycle methods should come first)' : '';
-									trackErr(sub('Line: {0} Sort properties: {1} {2} {3}', item.loc.start.line, prevPropName, propName, note).warn, file);
-								}
-							}
-
-							prev = item;
-						}
-					);
-
-					delete node._col;
-				}
+			}
+			else {
+				processorFn(node, parent, file);
 			}
 		}
-	);
-*/
+	).toString();
+
 	return iterateLines(
 		contents,
 		function(item, index, collection) {
