@@ -92,9 +92,7 @@ var re = {
 		mixedSpaces: {
 			regex: /^.*( \t|\t ).*$/,
 			replacer: function(fullItem, result, rule) {
-				// console.log(fullItem.replace(/\s/g, '-'));
 				fullItem = fullItem.replace(/(.*)( +\t|\t +)(.*)/g, function(str, prefix, problem, suffix) {
-					// console.log(problem.split('\t').join('').length);
 					problem = problem.replace(/ {4}| {2}/g, '\t').replace(/ /g, '');
 
 					return prefix + problem + suffix;
@@ -276,7 +274,6 @@ var re = {
 		IGNORE: /^(\t| )*(\*|\/\/)/,
 		logging: {
 			regex: /\bconsole\.[^\(]+?\(/,
-			// replacer: ,
 			message: 'Debugging statement: {1}',
 		},
 		invalidConditional: {
@@ -307,7 +304,6 @@ var re = {
 
 				return invalid;
 			},
-			// replacer: ,
 			message: 'These arguments should each be on their own line: {1}',
 		},
 		invalidFunctionFormat: {
@@ -341,7 +337,6 @@ var re = {
 
 				return doubleQuoted;
 			},
-			// replacer: ,
 			message: 'Strings should be single quoted: {1}'
 		},
 
@@ -894,12 +889,6 @@ var checkHTML = function(contents, file) {
 				attrs.forEach(
 					function(item, index, collection) {
 						var oldItem = item;
-						// item = item.trim();
-						// console.log(item.match(/^([^=]+)=["'](.*)["']$/));
-						// var pieces = item.trim().split('=');
-
-						// var attrName = pieces[0];
-						// var attrValue = pieces[1].trim().replace(/(^["']|["']$)/g, '');
 
 						var pieces = item.trim().match(/^([^=]+)=(["'])(.*)\2$/);
 
@@ -936,11 +925,6 @@ var checkHTML = function(contents, file) {
 								return item;
 							}
 						);
-
-						// while (m = attrValue.match(/<%.*?%>/g)) {
-						//	console.log(m[0]);
-						//	id++;
-						// }
 
 						var attrSep = ' ';
 
@@ -1000,7 +984,6 @@ var checkHTML = function(contents, file) {
 							});
 
 							item = item.replace(attrValue, newAttrValue)
-							// console.log(fullItem);
 						}
 
 						fullItem = fullItem.replace(oldItem, item);
