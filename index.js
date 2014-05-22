@@ -785,6 +785,14 @@ var processor = {
 };
 
 var checkJs = function(contents, file) {
+	var hasSheBang = false;
+
+	if (contents[0] === '#' && contents[1] === '!') {
+		contents = '//' + contents;
+
+		hasSheBang = true;
+	}
+
 	try {
 		contents = falafel(
 			contents,
@@ -870,6 +878,10 @@ var checkJs = function(contents, file) {
 	}
 	catch (e) {
 		trackErr(sub('Line: {0} Could not parse JavaScript: {1}', e.lineNumber, e.description).warn, file);
+	}
+
+	if (hasSheBang) {
+		contents = contents.substr(2, contents.length);
 	}
 
 	return iterateLines(
