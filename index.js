@@ -684,7 +684,7 @@ var processor = {
 
 					var lineText = lines.length > 1 ? 'Lines' : 'Line';
 
-					trackErr(sub('{0}: {1} {2}: {3}(...)', lineText, lines.join('-'), error, callee.name).warn, file);
+					trackErr(sub('{0}: {1} {2}: {3}(...)', lineText, lines.join('-'), error, callee.name || 'function').warn, file);
 				}
 			}
 			else if (multiLineFn) {
