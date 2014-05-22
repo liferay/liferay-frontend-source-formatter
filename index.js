@@ -783,87 +783,92 @@ var processor = {
 };
 
 var checkJs = function(contents, file) {
-	contents = falafel(
-		contents,
-		{
-			loc: true,
-			tolerant: true
-		},
-		function(node){
-			var parent = node.parent;
-			var type = node.type;
+	try {
+		contents = falafel(
+			contents,
+			{
+				loc: true,
+				tolerant: true
+			},
+			function(node){
+				var parent = node.parent;
+				var type = node.type;
 
-			// Check for trailing commas
-			if (/(Object|Array)Expression/.test(type)) {
-				var source = node.source();
+				// Check for trailing commas
+				if (/(Object|Array)Expression/.test(type)) {
+					var source = node.source();
 
-				var leadingComma = re.REGEX_LEADING_COMMA.test(source);
-				var trailingComma = re.REGEX_TRAILING_COMMA.test(source);
+					var leadingComma = re.REGEX_LEADING_COMMA.test(source);
+					var trailingComma = re.REGEX_TRAILING_COMMA.test(source);
 
-				if (leadingComma || trailingComma) {
-					var start = node.loc.start.line;
-					var end = node.loc.end.line;
+					if (leadingComma || trailingComma) {
+						var start = node.loc.start.line;
+						var end = node.loc.end.line;
 
-					var lineEnd = end;
-					var lineStart = start;
+						var lineEnd = end;
+						var lineStart = start;
 
-					if (trailingComma) {
-						var trailingStr = '';
+						if (trailingComma) {
+							var trailingStr = '';
 
-						source = source.replace(
-							re.REGEX_TRAILING_COMMA,
-							function(str, closingBracket, index, fullString) {
-								// Count the number of new lines between the trailing comma
-								// and the end of the block, and update the lineNumber
-								lineEnd -= (fullString.substring(index, fullString.length).split('\n').length - 1);
+							source = source.replace(
+								re.REGEX_TRAILING_COMMA,
+								function(str, closingBracket, index, fullString) {
+									// Count the number of new lines between the trailing comma
+									// and the end of the block, and update the lineNumber
+									lineEnd -= (fullString.substring(index, fullString.length).split('\n').length - 1);
 
-								trailingStr = str.replace(/\n|\t/g, '');
+									trailingStr = str.replace(/\n|\t/g, '');
 
-								return closingBracket;
-							}
-						);
+									return closingBracket;
+								}
+							);
 
-						trackErr(sub('Line: {0} Trailing comma: {1}', lineEnd, trailingStr).warn, file);
+							trackErr(sub('Line: {0} Trailing comma: {1}', lineEnd, trailingStr).warn, file);
+						}
+
+						if (leadingComma) {
+							var leadingStr = '';
+
+							source = source.replace(
+								re.REGEX_LEADING_COMMA,
+								function(str, openingBracket, index, fullString) {
+									// Count the number of new lines between the leading comma
+									// and the end of the block, and update the lineNumber
+									lineStart += (str.split('\n').length - 1);
+
+									leadingStr = str.replace(/\n|\t/g, '');
+
+									return openingBracket;
+								}
+							);
+
+							trackErr(sub('Line: {0} Leading comma: {1}', lineStart, leadingStr).warn, file);
+						}
+
+						node.update(source);
 					}
+				}
 
-					if (leadingComma) {
-						var leadingStr = '';
+				var processorFn = processor[type];
 
-						source = source.replace(
-							re.REGEX_LEADING_COMMA,
-							function(str, openingBracket, index, fullString) {
-								// Count the number of new lines between the leading comma
-								// and the end of the block, and update the lineNumber
-								lineStart += (str.split('\n').length - 1);
-
-								leadingStr = str.replace(/\n|\t/g, '');
-
-								return openingBracket;
-							}
-						);
-
-						trackErr(sub('Line: {0} Leading comma: {1}', lineStart, leadingStr).warn, file);
+				if (!processorFn) {
+					if (node.type == 'Property') {
+						if (!parent._col) {
+							parent._col = [];
+						}
+						parent._col.push(node.key);
 					}
-
-					node.update(source);
+				}
+				else {
+					processorFn(node, parent, file);
 				}
 			}
-
-			var processorFn = processor[type];
-
-			if (!processorFn) {
-				if (node.type == 'Property') {
-					if (!parent._col) {
-						parent._col = [];
-					}
-					parent._col.push(node.key);
-				}
-			}
-			else {
-				processorFn(node, parent, file);
-			}
-		}
-	).toString();
+		).toString();
+	}
+	catch (e) {
+		trackErr(sub('Line: {0} Could not parse JavaScript: {1}', e.lineNumber, e.description).warn, file);
+	}
 
 	return iterateLines(
 		contents,
