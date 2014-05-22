@@ -46,12 +46,14 @@ if (notifier.update) {
 	notifier.notify(true);
 }
 
-colors.setTheme({
-	help: 'cyan',
-	warn: 'yellow',
-	error: 'red',
-	subtle: 'grey'
-});
+colors.setTheme(
+	{
+		help: 'cyan',
+		warn: 'yellow',
+		error: 'red',
+		subtle: 'grey'
+	}
+);
 
 var args = argv._;
 
@@ -313,7 +315,7 @@ var re = {
 			message: 'Anonymous function expressions should be formatted as function(: {1}',
 		},
 		liferayLanguageVar: {
-			regex: /Liferay\.Language\.get\((?!['"])/,
+			regex: /Liferay\.Language\.get\((?!['"\)])/,
 			message: 'You should never pass variables to Liferay.Language.get(): {1}'
 		},
 		doubleQuotes: {
@@ -790,7 +792,7 @@ var checkJs = function(contents, file) {
 				loc: true,
 				tolerant: true
 			},
-			function(node){
+			function(node) {
 				var parent = node.parent;
 				var type = node.type;
 
@@ -1007,7 +1009,7 @@ var checkHTML = function(contents, file) {
 						}
 
 						if (matches) {
-							newAttrValue = attrValue.replace(new RegExp(token + '(\\d+)' + token, 'g'), function(str, id){
+							newAttrValue = attrValue.replace(new RegExp(token + '(\\d+)' + token, 'g'), function(str, id) {
 								return matches[id];
 							});
 
@@ -1027,63 +1029,67 @@ var checkHTML = function(contents, file) {
 var series = args.map(
 	function(file) {
 		return function(cb) {
-			fs.readFile(file, 'utf-8', function (err, data) {
-				if (err) {
-					return cb(null, '');
-				}
-
-				if (re.REGEX_EXT_CSS.test(file)) {
-					formatter = checkCss;
-				}
-				else if (re.REGEX_EXT_JS.test(file)) {
-					formatter = checkJs;
-				}
-				else if (re.REGEX_EXT_HTML.test(file)) {
-					formatter = checkHTML;
-				}
-
-				var content = formatter(data, file);
-
-				var errors = fileErrors[file] || [];
-
-				var includeHeaderFooter = (errors.length || !QUIET);
-
-				if (includeHeaderFooter) {
-					var fileName = file;
-
-					if (RELATIVE) {
-						file = path.relative(CWD, file);
+			fs.readFile(
+				file,
+				'utf-8',
+				function(err, data) {
+					if (err) {
+						return cb(null, '');
 					}
 
-					console.log('File:'.blackBG + ' ' + file.underline);
-				}
+					if (re.REGEX_EXT_CSS.test(file)) {
+						formatter = checkCss;
+					}
+					else if (re.REGEX_EXT_JS.test(file)) {
+						formatter = checkJs;
+					}
+					else if (re.REGEX_EXT_HTML.test(file)) {
+						formatter = checkHTML;
+					}
 
-				if (errors.length) {
-					console.log(INDENT + errors.join('\n' + INDENT));
-				}
-				else if (includeHeaderFooter) {
-					console.log(INDENT + 'clear');
-				}
+					var content = formatter(data, file);
 
-				if (includeHeaderFooter) {
-					console.log('----'.subtle);
-				}
+					var errors = fileErrors[file] || [];
 
-				var changed = (content != data);
+					var includeHeaderFooter = (errors.length || !QUIET);
 
-				if (INLINE_REPLACE && changed) {
-					fs.writeFile(file, content, function(err, result) {
-						if (err) {
-							return cb(null, '');
+					if (includeHeaderFooter) {
+						var fileName = file;
+
+						if (RELATIVE) {
+							file = path.relative(CWD, file);
 						}
 
+						console.log('File:'.blackBG + ' ' + file.underline);
+					}
+
+					if (errors.length) {
+						console.log(INDENT + errors.join('\n' + INDENT));
+					}
+					else if (includeHeaderFooter) {
+						console.log(INDENT + 'clear');
+					}
+
+					if (includeHeaderFooter) {
+						console.log('----'.subtle);
+					}
+
+					var changed = (content != data);
+
+					if (INLINE_REPLACE && changed) {
+						fs.writeFile(file, content, function(err, result) {
+							if (err) {
+								return cb(null, '');
+							}
+
+							cb(null, content);
+						});
+					}
+					else {
 						cb(null, content);
-					});
+					}
 				}
-				else {
-					cb(null, content);
-				}
-			});
+			);
 		}
 	}
 );
