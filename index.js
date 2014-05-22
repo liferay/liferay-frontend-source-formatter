@@ -48,10 +48,10 @@ if (notifier.update) {
 
 colors.setTheme(
 	{
-		help: 'cyan',
-		warn: 'yellow',
 		error: 'red',
-		subtle: 'grey'
+		help: 'cyan',
+		subtle: 'grey',
+		warn: 'yellow'
 	}
 );
 
@@ -68,31 +68,33 @@ var CWD = process.env.GIT_PWD || process.cwd();
 var TOP_LEVEL;
 
 var re = {
+	REGEX_COMMA_LEADING: /^((?:\[|\{)\s*),/,
+	REGEX_COMMA_TRAILING: /,(\s*(?:\]|\}))$/,
+
+	REGEX_COMMENT: /\/(\/|\*).*/g,
+
 	REGEX_EXT_CSS: /\.(s)?css$/,
 	REGEX_EXT_HTML: /\.(jsp.?|html|vm|ftl)$/,
 	REGEX_EXT_JS: /\.js$/,
 
-	REGEX_LEADING_SPACE: /^\s+/,
+	REGEX_HEX: /#[0-9A-Fa-f]{3,6}\b/,
+	REGEX_HEX_REDUNDANT: /#([0-9A-Fa-f])\1([0-9A-Fa-f])\2([0-9A-Fa-f])\3/,
+
 	REGEX_LEADING_INCLUDE: /^@include /,
-	REGEX_PROP_KEY: /^\s*(?:@include\s)?([^:]+)(?:)/,
+	REGEX_LEADING_SPACE: /^\s+/,
 
 	REGEX_PROPERTY: /^\t*([^:]+:|@include\s)[^;]+;$/,
-	REGEX_SUB: /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
+	REGEX_PROP_KEY: /^\s*(?:@include\s)?([^:]+)(?:)/,
 
-	REGEX_SINGLE_QUOTES: /'[^']*'/g,
 	REGEX_REGEX: /\/[^\/]+\//g,
-	REGEX_COMMENT: /\/(\/|\*).*/g,
-
-	REGEX_HEX_REDUNDANT: /#([0-9A-Fa-f])\1([0-9A-Fa-f])\2([0-9A-Fa-f])\3/,
-	REGEX_HEX: /#[0-9A-Fa-f]{3,6}\b/,
+	REGEX_SINGLE_QUOTES: /'[^']*'/g,
+	REGEX_SUB: /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
 
 	REPLACE_REGEX_REDUNDANT: '#$1$2$3',
 
-	REGEX_LEADING_COMMA: /^((?:\[|\{)\s*),/,
-	REGEX_TRAILING_COMMA: /,(\s*(?:\]|\}))$/,
-
 	common: {
 		mixedSpaces: {
+			message: 'Mixed spaces and tabs: {1}',
 			regex: /^.*( \t|\t ).*$/,
 			replacer: function(fullItem, result, rule) {
 				fullItem = fullItem.replace(/(.*)( +\t|\t +)(.*)/g, function(str, prefix, problem, suffix) {
@@ -103,46 +105,14 @@ var re = {
 
 				return fullItem;
 			},
-			testFullItem: true,
-			message: 'Mixed spaces and tabs: {1}',
+			testFullItem: true
 		}
 	},
 
 	css: {
-		hexRedundant: {
-			regex: /#([0-9A-Fa-f])\1([0-9A-Fa-f])\2([0-9A-Fa-f])\3/,
-			test: function(item, regex) {
-				var match = re.hasHex(item);
-
-				return match && re.test(match, regex);
-			},
-			message: function(lineNum, item, result, rule) {
-				var match = re.hasHex(item);
-
-				var message = 'Hex code can be reduced to ' + rule._reduceHex(match) + ': {1}';
-
-				return re.message(message, lineNum, item, result, rule);
-			},
-			replacer: function(fullItem, result, rule) {
-				var hexMatch = re.hasHex(fullItem);
-
-				if (hexMatch) {
-					fullItem = fullItem.replace(hexMatch, rule._reduceHex(hexMatch));
-				}
-
-				return fullItem;
-			},
-			_reduceHex: function(hex) {
-				return hex ? hex.replace(re.REGEX_HEX_REDUNDANT, re.REPLACE_REGEX_REDUNDANT) : '';
-			},
-		},
 		hexLowerCase: {
+			message: 'Hex code should be all uppercase: {1}',
 			regex: /[a-f]/,
-			test: function(item, regex) {
-				var match = re.hasHex(item);
-
-				return match && re.test(match, regex);
-			},
 			replacer: function(fullItem, result, rule) {
 				var hexMatch = re.hasHex(fullItem);
 
@@ -152,26 +122,53 @@ var re = {
 
 				return fullItem;
 			},
-			message: 'Hex code should be all uppercase: {1}',
+			test: function(item, regex) {
+				var match = re.hasHex(item);
+
+				return match && re.test(match, regex);
+			}
+		},
+
+		hexRedundant: {
+			message: function(lineNum, item, result, rule) {
+				var match = re.hasHex(item);
+
+				var message = 'Hex code can be reduced to ' + rule._reduceHex(match) + ': {1}';
+
+				return re.message(message, lineNum, item, result, rule);
+			},
+			regex: /#([0-9A-Fa-f])\1([0-9A-Fa-f])\2([0-9A-Fa-f])\3/,
+			replacer: function(fullItem, result, rule) {
+				var hexMatch = re.hasHex(fullItem);
+
+				if (hexMatch) {
+					fullItem = fullItem.replace(hexMatch, rule._reduceHex(hexMatch));
+				}
+
+				return fullItem;
+			},
+			test: function(item, regex) {
+				var match = re.hasHex(item);
+
+				return match && re.test(match, regex);
+			},
+			_reduceHex: function(hex) {
+				return hex ? hex.replace(re.REGEX_HEX_REDUNDANT, re.REPLACE_REGEX_REDUNDANT) : '';
+			}
+		},
+
+		missingInteger: {
+			message: 'Missing integer: {1}',
+			regex: /([^0-9])(\.\d+)/,
+			replacer: '$10$2'
+		},
+		missingListValuesSpace: {
+			message: 'Needs space between comma-separated values: {1}',
+			regex: /,(?=[^\s])/g,
+			replacer: ', '
 		},
 
 		missingNewlines: {
-			test: function(item, regex, rule, context) {
-				var hasCloser = item.indexOf('}') > -1;
-				var hasOpener = item.indexOf('{') > -1;
-
-				var previousItem = context.previousItem || '';
-				var nextItem = context.nextItem || '';
-
-				var missingNewlines = false;
-
-				if ((hasCloser && (nextItem.trim() != '' && nextItem.indexOf('}') === -1)) ||
-					(hasOpener && (previousItem.trim() != '' && previousItem.indexOf('{') === -1))) {
-					missingNewlines = true;
-				}
-
-				return missingNewlines;
-			},
 			message: function(lineNum, item, result, rule, context) {
 				var message = 'There should be a newline between } and "{rule}"';
 
@@ -192,9 +189,40 @@ var re = {
 				}
 
 				return fullItem;
+			},
+			test: function(item, regex, rule, context) {
+				var hasCloser = item.indexOf('}') > -1;
+				var hasOpener = item.indexOf('{') > -1;
+
+				var previousItem = context.previousItem || '';
+				var nextItem = context.nextItem || '';
+
+				var missingNewlines = false;
+
+				if ((hasCloser && (nextItem.trim() != '' && nextItem.indexOf('}') === -1)) ||
+					(hasOpener && (previousItem.trim() != '' && previousItem.indexOf('{') === -1))) {
+					missingNewlines = true;
+				}
+
+				return missingNewlines;
 			}
 		},
+
+		needlessUnit: {
+			message: 'Needless unit: {1}',
+			regex: /(#?)(\b0(?!s\b)[a-zA-Z]{1,}\b)/,
+			replacer: '0',
+			test: function(item, regex) {
+				var m = item.match(regex);
+
+				return m && !m[1];
+			}
+		},
+
 		trailingNewlines: {
+			message: function(lineNum, item, result, rule, context) {
+				return re.message('Trailing new line', lineNum - 1, item, result, rule);
+			},
 			test: function(item, regex, rule, context) {
 				var hasCloser = item.indexOf('}') > -1;
 				var hasOpener = item.indexOf('{') > -1;
@@ -209,36 +237,11 @@ var re = {
 				}
 
 				return trailingNewlines;
-			},
-			message: function(lineNum, item, result, rule, context) {
-				return re.message('Trailing new line', lineNum - 1, item, result, rule);
 			}
 		},
 
-		needlessUnit: {
-			regex: /(#?)(\b0(?!s\b)[a-zA-Z]{1,}\b)/,
-			test: function(item, regex) {
-				var m = item.match(regex);
-
-				return m && !m[1];
-			},
-			message: 'Needless unit: {1}',
-			replacer: '0'
-		},
-		missingInteger: {
-			regex: /([^0-9])(\.\d+)/,
-			message: 'Missing integer: {1}',
-			replacer: '$10$2',
-		},
-		missingListValuesSpace: {
-			regex: /,(?=[^\s])/g,
-			replacer: ', ',
-			message: 'Needs space between comma-separated values: {1}'
-		},
 		_properties: {
 			invalidBorderReset: {
-				regex: /(border(-(?:right|left|top|bottom))?):\s?(none|0)(\s?(none|0))?;/,
-				test: 'match',
 				message: function(lineNum, item, result, rule) {
 					var borderReplacement = rule._getValidReplacement(result);
 
@@ -246,24 +249,26 @@ var re = {
 
 					return re.message(message, lineNum, item, rule);
 				},
+				regex: /(border(-(?:right|left|top|bottom))?):\s?(none|0)(\s?(none|0))?;/,
 				replacer: function(fullItem, result, rule) {
 					return fullItem.replace(result[0], rule._getValidReplacement(result));
 				},
+				test: 'match',
 				_getValidReplacement: function(result) {
 					var borderProperty = result[1] || 'border';
 
 					return '' + borderProperty + '-width: 0;';
-				},
+				}
 			},
 
 			invalidFormat: {
-				regex: /^\t*([^:]+:(?:(?!\s)|(?=\s{2,})))[^;]+;$/,
-				test: function(item, regex) {
-					return item.indexOf(':') > -1 && regex.test(item);
-				},
 				message: 'There should be one space after ":": {1}',
+				regex: /^\t*([^:]+:(?:(?!\s)|(?=\s{2,})))[^;]+;$/,
 				replacer: function(fullItem, result, rule) {
 					return fullItem.replace(/:\s+/, ': ');
+				},
+				test: function(item, regex) {
+					return item.indexOf(':') > -1 && regex.test(item);
 				}
 			}
 		}
@@ -275,50 +280,9 @@ var re = {
 
 	js: {
 		IGNORE: /^(\t| )*(\*|\/\/)/,
-		logging: {
-			regex: /\bconsole\.[^\(]+?\(/,
-			message: 'Debugging statement: {1}',
-		},
-		invalidConditional: {
-			regex: /\)\{(?!\})/,
-			replacer: ') {',
-			message: function(lineNum, item, result, rule) {
-				var message = 'Needs a space between ")" and "{bracket}": {1}';
 
-				return sub(re.message(message, lineNum, item, rule), rule._bracket);
-			},
-			_bracket: {
-				bracket: '{'
-			}
-		},
-		invalidArgumentFormat: {
-			regex: /(\w+)\((?!(?:$|.*?\);?))/,
-			test: function(item, regex) {
-				var invalid = false;
-
-				item.replace(
-					regex,
-					function(str, fnName) {
-						if (fnName !== 'function') {
-							invalid = true;
-						}
-					}
-				);
-
-				return invalid;
-			},
-			message: 'These arguments should each be on their own line: {1}',
-		},
-		invalidFunctionFormat: {
-			regex: /function\s+\(/,
-			replacer: 'function(',
-			message: 'Anonymous function expressions should be formatted as function(: {1}',
-		},
-		liferayLanguageVar: {
-			regex: /Liferay\.Language\.get\((?!['"\)])/,
-			message: 'You should never pass variables to Liferay.Language.get(): {1}'
-		},
 		doubleQuotes: {
+			message: 'Strings should be single quoted: {1}',
 			regex: /"[^"]*"/,
 			test: function(item, regex, rule) {
 				var doubleQuoted = false;
@@ -339,58 +303,109 @@ var re = {
 				}
 
 				return doubleQuoted;
-			},
-			message: 'Strings should be single quoted: {1}'
+			}
 		},
-
 		elseFormat: {
-			regex: /^(\s+)?\} ?(else|catch|finally)/,
-			test: 'match',
-			replacer: '$1}\n$1$2',
 			message: function(lineNum, item, result, rule) {
 				var message = '"' + result[2] + '" should be on it\'s own line: {1}';
 
 				return re.message(message, lineNum, item, rule);
 			},
+			regex: /^(\s+)?\} ?(else|catch|finally)/,
+			replacer: '$1}\n$1$2',
+			test: 'match',
 			testFullItem: true
 		},
 
+		invalidArgumentFormat: {
+			message: 'These arguments should each be on their own line: {1}',
+			regex: /(\w+)\((?!(?:$|.*?\);?))/,
+			test: function(item, regex) {
+				var invalid = false;
+
+				item.replace(
+					regex,
+					function(str, fnName) {
+						if (fnName !== 'function') {
+							invalid = true;
+						}
+					}
+				);
+
+				return invalid;
+			}
+		},
+
+		invalidConditional: {
+			message: function(lineNum, item, result, rule) {
+				var message = 'Needs a space between ")" and "{bracket}": {1}';
+
+				return sub(re.message(message, lineNum, item, rule), rule._bracket);
+			},
+			regex: /\)\{(?!\})/,
+			replacer: ') {',
+			_bracket: {
+				bracket: '{'
+			}
+		},
+
+		invalidFunctionFormat: {
+			message: 'Anonymous function expressions should be formatted as function(: {1}',
+			regex: /function\s+\(/,
+			replacer: 'function('
+		},
+
 		keywordFormat: {
-			regex: /\b(try|catch|if|for|else|switch|while)(\(|\{)/,
-			test: 'match',
-			replacer: '$1 $2',
 			message: function(lineNum, item, result, rule) {
 				var message = '"' + result[1] + '" should have a space after it: {1}';
 
 				return re.message(message, lineNum, item, rule);
 			},
+			regex: /\b(try|catch|if|for|else|switch|while)(\(|\{)/,
+			replacer: '$1 $2',
+			test: 'match'
 		},
-	},
 
-	hasHex: function(item) {
+		liferayLanguageVar: {
+			message: 'You should never pass variables to Liferay.Language.get(): {1}',
+			regex: /Liferay\.Language\.get\((?!['"\)])/
+		},
+
+		logging: {
+			message: 'Debugging statement: {1}',
+			regex: /\bconsole\.[^\(]+?\(/
+		}
+	}
+};
+
+A.mix(
+	re,
+	{
+		hasHex: function(item) {
 		var match = item.match(re.REGEX_HEX);
 
-		return match && match[0];
-	},
+			return match && match[0];
+		},
 
-	hasProperty: function(item) {
-		return re.REGEX_PROPERTY.test(item);
-	},
+		hasProperty: function(item) {
+			return re.REGEX_PROPERTY.test(item);
+		},
 
-	match: function(item, re) {
-		return item.match(re);
-	},
+		match: function(item, re) {
+			return item.match(re);
+		},
 
-	message: function(message, lineNum, item, result, rule) {
-		var instance = this;
+		message: function(message, lineNum, item, result, rule) {
+			var instance = this;
 
-		return sub('Line: {0} ', lineNum) + sub(message, lineNum, item);
-	},
+			return sub('Line: {0} ', lineNum) + sub(message, lineNum, item);
+		},
 
-	test: function(item, regex) {
-		return regex.test(item);
-	},
-};
+		test: function(item, regex) {
+			return regex.test(item);
+		}
+	}
+);
 
 var fileErrors = {};
 
@@ -543,11 +558,11 @@ var checkCss = function(contents, file) {
 			var propertyRules = rules._properties;
 
 			var context = {
+				file: file,
 				item: item,
 				lineNum: lineNum,
-				file: file,
-				previousItem: previousItem,
-				nextItem: nextItem
+				nextItem: nextItem,
+				previousItem: previousItem
 			};
 
 			fullItem = iterateRules('common', fullItem, context);
@@ -560,8 +575,8 @@ var checkCss = function(contents, file) {
 				var propertyContext = A.merge(
 					context,
 					{
-						item: item,
-						formatItem: postFormatPropertyItem
+						formatItem: postFormatPropertyItem,
+						item: item
 					}
 				);
 
@@ -808,8 +823,8 @@ var checkJs = function(contents, file) {
 				if (/(Object|Array)Expression/.test(type)) {
 					var source = node.source();
 
-					var leadingComma = re.REGEX_LEADING_COMMA.test(source);
-					var trailingComma = re.REGEX_TRAILING_COMMA.test(source);
+					var leadingComma = re.REGEX_COMMA_LEADING.test(source);
+					var trailingComma = re.REGEX_COMMA_TRAILING.test(source);
 
 					if (leadingComma || trailingComma) {
 						var start = node.loc.start.line;
@@ -822,7 +837,7 @@ var checkJs = function(contents, file) {
 							var trailingStr = '';
 
 							source = source.replace(
-								re.REGEX_TRAILING_COMMA,
+								re.REGEX_COMMA_TRAILING,
 								function(str, closingBracket, index, fullString) {
 									// Count the number of new lines between the trailing comma
 									// and the end of the block, and update the lineNumber
@@ -841,7 +856,7 @@ var checkJs = function(contents, file) {
 							var leadingStr = '';
 
 							source = source.replace(
-								re.REGEX_LEADING_COMMA,
+								re.REGEX_COMMA_LEADING,
 								function(str, openingBracket, index, fullString) {
 									// Count the number of new lines between the leading comma
 									// and the end of the block, and update the lineNumber
@@ -894,10 +909,10 @@ var checkJs = function(contents, file) {
 			var lineNum = index + 1;
 
 			var context = {
-				item: item,
-				lineNum: lineNum,
+				customIgnore: re.js.IGNORE,
 				file: file,
-				customIgnore: re.js.IGNORE
+				item: item,
+				lineNum: lineNum
 			};
 
 			fullItem = iterateRules('common', fullItem, context);
@@ -1089,13 +1104,17 @@ var series = args.map(
 					var changed = (content != data);
 
 					if (INLINE_REPLACE && changed) {
-						fs.writeFile(file, content, function(err, result) {
-							if (err) {
-								return cb(null, '');
-							}
+						fs.writeFile(
+							file,
+							content,
+							function(err, result) {
+								if (err) {
+									return cb(null, '');
+								}
 
-							cb(null, content);
-						});
+								cb(null, content);
+							}
+						);
 					}
 					else {
 						cb(null, content);
