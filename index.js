@@ -608,7 +608,7 @@ var LIFECYCLE_METHODS = {
 
 var processor = {
 	ExpressionStatement: function(node, parent, file) {
-		if (node.expression.type == 'CallExpression') {
+		if (node.expression.type == 'CallExpression' && node.expression.callee.type !== 'FunctionExpression') {
 			var expression = node.expression;
 			var callee = expression.callee;
 
@@ -635,6 +635,7 @@ var processor = {
 				args.forEach(
 					function(item, index, collection) {
 						var loc = item.loc;
+						var type = item.type;
 
 						var argStart = loc.start.line;
 						var argEnd = loc.end.line;
@@ -642,11 +643,10 @@ var processor = {
 						argLineStarts.push(argStart);
 						argLineEnds.push(argEnd);
 
-						if (item.type == 'FunctionExpression' && item.body.body.length) {
+						if (type == 'FunctionExpression' && item.body.body.length) {
 							hasNonEmptyFunctionArg = true;
 						}
-
-						if (item.type == 'ObjectExpression' && item.properties.length) {
+						else if (type == 'ObjectExpression' && item.properties.length) {
 							hasNonEmptyObjectArg = true;
 						}
 
