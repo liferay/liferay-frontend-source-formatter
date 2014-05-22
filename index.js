@@ -404,7 +404,22 @@ var trackErr = function(err, file) {
 	}
 
 	errors.push(err);
-}
+};
+
+var getLineNumber = A.cached(
+	function(line) {
+		var m = line.match(/Lines?: ([0-9]+)/);
+
+		return parseInt(m && m[1], 10) || 0;
+	}
+);
+
+var sortErrors = function(a, b) {
+	var aNum = getLineNumber(a);
+	var bNum = getLineNumber(b);
+
+	return aNum < bNum ? -1 : aNum > bNum ? 1 : 0;
+};
 
 var formatPropertyItem = function(item) {
 	return item.replace(re.REGEX_LEADING_SPACE, '').replace(re.REGEX_LEADING_INCLUDE, '');
@@ -1076,6 +1091,8 @@ var series = args.map(
 					}
 
 					if (errors.length) {
+						errors.sort(sortErrors);
+
 						console.log(INDENT + errors.join('\n' + INDENT));
 					}
 					else if (includeHeaderFooter) {
