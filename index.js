@@ -6,8 +6,7 @@ var colors = require('colors');
 var fs = require('fs');
 var path = require('path');
 var updateNotifier = require('update-notifier');
-var YUI = require('yui').YUI;
-var A = YUI().use('yui-base', 'oop', 'array-extras');
+var A = require('yui').use('yui-base', 'oop', 'array-extras');
 
 var argv = require('optimist').usage('Usage: $0 -qo')
 			.options(
@@ -944,6 +943,18 @@ var checkJs = function(contents, file) {
 };
 
 var checkHTML = function(contents, file) {
+	var script = contents.match(/<aui:script>([\s\S]*?)<\/aui:script>/g);
+
+	if (script) {
+		script.forEach(
+			function(item, index) {
+				item = item.replace(/<\/?aui:script>/g, '').replace(/<%=[^>]+>/g, '_').replace(/<portlet:namespace \/>/g, '_').replace(/<%[^>]+>/g, '/* scriptlet block */');
+
+				checkJs(item, file);
+			}
+		);
+	}
+
 	return iterateLines(
 		contents,
 		function(item, index, collection) {
