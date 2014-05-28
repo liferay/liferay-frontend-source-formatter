@@ -969,7 +969,11 @@ var checkHTML = function(contents, file) {
 	if (script) {
 		script.forEach(
 			function(item, index) {
-				item = item.replace(/<\/?aui:script>/g, '').replace(/<%=[^>]+>/g, '_').replace(/<portlet:namespace \/>/g, '_').replace(/<%[^>]+>/g, '/* scriptlet block */');
+				item = item.replace(/<\/?aui:script>\n?/g, '')
+							.replace(/<%=[^>]+>/g, '_')
+							.replace(/<portlet:namespace \/>/g, '_')
+							.replace(/<%[^>]+>/g, '/* scriptlet block */')
+							.replace(/<\/?[A-Za-z0-9-_]+:[^>]+>/g, '/* jsp tag */');
 
 				checkJs(item, file);
 			}
