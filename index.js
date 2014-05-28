@@ -383,6 +383,20 @@ var re = {
 A.mix(
 	re,
 	{
+		hasExtraNewLines: function(item, index, collection, file) {
+			var extraNewLines = false;
+
+			if (item == '') {
+				extraNewLines = (index === 0) || collection[index - 1] == '';
+			}
+
+			if (extraNewLines) {
+				trackErr(re.message('Extra new line', index + 1).warn, file);
+			}
+
+			return extraNewLines;
+		},
+
 		hasHex: function(item) {
 		var match = item.match(re.REGEX_HEX);
 
@@ -560,6 +574,8 @@ var checkCss = function(contents, file) {
 			var fullItem = item;
 
 			item = item.trim();
+
+			re.hasExtraNewLines(item, index, collection, file);
 
 			var lineNum = index + 1;
 			var nextItem = collection[lineNum] && collection[lineNum].trim();
@@ -923,6 +939,8 @@ var checkJs = function(contents, file) {
 
 			item = item.trim();
 
+			re.hasExtraNewLines(item, index, collection, file);
+
 			var lineNum = index + 1;
 
 			var context = {
@@ -964,6 +982,8 @@ var checkHTML = function(contents, file) {
 			var fullItem = item;
 
 			item = item.trim();
+
+			re.hasExtraNewLines(item, index, collection, file);
 
 			var lineNum = index + 1;
 
