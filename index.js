@@ -67,6 +67,9 @@ var CWD = process.env.GIT_PWD || process.cwd();
 var TOP_LEVEL;
 
 var re = {
+	REGEX_BRACE_CLOSING: /\}\s*?$/,
+	REGEX_BRACE_OPENING: /\{\s*?$/,
+
 	REGEX_COMMA_LEADING: /^((?:\[|\{)\s*),/,
 	REGEX_COMMA_TRAILING: /,(\s*(?:\]|\}))$/,
 
@@ -190,16 +193,16 @@ var re = {
 				return fullItem;
 			},
 			test: function(item, regex, rule, context) {
-				var hasCloser = item.indexOf('}') > -1;
-				var hasOpener = item.indexOf('{') > -1;
+				var hasCloser = re.REGEX_BRACE_CLOSING.test(item);
+				var hasOpener = re.REGEX_BRACE_OPENING.test(item);
 
 				var previousItem = context.previousItem || '';
 				var nextItem = context.nextItem || '';
 
 				var missingNewlines = false;
 
-				if ((hasCloser && (nextItem.trim() != '' && nextItem.indexOf('}') === -1)) ||
-					(hasOpener && (previousItem.trim() != '' && previousItem.indexOf('{') === -1))) {
+				if ((hasCloser && (nextItem.trim() != '' && !re.REGEX_BRACE_CLOSING.test(nextItem))) ||
+					(hasOpener && (previousItem.trim() != '' && !re.REGEX_BRACE_OPENING.test(previousItem)))) {
 					missingNewlines = true;
 				}
 
@@ -223,8 +226,8 @@ var re = {
 				return re.message('Trailing new line', lineNum - 1, item, result, rule);
 			},
 			test: function(item, regex, rule, context) {
-				var hasCloser = item.indexOf('}') > -1;
-				var hasOpener = item.indexOf('{') > -1;
+				var hasCloser = re.REGEX_BRACE_CLOSING.test(item);
+				var hasOpener = re.REGEX_BRACE_OPENING.test(item);
 
 				var previousItem = context.previousItem;
 				var nextItem = context.nextItem;
