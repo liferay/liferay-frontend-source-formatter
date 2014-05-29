@@ -656,6 +656,37 @@ var LIFECYCLE_METHODS = {
 	syncUI: -700
 };
 
+var jsonf = A.rbind(
+	'stringify',
+	JSON,
+	function(key, value) {
+		if (key == 'start' || key == 'end') {
+			return value.line;
+		}
+		if (['parent', 'range'].indexOf(key) == -1) {
+			return value;
+		}
+	},
+	4
+);
+
+var getLineBounds = function(loc, prop) {
+	var val = {};
+
+	if (loc) {
+		loc = loc.loc || loc;
+
+		val.start = loc.start.line;
+		val.end = loc.end.line;
+	}
+
+	if (prop) {
+		val = val[prop];
+	}
+
+	return val;
+};
+
 var processor = {
 	ExpressionStatement: function(node, parent, file) {
 		if (node.expression.type == 'CallExpression' && node.expression.callee.type !== 'FunctionExpression') {
