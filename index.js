@@ -956,7 +956,7 @@ var checkJs = function(contents, file) {
 		).toString();
 	}
 	catch (e) {
-		trackErr(sub('Line: {0} Could not parse JavaScript: {1}', e.lineNumber, e.description).warn, file);
+		trackErr(sub('Line: {0} Could not parse JavaScript: {1}', e.lineNumber || 'n/a;', e.message).warn, file);
 	}
 
 	if (hasSheBang) {
