@@ -688,90 +688,8 @@ var getLineBounds = function(loc, prop) {
 };
 
 var processor = {
-	ExpressionStatement: function(node, parent, file) {
-		if (node.expression.type == 'CallExpression' && node.expression.callee.type !== 'FunctionExpression') {
-			var expression = node.expression;
-			var callee = expression.callee;
-
-			var args = expression.arguments;
-
-			var fnStart = node.loc.start.line;
-			var fnEnd = node.loc.end.line;
-
-			var multiLineFn = (fnEnd > fnStart);
-
-			if (args.length) {
-				var lastArgStartLine = 0;
-				var lastArgEndLine = 0;
-
-				var hasNonEmptyFunctionArg = false;
-				var hasNonEmptyObjectArg = false;
-
-				var testLineEndings = false;
-				var argLineStarts = [];
-				var argLineEnds = [];
-
-				var error = '';
-
-				args.forEach(
-					function(item, index, collection) {
-						var loc = item.loc;
-						var type = item.type;
-
-						var argStart = loc.start.line;
-						var argEnd = loc.end.line;
-
-						argLineStarts.push(argStart);
-						argLineEnds.push(argEnd);
-
-						if (type == 'FunctionExpression' && item.body.body.length) {
-							hasNonEmptyFunctionArg = true;
-						}
-						else if (type == 'ObjectExpression' && item.properties.length) {
-							hasNonEmptyObjectArg = true;
-						}
-
-						if (multiLineFn) {
-							if (argStart == fnStart) {
-								error = 'Args should each be on their own line (args on start line)';
-							}
-							else if (argStart == fnStart || argEnd == fnEnd) {
-								error = 'Args should each be on their own line (args on end line)';
-							}
-						}
-
-						if (argStart == lastArgStartLine || argStart == lastArgEndLine) {
-							testLineEndings = true;
-						}
-
-						lastArgStartLine = argStart;
-						lastArgEndLine = argEnd;
-					}
-				);
-
-				if (testLineEndings) {
-					var argLines = argLineStarts.concat(argLineEnds);
-
-					if (hasNonEmptyFunctionArg || hasNonEmptyObjectArg || A.Array.dedupe(argLines).length > 1) {
-						error = 'Args should each be on their own line (args on same line)';
-					}
-					else if (multiLineFn) {
-						error = 'Function call can be all on one line';
-					}
-				}
-
-				if (error) {
-					var lines = A.Array.dedupe([fnStart, fnEnd]);
-
-					var lineText = lines.length > 1 ? 'Lines' : 'Line';
-
-					trackErr(sub('{0}: {1} {2}: {3}(...)', lineText, lines.join('-'), error, callee.name || 'function').warn, file);
-				}
-			}
-			else if (multiLineFn) {
-				trackErr(sub('Lines: {0} Function call without arguments should be on one line: {1}', [fnStart, fnEnd].join('-'), callee.name).warn, file);
-			}
-		}
+	CallExpression: function(node, parent, file) {
+		processor._processExpr(node, parent, file);
 	},
 	ObjectExpression: function(node, parent, file) {
 		var prev = null;
@@ -859,6 +777,149 @@ var processor = {
 			var lineText = lines.length > 1 ? 'Lines' : 'Line';
 
 			trackErr(sub('{0}: {1} Each variable should have it\'s own var statement: {2}', lineText, lines.join('-'), vars.join(', ')).warn, file);
+		}
+	},
+
+	_processArgs: function(args, options) {
+		var obj = {};
+
+		var fnStart = options.fnStart || 0;
+		var fnEnd = options.fnEnd || 0;
+
+		var multiLineFn = options.multiLineFn;
+
+		var lastArgStartLine = 0;
+		var lastArgEndLine = 0;
+
+		var hasNonEmptyFunctionArg = false;
+		var hasNonEmptyObjectArg = false;
+
+		var testLineEndings = false;
+		var argLineStarts = [];
+		var argLineEnds = [];
+
+		var error = '';
+
+		args.forEach(
+			function(item, index, collection) {
+				var type = item.type;
+
+				var loc = getLineBounds(item.loc);
+
+				var argStart = loc.start;
+				var argEnd = loc.end;
+
+				argLineStarts.push(argStart);
+				argLineEnds.push(argEnd);
+
+				if (type == 'FunctionExpression' && item.body.body.length) {
+					hasNonEmptyFunctionArg = true;
+				}
+				else if (type == 'ObjectExpression' && item.properties.length) {
+					hasNonEmptyObjectArg = true;
+				}
+
+				if (multiLineFn) {
+					if (argStart == fnStart) {
+						error = 'Args should each be on their own line (args on start line)';
+					}
+					else if (argStart == fnStart || argEnd == fnEnd) {
+						error = 'Args should each be on their own line (args on end line)';
+					}
+				}
+
+				if (argStart == lastArgStartLine || argStart == lastArgEndLine) {
+					testLineEndings = true;
+				}
+
+				lastArgStartLine = argStart;
+				lastArgEndLine = argEnd;
+			}
+		);
+
+		if (testLineEndings) {
+			var argLines = argLineStarts.concat(argLineEnds);
+
+			if (hasNonEmptyFunctionArg || hasNonEmptyObjectArg || A.Array.dedupe(argLines).length > 1) {
+				error = 'Args should each be on their own line (args on same line)';
+			}
+			else if (multiLineFn) {
+				error = 'Function call can be all on one line';
+			}
+		}
+
+		obj.error = error;
+
+		return obj;
+	},
+
+	_processExpr: function(node, parent, file) {
+		var callee = node.callee;
+
+		var args = node.arguments;
+
+		var lineBounds = getLineBounds(node);
+
+		var fnStart = lineBounds.start;
+		var fnEnd = lineBounds.end;
+
+		var fnName = callee.name;
+
+		var type = callee.type;
+
+		if (type == 'FunctionExpression') {
+			if (!fnName) {
+				fnName = '<anonymous>';
+			}
+
+			fnStart = fnEnd = getLineBounds(node, 'end');
+
+			if (args.length) {
+				args.forEach(
+					function(item, index) {
+						fnStart = item.loc.start.line;
+						fnEnd = item.loc.end.line;
+					}
+				);
+			}
+		}
+		else if (type == 'MemberExpression') {
+			fnStart = getLineBounds(node, 'end');
+			fnEnd = getLineBounds(callee, 'end');
+
+			if (!fnName && callee.property) {
+				fnName = callee.property.name;
+			}
+
+			if (!fnName && callee.object.callee) {
+				fnName = callee.object.callee.name;
+			}
+		}
+
+		var multiLineFn = (fnEnd > fnStart);
+
+		if (args.length) {
+			var obj = processor._processArgs(
+				args,
+				{
+					multiLineFn: multiLineFn,
+					fnStart: fnStart,
+					fnEnd: fnEnd
+				}
+			);
+
+			var error = obj.error;
+
+			if (error) {
+				var lines = A.Array.dedupe([fnStart, fnEnd]);
+
+				var lineText = lines.length > 1 ? 'Lines' : 'Line';
+
+				trackErr(sub('{0}: {1} {2}: {3}(...)', lineText, lines.join('-'), error, fnName).warn, file);
+			}
+		}
+		else if (multiLineFn) {
+			trackErr(sub('Lines: {0} Function call without arguments should be on one line: {1}()', [fnStart, fnEnd].join('-'), fnName).warn, file);
 		}
 	}
 };
