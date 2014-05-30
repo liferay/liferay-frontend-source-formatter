@@ -884,8 +884,8 @@ var processor = {
 			}
 		}
 		else if (type == 'MemberExpression') {
-			fnStart = getLineBounds(node, 'end');
-			fnEnd = getLineBounds(callee, 'end');
+			fnEnd = getLineBounds(node, 'end');
+			fnStart = getLineBounds(callee, 'end');
 
 			if (!fnName && callee.property) {
 				fnName = callee.property.name;
