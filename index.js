@@ -710,6 +710,9 @@ var processor = {
 					var privateProp = isPrivate(propName);
 					var privatePrevProp = isPrivate(prevPropName);
 
+					var prevPropValueFn = (prev.parent.value.type == 'FunctionExpression');
+					var propValueFn = (item.parent.value.type == 'FunctionExpression');
+
 					var lifecyleMethod = (propName in LIFECYCLE_METHODS || prevPropName in LIFECYCLE_METHODS);
 
 					if (lifecyleMethod) {
@@ -723,7 +726,11 @@ var processor = {
 						}
 						else {
 							if (customPropName) {
-								needsSort = true;
+								var uppercase = /^[^a-z]+$/.test(prevPropName);
+
+								if (!uppercase && prevPropValueFn) {
+									needsSort = true;
+								}
 							}
 						}
 					}
