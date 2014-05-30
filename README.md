@@ -34,6 +34,8 @@ This will scan through HTML(-like) files, JS files, and CSS files and detect man
 - Trailing commas in arrays and objects
 - Variables that are all defined in one statement
 - Variables being passed to `Liferay.Language.get()`
+- Trailing or extraneous newlines
+- **Experimental** Will try to parse JavaScript inside of <aui:script> blocks
 
 ## Installation
 
@@ -104,4 +106,3 @@ The following are known issues where it will say there's an error, but there's n
 then it will still flag that as an error
 - Spaces inside of JS comments will most of the time get flagged as mixed tabs and spaces
 - Double quotes inside of JS (like inside of a regex or in a comment), will get flagged as an error.
-- Doesn't yet work with JavaScript inside of JSP or HTML.
