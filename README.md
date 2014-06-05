@@ -35,6 +35,7 @@ This will scan through HTML(-like) files, JS files, and CSS files and detect man
 - Variables that are all defined in one statement
 - Variables being passed to `Liferay.Language.get()`
 - Trailing or extraneous newlines
+- Variable names starting with `is` (it ignores methods, which is valid, but properties and variables should not have a prefix of `is`)
 - **Experimental** Will try to parse JavaScript inside of <aui:script> blocks
 
 ## Installation
