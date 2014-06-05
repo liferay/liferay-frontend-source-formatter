@@ -717,7 +717,7 @@ var testVarNames = function(varName, lineNum, file) {
 	var pass = true;
 
 	if (re.REGEX_VAR_IS.test(varName)) {
-		trackErr(sub('Line: {0} Variable names should not start with is*: {1}', lineNum, varName).warn, file);
+		trackErr(sub('Line: {0} Variable/property names should not start with is*: {1}', lineNum, varName).warn, file);
 		pass = false;
 	}
 
@@ -745,6 +745,32 @@ var processor = {
 
 		collection.forEach(
 			function(item, index, collection) {
+				var parentValue = item.parent.value;
+				var parentValueType = parentValue.type;
+
+				var propValueFn = (parentValueType == 'FunctionExpression');
+
+				if (!propValueFn) {
+					var propValueMemberExp = (parentValueType == 'MemberExpression');
+					var propValueIdentifier = (parentValueType == 'Identifier');
+
+					var processVars = true;
+
+					if (propValueMemberExp || propValueIdentifier) {
+						var valName = parentValue.name;
+
+						if (propValueMemberExp) {
+							valName = parentValue.property.name;
+						}
+
+						processVars = (valName !== item.name);
+					}
+
+					if (processVars) {
+						testVarNames(item.name, item.loc.start.line, file);
+					}
+				}
+
 				if (index > 0) {
 					var needsSort = false;
 
@@ -755,7 +781,6 @@ var processor = {
 					var privatePrevProp = isPrivate(prevPropName);
 
 					var prevPropValueFn = (prev.parent.value.type == 'FunctionExpression');
-					var propValueFn = (item.parent.value.type == 'FunctionExpression');
 
 					var lifecyleMethod = (propName in LIFECYCLE_METHODS || prevPropName in LIFECYCLE_METHODS);
 
