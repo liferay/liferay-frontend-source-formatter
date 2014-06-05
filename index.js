@@ -92,6 +92,8 @@ var re = {
 	REGEX_SINGLE_QUOTES: /'[^']*'/g,
 	REGEX_SUB: /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
 
+	REGEX_VAR_IS: /^_?is[A-Z]/,
+
 	REPLACE_REGEX_REDUNDANT: '#$1$2$3',
 
 	common: {
@@ -687,9 +689,27 @@ var getLineBounds = function(loc, prop) {
 	return val;
 };
 
+var testVarNames = function(varName, lineNum, file) {
+	var pass = true;
+
+	if (re.REGEX_VAR_IS.test(varName)) {
+		trackErr(sub('Line: {0} Variable names should not start with is*: {1}', lineNum, varName).warn, file);
+		pass = false;
+	}
+
+	return pass;
+};
+
 var processor = {
 	CallExpression: function(node, parent, file) {
 		processor._processExpr(node, parent, file);
+	},
+	FunctionExpression: function(node, parent, file) {
+		node.params.forEach(
+			function(item, index) {
+				testVarNames(item.name, item.loc.start.line, file);
+			}
+		);
 	},
 	ObjectExpression: function(node, parent, file) {
 		var prev = null;
@@ -785,6 +805,30 @@ var processor = {
 
 			trackErr(sub('{0}: {1} Each variable should have it\'s own var statement: {2}', lineText, lines.join('-'), vars.join(', ')).warn, file);
 		}
+
+		declarations.forEach(
+			function(item, index) {
+				var init = item.init;
+
+				if (init) {
+					var itemType = init.type;
+
+					if (itemType !== 'FunctionExpression') {
+						var varName = item.id.name;
+
+						var process = true;
+
+						if (itemType === 'MemberExpression' && init.property.name == varName) {
+							process = false;
+						}
+
+						if (process) {
+							testVarNames(varName, item.id.loc.start.line, file);
+						}
+					}
+				}
+			}
+		);
 	},
 
 	_processArgs: function(args, options) {
