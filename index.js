@@ -101,11 +101,14 @@ var re = {
 			message: 'Mixed spaces and tabs: {1}',
 			regex: /^.*( \t|\t ).*$/,
 			replacer: function(fullItem, result, rule) {
-				fullItem = fullItem.replace(/(.*)( +\t|\t +)(.*)/g, function(str, prefix, problem, suffix) {
-					problem = problem.replace(/ {4}| {2}/g, '\t').replace(/ /g, '');
+				fullItem = fullItem.replace(
+					/(.*)( +\t|\t +)(.*)/g,
+					function(str, prefix, problem, suffix) {
+						problem = problem.replace(/ {4}| {2}/g, '\t').replace(/ /g, '');
 
-					return prefix + problem + suffix;
-				});
+						return prefix + problem + suffix;
+					}
+				);
 
 				return fullItem;
 			},
@@ -178,18 +181,26 @@ var re = {
 
 				message = re.message(message, lineNum, item, result, rule);
 
-				return sub(message, {rule: context.nextItem.trim()});
+				return sub(
+					message,
+					{
+						rule: context.nextItem.trim()
+					}
+				);
 			},
 			regex: /.*?(\}|\{)/,
 			replacer: function(fullItem, result, rule, context) {
 				if (result) {
-					fullItem = fullItem.replace(rule.regex, function(m, bracket) {
-						if (bracket == '{') {
-							m = '\n' + m;
-						}
+					fullItem = fullItem.replace(
+						rule.regex,
+						function(m, bracket) {
+							if (bracket == '{') {
+								m = '\n' + m;
+							}
 
-						return m;
-					});
+							return m;
+						}
+					);
 				}
 
 				return fullItem;
@@ -466,9 +477,16 @@ var sub = function(str, obj) {
 		obj = Array.prototype.slice.call(arguments, 1);
 	}
 
-	return str.replace ? str.replace(re.REGEX_SUB, function(match, key) {
-		return (typeof obj[key] !== 'undefined') ? obj[key] : match;
-	}) : s;
+	if (str.replace) {
+		str = str.replace(
+			re.REGEX_SUB,
+			function(match, key) {
+				return (typeof obj[key] !== 'undefined') ? obj[key] : match;
+			}
+		);
+	}
+
+	return str;
 };
 
 var iterateLines = function(contents, iterator) {
@@ -959,9 +977,9 @@ var processor = {
 			var obj = processor._processArgs(
 				args,
 				{
-					multiLineFn: multiLineFn,
+					fnEnd: fnEnd,
 					fnStart: fnStart,
-					fnEnd: fnEnd
+					multiLineFn: multiLineFn
 				}
 			);
 
@@ -1239,9 +1257,12 @@ var checkHTML = function(contents, file) {
 						}
 
 						if (matches) {
-							newAttrValue = attrValue.replace(new RegExp(token + '(\\d+)' + token, 'g'), function(str, id) {
-								return matches[id];
-							});
+							newAttrValue = attrValue.replace(
+								new RegExp(token + '(\\d+)' + token, 'g'),
+								function(str, id) {
+									return matches[id];
+								}
+							);
 
 							item = item.replace(attrValue, newAttrValue)
 						}
