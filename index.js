@@ -376,6 +376,7 @@ var re = {
 		},
 
 		logging: {
+			ignore: 'node',
 			message: 'Debugging statement: {1}',
 			regex: /\bconsole\.[^\(]+?\(/
 		}
@@ -496,6 +497,7 @@ var iterateRules = function(rules, fullItem, context) {
 	var file = context.file;
 	var formatItem = context.formatItem;
 	var customIgnore = context.customIgnore;
+	var hasSheBang = context.hasSheBang;
 
 	if (A.Lang.isObject(rules)) {
 		var ignore = rules.IGNORE;
@@ -507,6 +509,10 @@ var iterateRules = function(rules, fullItem, context) {
 				rules,
 				function(rule, ruleName) {
 					if (ruleName === 'IGNORE' || ruleName.indexOf('_') === 0) {
+						return;
+					}
+
+					if (rule.ignore == 'node' && hasSheBang) {
 						return;
 					}
 
@@ -1089,6 +1095,7 @@ var checkJs = function(contents, file) {
 			var context = {
 				customIgnore: re.js.IGNORE,
 				file: file,
+				hasSheBang: hasSheBang,
 				item: item,
 				lineNum: lineNum
 			};
