@@ -67,6 +67,8 @@ var CWD = process.env.GIT_PWD || process.cwd();
 var TOP_LEVEL;
 
 var re = {
+	REGEX_ARRAY_INTERNAL_SPACE: /[^,]*?,((?! )| {2,})[^,]+?/g,
+	REGEX_ARRAY_SURROUNDING_SPACE: /\[\s|\s\]/g,
 	REGEX_BRACE_CLOSING: /\}\s*?$/,
 	REGEX_BRACE_OPENING: /\{\s*?$/,
 
@@ -1051,13 +1053,66 @@ var checkJs = function(contents, file) {
 					var leadingComma = re.REGEX_COMMA_LEADING.test(source);
 					var trailingComma = re.REGEX_COMMA_TRAILING.test(source);
 
+					var start = node.loc.start.line;
+					var end = node.loc.end.line;
+
+					var lineEnd = end;
+					var lineStart = start;
+
+					if (start === end) {
+						if (re.REGEX_ARRAY_SURROUNDING_SPACE.test(source)) {
+							var brackets = [];
+							var surroundingSpaceTypes = [];
+
+							source.replace(
+								re.REGEX_ARRAY_SURROUNDING_SPACE,
+								function(item, index, str) {
+									var startIndex = 0;
+									var endIndex = str.length;
+
+									var leadingSpace = item.indexOf('[') > -1;
+									var trailingSpace = item.indexOf(']') > -1;
+
+									if (leadingSpace) {
+										endIndex = index + 1;
+										surroundingSpaceTypes.push('leading');
+									}
+									else if (trailingSpace) {
+										startIndex = index + 1;
+										surroundingSpaceTypes.push('trailing');
+										brackets.push('...');
+									}
+
+									brackets.push(str.substring(startIndex, endIndex));
+
+									if (leadingSpace) {
+										brackets.push('...');
+									}
+								}
+							);
+
+							brackets = A.Array.dedupe(brackets);
+
+							trackErr(sub('Line: {0} Remove {1} spaces: {2}', lineEnd, surroundingSpaceTypes.join(' and '), brackets.join(' ')).warn, file);
+						}
+
+						var internalMatches = source.match();
+
+						if (re.REGEX_ARRAY_INTERNAL_SPACE.test(source)) {
+							var missingSpaces = [];
+
+							source.replace(
+								re.REGEX_ARRAY_INTERNAL_SPACE,
+								function(item, index, str) {
+									missingSpaces.push(item.replace('\t', '\\t'));
+								}
+							);
+
+							trackErr(sub('Line: {0} Array items should be separated by exactly one space: {1}', lineEnd, missingSpaces.join('')).warn, file);
+						}
+					}
+
 					if (leadingComma || trailingComma) {
-						var start = node.loc.start.line;
-						var end = node.loc.end.line;
-
-						var lineEnd = end;
-						var lineStart = start;
-
 						if (trailingComma) {
 							var trailingStr = '';
 
