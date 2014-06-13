@@ -674,7 +674,7 @@ var checkCss = function(contents, file) {
 var falafel = require('falafel');
 
 var isPrivate = function(str) {
-	return str.charAt(0) === '_';
+	return A.Lang.isString(str) && str.charAt(0) === '_';
 };
 
 var LIFECYCLE_METHODS = {
