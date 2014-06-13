@@ -1221,6 +1221,7 @@ var checkHTML = function(contents, file) {
 				item = item.replace(/<\/?aui:script>\n?/g, '')
 							.replace(/<%=[^>]+>/g, '_')
 							.replace(/<portlet:namespace \/>/g, '_')
+							.replace(/\$\{.*?\}/g, '_')
 							.replace(/<%[^>]+>/g, '/* scriptlet block */')
 							.replace(/<\/?[A-Za-z0-9-_]+:[^>]+>/g, '/* jsp tag */');
 
