@@ -90,7 +90,7 @@ var re = {
 	REGEX_PROPERTY: /^\t*([^:]+:|@include\s)[^;]+;$/,
 	REGEX_PROP_KEY: /^\s*(?:@include\s)?([^:]+)(?:)/,
 
-	REGEX_REGEX: /\/[^\/]+\//g,
+	REGEX_REGEX: /\/.*\/([gim]{1,3})?/g,
 	REGEX_SINGLE_QUOTES: /'[^']*'/g,
 	REGEX_SUB: /\{\s*([^|}]+?)\s*(?:\|([^}]*))?\s*\}/g,
 
@@ -362,6 +362,11 @@ var re = {
 			},
 			regex: /\)\{(?!\})/,
 			replacer: ') {',
+			test: function(item, regex) {
+				item = item.replace(re.REGEX_REGEX, '');
+
+				return regex.test(item);
+			},
 			_bracket: {
 				bracket: '{'
 			}
