@@ -78,7 +78,7 @@ var re = {
 	REGEX_COMMENT: /\/(\/|\*).*/g,
 
 	REGEX_EXT_CSS: /\.(s)?css$/,
-	REGEX_EXT_HTML: /\.(jsp.?|html|vm|ftl)$/,
+	REGEX_EXT_HTML: /\.(jsp.?|html|vm|ftl|tpl|tmpl)$/,
 	REGEX_EXT_JS: /\.js$/,
 
 	REGEX_HEX: /#[0-9A-Fa-f]{3,6}\b/,
