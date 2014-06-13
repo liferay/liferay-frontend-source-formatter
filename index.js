@@ -216,8 +216,8 @@ var re = {
 
 				var missingNewlines = false;
 
-				if ((hasCloser && (nextItem.trim() != '' && !re.REGEX_BRACE_CLOSING.test(nextItem))) ||
-					(hasOpener && (previousItem.trim() != '' && !re.REGEX_BRACE_OPENING.test(previousItem)))) {
+				if ((hasCloser && (nextItem.trim() !== '' && !re.REGEX_BRACE_CLOSING.test(nextItem))) ||
+					(hasOpener && (previousItem.trim() !== '' && !re.REGEX_BRACE_OPENING.test(previousItem)))) {
 					missingNewlines = true;
 				}
 
@@ -322,6 +322,7 @@ var re = {
 				return doubleQuoted;
 			}
 		},
+
 		elseFormat: {
 			message: function(lineNum, item, result, rule) {
 				var message = '"' + result[2] + '" should be on it\'s own line: {1}';
@@ -403,7 +404,7 @@ A.mix(
 			var extraNewLines = false;
 
 			if (item == '') {
-				extraNewLines = (index === 0) || collection[index - 1] == '';
+				extraNewLines = (index === 0) || collection[index - 1] === '';
 			}
 
 			if (extraNewLines) {
@@ -1259,7 +1260,7 @@ var checkHTML = function(contents, file) {
 							var note = '';
 
 							if (re.test(fullItem)) {
-								note = '**'
+								note = '**';
 							}
 
 							if (!note || note && VERBOSE) {
@@ -1344,7 +1345,7 @@ var checkHTML = function(contents, file) {
 								}
 							);
 
-							item = item.replace(attrValue, newAttrValue)
+							item = item.replace(attrValue, newAttrValue);
 						}
 
 						fullItem = fullItem.replace(oldItem, item);
