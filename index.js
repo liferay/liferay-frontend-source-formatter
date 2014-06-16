@@ -171,6 +171,7 @@ var re = {
 			regex: /([^0-9])(\.\d+)/,
 			replacer: '$10$2'
 		},
+
 		missingListValuesSpace: {
 			message: 'Needs space between comma-separated values: {1}',
 			regex: /,(?=[^\s])/g,
@@ -223,6 +224,12 @@ var re = {
 
 				return missingNewlines;
 			}
+		},
+
+		needlessQuotes: {
+			message: 'Needless quotes: {1}',
+			regex: /url\((["'])(.*?)\1\)/,
+			replacer: 'url($2)'
 		},
 
 		needlessUnit: {
