@@ -77,6 +77,8 @@ var re = {
 
 	REGEX_COMMENT: /\/(\/|\*).*/g,
 
+	REGEX_DIGITS: /\d+/,
+
 	REGEX_EXT_CSS: /\.(s)?css$/,
 	REGEX_EXT_HTML: /\.(jsp.?|html|vm|ftl|tpl|tmpl)$/,
 	REGEX_EXT_JS: /\.js$/,
@@ -739,6 +741,57 @@ var testVarNames = function(varName, lineNum, file) {
 	return pass;
 };
 
+var naturalCompare = function(a, b, caseInsensitive) {
+	if (caseInsensitive === true) {
+		a = a.toLowerCase();
+		b = b.toLowerCase();
+	}
+
+	var aa = a.split(re.REGEX_DIGITS);
+	var bb = b.split(re.REGEX_DIGITS);
+
+	var length = Math.max(aa.length, bb.length);
+
+	var result = 0;
+
+	for (var i = 0; i < length; i++) {
+		var itemA = aa[i];
+		var itemB = bb[i];
+
+		if (itemA != itemB) {
+			var cmp1 = parseInt(itemA, 10);
+			var cmp2 = parseInt(itemB, 10);
+
+			if (isNaN(cmp1)) {
+				cmp1 = itemA;
+			}
+
+			if (isNaN(cmp2)) {
+				cmp2 = itemB;
+			}
+
+			if (typeof cmp1 == 'undefined' || typeof cmp2 == 'undefined') {
+				result = aa.length - bb.length;
+			}
+			else {
+				result = cmp1 < cmp2 ? -1 : 1;
+			}
+
+			break;
+		}
+	}
+
+	return result;
+}
+
+var naturalSort = function(arr, caseInsensitive) {
+	return arr.sort(
+		function(a, b) {
+			return naturalCompare(a, b, caseInsensitive);
+		}
+	);
+}
+
 var processor = {
 	CallExpression: function(node, parent, file) {
 		processor._processExpr(node, parent, file);
@@ -799,6 +852,9 @@ var processor = {
 
 					var lifecyleMethod = (propName in LIFECYCLE_METHODS || prevPropName in LIFECYCLE_METHODS);
 
+					var prevPropUpperCase = /^[^a-z]+$/.test(prevPropName);
+					var propUpperCase = /^[^a-z]+$/.test(propName);
+
 					if (lifecyleMethod) {
 						var customPropName = LIFECYCLE_METHODS[propName];
 						var customPrevPropName = LIFECYCLE_METHODS[prevPropName];
@@ -810,16 +866,14 @@ var processor = {
 						}
 						else {
 							if (customPropName) {
-								var uppercase = /^[^a-z]+$/.test(prevPropName);
-
-								if (!uppercase && prevPropValueFn) {
+								if (!prevPropUpperCase && prevPropValueFn) {
 									needsSort = true;
 								}
 							}
 						}
 					}
 					else {
-						if ((privateProp === privatePrevProp) && propName < prevPropName) {
+						if ((privateProp === privatePrevProp) && (propUpperCase === prevPropUpperCase) && naturalCompare(propName, prevPropName, true) === -1) {
 							needsSort = true;
 						}
 					}
