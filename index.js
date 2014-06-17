@@ -72,6 +72,8 @@ var re = {
 	REGEX_BRACE_CLOSING: /\}\s*?$/,
 	REGEX_BRACE_OPENING: /\{\s*?$/,
 
+	REGEX_CSS_COMMA_END: /,\s*?$/,
+
 	REGEX_COMMA_LEADING: /^((?:\[|\{)\s*),/,
 	REGEX_COMMA_TRAILING: /,(\s*(?:\]|\}))$/,
 
@@ -220,7 +222,7 @@ var re = {
 				var missingNewlines = false;
 
 				if ((hasCloser && (nextItem.trim() !== '' && !re.REGEX_BRACE_CLOSING.test(nextItem))) ||
-					(hasOpener && (previousItem.trim() !== '' && !re.REGEX_BRACE_OPENING.test(previousItem)))) {
+					(hasOpener && (previousItem.trim() !== '' && !re.REGEX_BRACE_OPENING.test(previousItem) && !re.REGEX_CSS_COMMA_END.test(previousItem)))) {
 					missingNewlines = true;
 				}
 
