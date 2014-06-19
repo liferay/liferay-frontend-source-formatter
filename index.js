@@ -72,12 +72,12 @@ var re = {
 	REGEX_BRACE_CLOSING: /\}\s*?$/,
 	REGEX_BRACE_OPENING: /\{\s*?$/,
 
-	REGEX_CSS_COMMA_END: /,\s*?$/,
-
 	REGEX_COMMA_LEADING: /^((?:\[|\{)\s*),/,
 	REGEX_COMMA_TRAILING: /,(\s*(?:\]|\}))$/,
 
 	REGEX_COMMENT: /\/(\/|\*).*/g,
+
+	REGEX_CSS_COMMA_END: /,\s*?$/,
 
 	REGEX_DIGITS: /\d+/,
 
@@ -91,8 +91,8 @@ var re = {
 	REGEX_LEADING_INCLUDE: /^@include /,
 	REGEX_LEADING_SPACE: /^\s+/,
 
-	REGEX_PROPERTY: /^\t*([^:]+:|@include\s)[^;]+;$/,
 	REGEX_PROP_KEY: /^\s*(?:@include\s)?([^:]+)(?:)/,
+	REGEX_PROPERTY: /^\t*([^:]+:|@include\s)[^;]+;$/,
 
 	REGEX_REGEX: /\/.*\/([gim]{1,3})?/g,
 	REGEX_SINGLE_QUOTES: /'[^']*'/g,
