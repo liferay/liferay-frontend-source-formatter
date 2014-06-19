@@ -698,7 +698,8 @@ var LIFECYCLE_METHODS = {
 	initializer: -1000,
 	renderUI: -900,
 	bindUI: -800,
-	syncUI: -700
+	syncUI: -700,
+	destructor: -600
 };
 
 var jsonf = A.rbind(
