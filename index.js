@@ -785,7 +785,7 @@ var naturalCompare = function(a, b, caseInsensitive) {
 	}
 
 	return result;
-}
+};
 
 var naturalSort = function(arr, caseInsensitive) {
 	return arr.sort(
@@ -793,7 +793,7 @@ var naturalSort = function(arr, caseInsensitive) {
 			return naturalCompare(a, b, caseInsensitive);
 		}
 	);
-}
+};
 
 var processor = {
 	CallExpression: function(node, parent, file) {
@@ -1439,6 +1439,8 @@ var series = args.map(
 						return cb(null, '');
 					}
 
+					var formatter;
+
 					if (re.REGEX_EXT_CSS.test(file)) {
 						formatter = checkCss;
 					}
@@ -1498,7 +1500,7 @@ var series = args.map(
 					}
 				}
 			);
-		}
+		};
 	}
 );
 
