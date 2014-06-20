@@ -1310,7 +1310,21 @@ var checkHTML = function(contents, file) {
 
 			var lineNum = index + 1;
 
-			var attrs = fullItem.match(/(?: )([A-Za-z0-9-]+=(["']).*?\2)/g);
+			var token = String.fromCharCode(-1);
+
+			var m = fullItem.match(/<%.*?%>/g);
+
+			var filteredItem = fullItem;
+
+			var matches = m && m.map(
+				function(item, index, collection) {
+					filteredItem = filteredItem.replace(item, token + index + token);
+
+					return item;
+				}
+			);
+
+			var attrs = filteredItem.match(/(?: )([A-Za-z0-9-]+=(["']).*?\2)/g);
 
 			if (attrs) {
 				var lastAttr = -1;
@@ -1341,19 +1355,6 @@ var checkHTML = function(contents, file) {
 						var styleAttr = (attrName == 'style');
 						var onAttr = (attrName.indexOf('on') === 0);
 						var labelAttr = (attrName.indexOf('label') === 0);
-
-						var id = 0;
-						var token = String.fromCharCode(-1);
-
-						var m = attrValue.match(/<%.*?%>/g);
-
-						var matches = m && m.map(
-							function(item, index, collection) {
-								attrValue = attrValue.replace(item, token + index + token);
-
-								return item;
-							}
-						);
 
 						var attrSep = ' ';
 
@@ -1407,18 +1408,16 @@ var checkHTML = function(contents, file) {
 							item = item.replace(attrValue, newAttrValue);
 						}
 
-						if (matches) {
-							newAttrValue = attrValue.replace(
-								new RegExp(token + '(\\d+)' + token, 'g'),
-								function(str, id) {
-									return matches[id];
-								}
-							);
+						filteredItem = filteredItem.replace(oldItem, item);
+					}
+				);
+			}
 
-							item = item.replace(attrValue, newAttrValue);
-						}
-
-						fullItem = fullItem.replace(oldItem, item);
+			if (matches) {
+				fullItem = filteredItem.replace(
+					new RegExp(token + '(\\d+)' + token, 'g'),
+					function(str, id) {
+						return matches[id];
 					}
 				);
 			}
