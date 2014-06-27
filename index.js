@@ -1439,6 +1439,14 @@ var series = args.map(
 				'utf-8',
 				function(err, data) {
 					if (err) {
+						var errMsg = 'Could not open file';
+
+						if (!fs.existsSync(file)) {
+							errMsg = 'File does not exist';
+						}
+
+						console.log('%s: %s', errMsg.error, path.resolve(file));
+
 						return cb(null, '');
 					}
 
@@ -1454,7 +1462,11 @@ var series = args.map(
 						formatter = checkHTML;
 					}
 
-					var content = formatter(data, file);
+					var content = data;
+
+					if (formatter) {
+						content = formatter(data, file);
+					}
 
 					var errors = fileErrors[file] || [];
 
