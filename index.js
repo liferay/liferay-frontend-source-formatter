@@ -1292,7 +1292,12 @@ var checkHTML = function(contents, file) {
 							.replace(/<%=[^>]+>/g, '_')
 							.replace(/<portlet:namespace \/>/g, '_')
 							.replace(/\$\{.*?\}/g, '_')
-							.replace(/<%[^>]+>/g, '/* scriptlet block */')
+							.replace(
+								/<%[^>]+>/g,
+								function(m, index) {
+									return '/* scriptlet block ' + (new Array(m.split('\n').length).join('\n')) + ' */';
+								}
+							)
 							.replace(/<\/?[A-Za-z0-9-_]+:[^>]+>/g, '/* jsp tag */');
 
 				var lines = contents.substring(0, index).split('\n').length;
