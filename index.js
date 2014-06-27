@@ -1328,7 +1328,7 @@ var checkHTML = function(contents, file) {
 				}
 			);
 
-			var attrs = filteredItem.match(/(?: )([A-Za-z0-9-]+=(["']).*?\2)/g);
+			var attrs = filteredItem.match(/(?: )?([A-Za-z0-9-]+=(["']).*?\2)/g);
 
 			if (attrs) {
 				var lastAttr = -1;
