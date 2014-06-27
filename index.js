@@ -1425,6 +1425,9 @@ var checkHTML = function(contents, file) {
 					}
 				);
 			}
+			else {
+				fullItem = filteredItem;
+			}
 
 			return fullItem;
 		}
