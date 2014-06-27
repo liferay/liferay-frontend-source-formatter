@@ -1282,19 +1282,23 @@ var checkJs = function(contents, file) {
 };
 
 var checkHTML = function(contents, file) {
-	var script = contents.match(/<aui:script>([\s\S]*?)<\/aui:script>/g);
+	var hasJs = (/<(aui:)?script>([\s\S]*?)<\/\1script>/).test(contents);
 
-	if (script) {
-		script.forEach(
-			function(item, index) {
-				item = item.replace(/<\/?aui:script>\n?/g, '')
+	if (hasJs) {
+		contents.replace(
+			/<(aui:)?script[^>]*?>([\s\S]*?)<\/\1script>/g,
+			function(m, tagNamespace, body, index) {
+				body = body.replace(/<%.*?%>/gim, '_')
 							.replace(/<%=[^>]+>/g, '_')
 							.replace(/<portlet:namespace \/>/g, '_')
 							.replace(/\$\{.*?\}/g, '_')
 							.replace(/<%[^>]+>/g, '/* scriptlet block */')
 							.replace(/<\/?[A-Za-z0-9-_]+:[^>]+>/g, '/* jsp tag */');
 
-				checkJs(item, file);
+				var lines = contents.substring(0, index).split('\n').length;
+				var prefix = new Array(lines).join('void(0);\n');
+
+				checkJs(prefix + body, file, false);
 			}
 		);
 	}
