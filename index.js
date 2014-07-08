@@ -69,6 +69,9 @@ var TOP_LEVEL;
 var re = {
 	REGEX_ARRAY_INTERNAL_SPACE: /[^,]*?,((?! )| {2,})[^,]+?/g,
 	REGEX_ARRAY_SURROUNDING_SPACE: /\[\s|\s\]/g,
+
+	REGEX_AUI_SCRIPT: /<(aui:)?script([^>]*?)>([\s\S]*?)<\/\1script>/,
+
 	REGEX_BRACE_CLOSING: /\}\s*?$/,
 	REGEX_BRACE_OPENING: /\{\s*?$/,
 
@@ -1282,12 +1285,25 @@ var checkJs = function(contents, file) {
 };
 
 var checkHTML = function(contents, file) {
-	var hasJs = (/<(aui:)?script>([\s\S]*?)<\/\1script>/).test(contents);
+	var hasJs = (re.REGEX_AUI_SCRIPT).test(contents);
 
 	if (hasJs) {
+		var reAUIScriptGlobal = new RegExp(re.REGEX_AUI_SCRIPT.source, 'g');
+
 		contents.replace(
-			/<(aui:)?script[^>]*?>([\s\S]*?)<\/\1script>/g,
-			function(m, tagNamespace, body, index) {
+			reAUIScriptGlobal,
+			function(m, tagNamespace, scriptAttrs, body, index) {
+				if (tagNamespace.indexOf('aui:') === 0 &&
+					scriptAttrs.indexOf('use="') > -1 &&
+					body.indexOf('Liferay.provide') > -1) {
+
+					var provideIndex = contents.indexOf('Liferay.provide');
+
+					var lineNum = contents.substring(0, provideIndex).split('\n').length;
+
+					trackErr(sub('Line {0} You can\'t have a Liferay.provide call in a script taglib that has a "use" attribute', lineNum).warn, file);
+				}
+
 				body = body.replace(/<%.*?%>/gim, '_')
 							.replace(/<%=[^>]+>/g, '_')
 							.replace(/<portlet:namespace \/>/g, '_')
