@@ -70,7 +70,7 @@ var re = {
 	REGEX_ARRAY_INTERNAL_SPACE: /[^,]*?,((?! )| {2,})[^,]+?/g,
 	REGEX_ARRAY_SURROUNDING_SPACE: /\[\s|\s\]/g,
 
-	REGEX_AUI_SCRIPT: /<(aui:)?script([^>]*?)>([\s\S]*?)<\/\1script>/,
+	REGEX_AUI_SCRIPT: /<(aui:)?script(.*)>([\s\S]*?)<\/\1script>/,
 
 	REGEX_BRACE_CLOSING: /\}\s*?$/,
 	REGEX_BRACE_OPENING: /\{\s*?$/,
@@ -1246,6 +1246,16 @@ var checkJs = function(contents, file) {
 	}
 	catch (e) {
 		trackErr(sub('Line: {0} Could not parse JavaScript: {1}', e.lineNumber || 'n/a;', e.message).warn, file);
+
+		if (VERBOSE) {
+			console.log(
+				contents.split('\n').map(
+					function(item, index) {
+						return (index + 1) + item;
+					}
+				).join('\n')
+			);
+		}
 	}
 
 	if (hasSheBang) {
@@ -1293,7 +1303,7 @@ var checkHTML = function(contents, file) {
 		contents.replace(
 			reAUIScriptGlobal,
 			function(m, tagNamespace, scriptAttrs, body, index) {
-				if (tagNamespace.indexOf('aui:') === 0 &&
+				if (tagNamespace && tagNamespace.indexOf('aui:') === 0 &&
 					scriptAttrs.indexOf('use="') > -1 &&
 					body.indexOf('Liferay.provide') > -1) {
 
@@ -1304,14 +1314,14 @@ var checkHTML = function(contents, file) {
 					trackErr(sub('Line {0} You can\'t have a Liferay.provide call in a script taglib that has a "use" attribute', lineNum).warn, file);
 				}
 
-				body = body.replace(/<%.*?%>/gim, '_')
-							.replace(/<%=[^>]+>/g, '_')
-							.replace(/<portlet:namespace \/>/g, '_')
-							.replace(/\$\{.*?\}/g, '_')
+				body = body.replace(/<%.*?%>/gim, '_SCRIPTLET_')
+							.replace(/<%=[^>]+>/g, '_ECHO_SCRIPTLET_')
+							.replace(/<portlet:namespace \/>/g, '_PN_')
+							.replace(/\$\{.*?\}/g, '_EL_EXPRESSION_')
 							.replace(
 								/<%[^>]+>/g,
 								function(m, index) {
-									return '/* scriptlet block ' + (new Array(m.split('\n').length).join('\n')) + ' */';
+									return '/* scriptlet block ' + (new Array(m.split('\n').length).join('\nvoid(0);')) + ' */';
 								}
 							)
 							.replace(/<\/?[A-Za-z0-9-_]+:[^>]+>/g, '/* jsp tag */');
