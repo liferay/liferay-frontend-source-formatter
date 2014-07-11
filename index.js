@@ -70,7 +70,7 @@ var re = {
 	REGEX_ARRAY_INTERNAL_SPACE: /[^,]*?,((?! )| {2,})[^,]+?/g,
 	REGEX_ARRAY_SURROUNDING_SPACE: /\[\s|\s\]/g,
 
-	REGEX_AUI_SCRIPT: /<(aui:)?script(.*)>([\s\S]*?)<\/\1script>/,
+	REGEX_AUI_SCRIPT: /<(aui:)?script(.*?)>([\s\S]*?)<\/\1script>/,
 
 	REGEX_BRACE_CLOSING: /\}\s*?$/,
 	REGEX_BRACE_OPENING: /\{\s*?$/,
@@ -307,6 +307,20 @@ var re = {
 
 	html: {
 
+	},
+
+	htmlJS: {
+		liferayLanguage: {
+			message: 'Do not use Liferay.Language.get() outside of .js files: {1}',
+			regex: /Liferay\.Language\.get/
+		},
+		liferayProvide: {
+			message: 'You can\'t have a Liferay.provide call in a script taglib that has a "use" attribute',
+			regex: /Liferay\.provide/,
+			test: function(item, regex, rule, context) {
+				return context.asyncAUIScript && re.test(item, regex);
+			}
+		}
 	},
 
 	js: {
@@ -1300,24 +1314,45 @@ var checkHTML = function(contents, file) {
 	if (hasJs) {
 		var reAUIScriptGlobal = new RegExp(re.REGEX_AUI_SCRIPT.source, 'g');
 
-		contents.replace(
+		var newContents = contents.replace(/<%.*?%>/gim, '_SCRIPTLET_')
+							.replace(/<%=[^>]+>/g, '_ECHO_SCRIPTLET_')
+							.replace(/<portlet:namespace \/>/g, '_PN_');
+
+		newContents.replace(
 			reAUIScriptGlobal,
 			function(m, tagNamespace, scriptAttrs, body, index) {
-				if (tagNamespace && tagNamespace.indexOf('aui:') === 0 &&
-					scriptAttrs.indexOf('use="') > -1 &&
-					body.indexOf('Liferay.provide') > -1) {
-
-					var provideIndex = contents.indexOf('Liferay.provide');
-
-					var lineNum = contents.substring(0, provideIndex).split('\n').length;
-
-					trackErr(sub('Line {0} You can\'t have a Liferay.provide call in a script taglib that has a "use" attribute', lineNum).warn, file);
+				if (!body) {
+					return;
 				}
 
-				body = body.replace(/<%.*?%>/gim, '_SCRIPTLET_')
-							.replace(/<%=[^>]+>/g, '_ECHO_SCRIPTLET_')
-							.replace(/<portlet:namespace \/>/g, '_PN_')
-							.replace(/\$\{.*?\}/g, '_EL_EXPRESSION_')
+				var lineStart = newContents.substring(0, index).split('\n').length;
+
+				var asyncAUIScript = tagNamespace && tagNamespace.indexOf('aui:') === 0 && scriptAttrs.indexOf('use="') > -1;
+
+				iterateLines(
+					body,
+					function(item, index) {
+						var fullItem = item;
+						var lineNum = lineStart + index;
+
+						item = item.trim();
+
+						var context = {
+							asyncAUIScript: asyncAUIScript,
+							file: file,
+							item: item,
+							lineNum: lineNum,
+							tagNamespace: tagNamespace,
+							scriptAttrs: scriptAttrs,
+							body: body,
+							fullMatch: m
+						};
+
+						fullItem = iterateRules('htmlJS', fullItem, context);
+					}
+				);
+
+				body = body.replace(/\$\{.*?\}/g, '_EL_EXPRESSION_')
 							.replace(
 								/<%[^>]+>/g,
 								function(m, index) {
@@ -1326,7 +1361,7 @@ var checkHTML = function(contents, file) {
 							)
 							.replace(/<\/?[A-Za-z0-9-_]+:[^>]+>/g, '/* jsp tag */');
 
-				var lines = contents.substring(0, index).split('\n').length;
+				var lines = newContents.substring(0, index).split('\n').length;
 				var prefix = new Array(lines).join('void(0);\n');
 
 				checkJs(prefix + body, file, false);
