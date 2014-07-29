@@ -97,6 +97,10 @@ This will say there's an error (that the attributes are out of order), but since
 
 However, passing -v will show these errors (marked with a **).
 
+`--color`, `--no-color` If you don't pass anything, `--color` defaults to true, which colors the output for the terminal. However, there may be times you need to pass the output of the script to other scripts, and want to have the output in a plain text format.
+
+If you pass `--no-color` it will overwrite the default and give you plain text.
+
 ## Known issues
 The following are known issues where it will say there's an error, but there's not (or where there should be an error but there's not)
 

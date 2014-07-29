@@ -11,6 +11,10 @@ var A = require('yui').use('yui-base', 'oop', 'array-extras');
 var argv = require('optimist').usage('Usage: $0 -qo')
 			.options(
 				{
+					color: {
+						boolean: true,
+						default: true
+					},
 					i: {
 						alias: 'inline-edit',
 						boolean: true,
@@ -65,6 +69,10 @@ var INLINE_REPLACE = argv.i;
 
 var CWD = process.env.GIT_PWD || process.cwd();
 var TOP_LEVEL;
+
+if (!argv.color) {
+	colors.mode = 'none';
+}
 
 var re = {
 	REGEX_ARRAY_INTERNAL_SPACE: /[^,]*?,((?! )| {2,})[^,]+?/g,
