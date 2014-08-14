@@ -1190,9 +1190,9 @@ var checkJs = function(contents, file, lint) {
 							trackErr(sub('Line: {0} Remove {1} spaces: {2}', lineEnd, surroundingSpaceTypes.join(' and '), brackets.join(' ')).warn, file);
 						}
 
-						var internalMatches = source.match();
+						var tmpSource = source.replace(/(['"]).*\1/g, '$1$1');
 
-						if (re.REGEX_ARRAY_INTERNAL_SPACE.test(source)) {
+						if (re.REGEX_ARRAY_INTERNAL_SPACE.test(tmpSource)) {
 							var missingSpaces = [];
 
 							source.replace(
