@@ -678,6 +678,13 @@ var checkJs = function(contents, file, lint) {
 		needsModuleVerification = true;
 		liferayModuleDir = fileDir;
 	}
+
+	if (lint !== false) {
+		var lint = require('./lib/lint');
+
+		lint(contents, file);
+	}
+
 	try {
 		contents = falafel(
 			contents,
