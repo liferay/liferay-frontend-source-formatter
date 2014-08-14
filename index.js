@@ -6,42 +6,10 @@ var colors = require('colors');
 var fs = require('fs');
 var path = require('path');
 var updateNotifier = require('update-notifier');
-var A = require('yui').use('yui-base', 'oop', 'array-extras');
+var base = require('./lib/base');
 
-var argv = require('optimist').usage('Usage: $0 -qo')
-			.options(
-				{
-					color: {
-						boolean: true,
-						default: true
-					},
-					i: {
-						alias: 'inline-edit',
-						boolean: true,
-						default: false
-					},
-					o: {
-						alias: 'open',
-						boolean: true,
-						default: false
-					},
-					q: {
-						alias: 'quiet',
-						boolean: true,
-						default: false
-					},
-					r: {
-						alias: 'relative',
-						boolean: true,
-						default: false
-					},
-					v: {
-						alias: 'verbose',
-						boolean: true,
-						default: false
-					}
-				}
-			).argv;
+var A = base.A;
+var argv = base.argv;
 
 var notifier = updateNotifier();
 
@@ -60,12 +28,13 @@ colors.setTheme(
 
 var args = argv._;
 
-var INDENT = '    ';
+var INDENT = base.INDENT;
 
 var QUIET = argv.q;
 var VERBOSE = argv.v;
 var RELATIVE = argv.r;
 var INLINE_REPLACE = argv.i;
+var CHECK_META = argv.m;
 
 var CWD = process.env.GIT_PWD || process.cwd();
 var TOP_LEVEL;
@@ -1121,7 +1090,10 @@ var processor = {
 	}
 };
 
-var checkJs = function(contents, file) {
+var needsModuleVerification = false;
+var liferayModuleDir = null;
+
+var checkJs = function(contents, file, lint) {
 	var hasSheBang = false;
 
 	if (contents[0] === '#' && contents[1] === '!') {
@@ -1130,6 +1102,12 @@ var checkJs = function(contents, file) {
 		hasSheBang = true;
 	}
 
+	var fileDir = path.dirname(path.resolve(file));
+
+	if (CHECK_META && !needsModuleVerification && path.basename(fileDir) === 'liferay' && fs.existsSync(path.join(fileDir, 'modules.js'))) {
+		needsModuleVerification = true;
+		liferayModuleDir = fileDir;
+	}
 	try {
 		contents = falafel(
 			contents,
@@ -1593,6 +1571,23 @@ var series = args.map(
 				}
 			);
 		};
+	}
+);
+
+series.push(
+	function(cb) {
+		if (needsModuleVerification) {
+			require('./lib/meta').check(
+				{
+					cb: cb,
+					liferayModuleDir: liferayModuleDir,
+					series: series
+				}
+			);
+		}
+		else {
+			cb();
+		}
 	}
 );
 
