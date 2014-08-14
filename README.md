@@ -79,6 +79,10 @@ There are some options that you can pass to the command:
 
 `-i, --inline-edit` For some of the errors (mainly the ones that can be safely changed), if you pass this option, it will modify the file and convert the error to a valid value.
 
+`-l, --lint` If you don't pass anything, `--lint` defaults to true, which switches on the linting of the JavaScript.
+
+If you pass `--no-lint` it will overwrite the default and disable linting.
+
 ### Experimental or less used options
 
 `-r, --relative` This will display the files passed in as relative to you current directory.
