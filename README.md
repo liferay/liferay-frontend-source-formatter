@@ -101,6 +101,10 @@ However, passing -v will show these errors (marked with a **).
 
 If you pass `--no-color` it will overwrite the default and give you plain text.
 
+`-m`, `--check-metadata` If we're inside of a portal repository, and one of the files is in the /html/js/liferay/ directory, check all of the modules in that directory, and see if the requires metadata in the files matches the metadata in the modules.js file.
+
+If you pass `-v`, it will give you the lines in each file, as well as a merged version (useful for copy/pasting to update the metadata).
+
 ## Known issues
 The following are known issues where it will say there's an error, but there's not (or where there should be an error but there's not)
 
