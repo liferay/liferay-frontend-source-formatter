@@ -403,6 +403,19 @@ var re = {
 			ignore: 'node',
 			message: 'Debugging statement: {1}',
 			regex: /\bconsole\.[^\(]+?\(/
+		},
+
+		varLineSpacing: {
+			message: 'Variable declaration needs a new line after it: {1}',
+			regex: /^(\s*?)?var\b\s/,
+			test: function(item, regex, rule, context) {
+				var nextLineEmpty = context.nextItem == '';
+				var nextLineHasVar = re.test(context.nextItem, regex);
+
+				var nextLineValid = (nextLineEmpty || nextLineHasVar);
+
+				return re.test(item, /;$/) && re.test(item, regex) && !nextLineValid;
+			},
 		}
 	}
 };
@@ -1286,6 +1299,7 @@ var checkJs = function(contents, file, lint) {
 				file: file,
 				hasSheBang: hasSheBang,
 				item: item,
+				nextItem: collection[lineNum] && collection[lineNum].trim(),
 				lineNum: lineNum
 			};
 
