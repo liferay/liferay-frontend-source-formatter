@@ -39,6 +39,7 @@ var VERBOSE = argv.v;
 var RELATIVE = argv.r;
 var INLINE_REPLACE = argv.i;
 var CHECK_META = argv.m;
+var LINT = argv.l;
 
 var CWD = process.env.GIT_PWD || process.cwd();
 var TOP_LEVEL;
@@ -679,10 +680,10 @@ var checkJs = function(contents, file, lint) {
 		liferayModuleDir = fileDir;
 	}
 
-	if (lint !== false) {
-		var lint = require('./lib/lint');
+	if (lint !== false && LINT !== false) {
+		var linter = require('./lib/lint');
 
-		lint(contents, file);
+		linter(contents, file);
 	}
 
 	try {
