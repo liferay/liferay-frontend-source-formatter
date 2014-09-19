@@ -32,6 +32,10 @@ colors.setTheme(
 
 var args = argv._;
 
+if (argv.h) {
+	return base.optimist.showHelp();
+}
+
 var INDENT = base.INDENT;
 
 var QUIET = argv.q;
