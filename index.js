@@ -877,6 +877,10 @@ var checkJs = function(contents, file, lint) {
 	);
 };
 
+var getScriptletBlockReplacement = function(length) {
+	return '/* scriptlet block ' + (new Array(length).join('\nvoid(0);')) + ' */';
+};
+
 var checkHTML = function(contents, file) {
 	var hasJs = (re.REGEX_AUI_SCRIPT).test(contents);
 
@@ -921,14 +925,56 @@ var checkHTML = function(contents, file) {
 					}
 				);
 
+				var rescanBlocks = [];
+
 				body = body.replace(/\$\{.*?\}/g, '_EL_EXPRESSION_')
 							.replace(
 								/<%[^>]+>/g,
 								function(m, index) {
-									return '/* scriptlet block ' + (new Array(m.split('\n').length).join('\nvoid(0);')) + ' */';
+									var len = m.length;
+									var retVal = m;
+
+									// If the last portion of this block is not the closing
+									// scriptlet, let's keep track that we should rescan this
+									// eg. when we hit cases like:
+									// <% List<String> foo = null; %>
+									// the regex will stop at String>
+
+									if (m.substr(len - 2, len - 1) === '%>') {
+										retVal = getScriptletBlockReplacement(m.split('\n').length);
+									}
+									else {
+										rescanBlocks.push(true);
+									}
+
+									return retVal;
 								}
-							)
-							.replace(/<\/?[A-Za-z0-9-_]+:[^>]+>/g, '/* jsp tag */');
+							).replace(/<\/?[A-Za-z0-9-_]+:[^>]+>/g, '/* jsp tag */');
+
+				if (rescanBlocks.length) {
+					var scriptBlockRe = /<%/g;
+					var match;
+
+					// We didn't find the closing %>, so let's iterate
+					// over all of the characters from the start of the
+					// remaining scriptlet blocks until we get to %>
+
+					while (match = scriptBlockRe.exec(body)) {
+						var matchIndex = match.index;
+
+						for (var i = matchIndex; i < body.length; i++) {
+							var item = body.charAt(i);
+
+							if (item && item == '>' && body.charAt(i - 1) == '%') {
+								var block = body.substring(matchIndex, i + 1);
+
+								body = body.replace(block, getScriptletBlockReplacement(block.split('\n').length));
+
+								break;
+							}
+						};
+					}
+				}
 
 				var lines = newContents.substring(0, index).split('\n').length;
 				var prefix = new Array(lines).join('void(0);\n');
