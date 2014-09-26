@@ -474,6 +474,7 @@ var processor = {
 			var vars = declarations.map(
 				function(item, index, collection) {
 					var line = item.loc.start.line;
+
 					if (line > high) {
 						high = line;
 					}
@@ -860,8 +861,8 @@ var checkJs = function(contents, file, lint) {
 				file: file,
 				hasSheBang: hasSheBang,
 				item: item,
-				nextItem: collection[lineNum] && collection[lineNum].trim(),
-				lineNum: lineNum
+				lineNum: lineNum,
+				nextItem: collection[lineNum] && collection[lineNum].trim()
 			};
 
 			fullItem = iterateRules('common', fullItem, context);
@@ -912,13 +913,13 @@ var checkHTML = function(contents, file) {
 
 						var context = {
 							asyncAUIScript: asyncAUIScript,
+							body: body,
 							file: file,
+							fullMatch: m,
 							item: item,
 							lineNum: lineNum,
-							tagNamespace: tagNamespace,
 							scriptAttrs: scriptAttrs,
-							body: body,
-							fullMatch: m
+							tagNamespace: tagNamespace
 						};
 
 						fullItem = iterateRules('htmlJS', fullItem, context);
