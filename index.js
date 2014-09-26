@@ -996,6 +996,7 @@ var checkHTML = function(contents, file) {
 			var lineNum = index + 1;
 
 			var token = String.fromCharCode(-1);
+			var nsToken = String.fromCharCode(-2);
 
 			var m = fullItem.match(/<%.*?%>/g);
 
@@ -1009,105 +1010,132 @@ var checkHTML = function(contents, file) {
 				}
 			);
 
-			var attrs = filteredItem.match(/(?: )?([A-Za-z0-9-]+=(["']).*?\2)/g);
+			var nsm = filteredItem.match(/<portlet:namespace \/>/);
 
-			if (attrs) {
-				var lastAttr = -1;
+			var nsMatches = nsm && nsm.map(
+				function(item, index) {
+					filteredItem = filteredItem.replace(item, nsToken + index + nsToken);
 
-				attrs.forEach(
-					function(item, index, collection) {
-						var oldItem = item;
+					return item;
+				}
+			);
 
-						var pieces = item.trim().match(/^([^=]+)=(["'])(.*)\2$/);
+			filteredItem = filteredItem.replace(
+				/<[^>]+>/g,
+				function(m, mi, str) {
+					var attrs = m.match(/(?: )?([A-Za-z0-9-]+=(["']).*?\2)/g);
 
-						var attrName = pieces[1];
-						var attrValue = pieces[3];
+					if (attrs) {
+						var lastAttr = -1;
 
-						if (lastAttr > attrName) {
-							var re = new RegExp('\\b' + lastAttr + '\\b.*?> ?<.*?' + attrName);
-
-							var note = '';
-
-							if (re.test(fullItem)) {
-								note = '**';
-							}
-
-							if (!note || note && VERBOSE) {
-								trackErr(sub('Line {0} Sort attributes{3}: {1} {2}', lineNum, lastAttr, attrName, note).warn, file);
-							}
-						}
-
-						var styleAttr = (attrName == 'style');
-						var onAttr = (attrName.indexOf('on') === 0);
-						var labelAttr = (attrName.indexOf('label') === 0);
-
-						var attrSep = ' ';
-
-						if (styleAttr) {
-							attrSep = /\s?;\s?/;
-						}
-
-						var attrValuePieces = attrValue.split(attrSep);
-
-						var lastAttrPiece = -1;
-
-						var sort = false;
-
-						attrValuePieces.forEach(
+						attrs.forEach(
 							function(item, index, collection) {
-								item = item.trim();
-								if (/^[A-Za-z]/.test(item)) {
-									// Skip event handlers like onClick, etc since they will have
-									// complex values that probably shouldn't be sorted
-									if (!onAttr && !labelAttr && lastAttrPiece > item) {
-										trackErr(sub('Line {0} Sort attribute values: {1} {2}', lineNum, lastAttrPiece, item).warn, file);
+								var oldItem = item;
 
-										sort = true;
+								var pieces = item.trim().match(/^([^=]+)=(["'])(.*)\2$/);
+
+								var attrName = pieces[1];
+								var attrValue = pieces[3];
+
+								if (lastAttr > attrName) {
+									var re = new RegExp('\\b' + lastAttr + '\\b.*?> ?<.*?' + attrName);
+
+									var note = '';
+
+									if (re.test(fullItem)) {
+										note = '**';
 									}
 
-									lastAttrPiece = item;
+									if (!note || note && VERBOSE) {
+										trackErr(sub('Line {0} Sort attributes{3}: {1} {2}', lineNum, lastAttr, attrName, note).warn, file);
+									}
 								}
+
+								var styleAttr = (attrName == 'style');
+								var onAttr = (attrName.indexOf('on') === 0);
+								var labelAttr = (attrName.indexOf('label') === 0);
+
+								var attrSep = ' ';
+
+								if (styleAttr) {
+									attrSep = /\s?;\s?/;
+								}
+
+								var attrValuePieces = attrValue.split(attrSep);
+
+								var lastAttrPiece = -1;
+
+								var sort = false;
+
+								attrValuePieces.forEach(
+									function(item, index, collection) {
+										item = item.trim();
+										if (/^[A-Za-z]/.test(item)) {
+											// Skip event handlers like onClick, etc since they will have
+											// complex values that probably shouldn't be sorted
+											if (!onAttr && !labelAttr && lastAttrPiece > item) {
+												trackErr(sub('Line {0} Sort attribute values: {1} {2}', lineNum, lastAttrPiece, item).warn, file);
+
+												sort = true;
+											}
+
+											lastAttrPiece = item;
+										}
+									}
+								);
+
+								lastAttr = attrName;
+
+								var newAttrValue;
+
+								if (sort) {
+									attrValuePieces = attrValuePieces.filter(
+										function(item, index, collection) {
+											return !!item.trim();
+										}
+									);
+
+									attrValuePieces.sort();
+
+									if (styleAttr) {
+										newAttrValue = attrValuePieces.join('; ') + ';';
+									}
+									else {
+										newAttrValue = attrValuePieces.join(' ');
+									}
+
+									item = item.replace(attrValue, newAttrValue);
+								}
+
+								m = m.replace(oldItem, item);
 							}
 						);
+					}
 
-						lastAttr = attrName;
+					return m;
+				}
+			);
 
-						var newAttrValue;
+			fullItem = filteredItem;
 
-						if (sort) {
-							attrValuePieces = attrValuePieces.filter(
-								function(item, index, collection) {
-									return !!item.trim();
-								}
-							);
-
-							attrValuePieces.sort();
-
-							if (styleAttr) {
-								newAttrValue = attrValuePieces.join('; ') + ';';
-							}
-							else {
-								newAttrValue = attrValuePieces.join(' ');
-							}
-
-							item = item.replace(attrValue, newAttrValue);
+			if (matches || nsMatches) {
+				if (matches) {
+					fullItem = fullItem.replace(
+						new RegExp(token + '(\\d+)' + token, 'g'),
+						function(str, id) {
+							return matches[id];
 						}
+					);
+				}
 
-						filteredItem = filteredItem.replace(oldItem, item);
-					}
-				);
-			}
-
-			if (matches) {
-				fullItem = filteredItem.replace(
-					new RegExp(token + '(\\d+)' + token, 'g'),
-					function(str, id) {
-						return matches[id];
-					}
-				);
-			}
-			else {
-				fullItem = filteredItem;
+				if (nsMatches) {
+					fullItem = fullItem.replace(
+						new RegExp(nsToken + '(\\d+)' + nsToken, 'g'),
+						function(str, id) {
+							return nsMatches[id];
+						}
+					);
+				}
 			}
 
 			return fullItem;
