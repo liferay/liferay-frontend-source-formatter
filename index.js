@@ -8,6 +8,7 @@ var path = require('path');
 var updateNotifier = require('update-notifier');
 
 var base = require('./lib/base');
+var junit = require('./lib/junit');
 var re = require('./lib/re');
 
 var A = base.A;
@@ -118,6 +119,12 @@ var logFormatErrors = function(errors, file) {
 		console.log('File:'.blackBG + ' ' + file.underline);
 	}
 
+	errors = errors.map(
+		function(error) {
+			return error.err;
+		}
+	);
+
 	if (errors.length) {
 		errors.sort(sortErrors);
 
@@ -203,6 +210,10 @@ series.push(
 		}
 	}
 );
+
+if (argv.junit) {
+	series.push(junit.generate);
+}
 
 var callback = function() {};
 
