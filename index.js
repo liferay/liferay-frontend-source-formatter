@@ -188,18 +188,18 @@ var series = args.map(
 );
 
 series.push(
-	function(cb) {
+	function(done) {
 		if (checkJs.needsModuleVerification) {
 			require('./lib/meta').check(
 				{
-					cb: cb,
+					cb: done,
 					liferayModuleDir: checkJs.liferayModuleDir,
 					series: series
 				}
 			);
 		}
 		else {
-			cb();
+			done();
 		}
 	}
 );
