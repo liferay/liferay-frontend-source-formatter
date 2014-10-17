@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="" failures="{{stats.failures}}">
+<?xml encoding="UTF-8" version="1.0" ?>
+<testsuites failures="{{stats.failures}}" name="">
 	{{#files}}
-		<testsuite name="{{file}}" failures="{{stats.failures}}">
+		<testsuite failures="{{stats.failures}}" name="{{file}}">
 			{{#errors}}
 				<testcase name="{{testName}}">
 					{{#failure}}
-						<failure type="failure" message="{{violationType}}">{{stack}}</failure>
+						<failure message="{{violationType}}" type="failure">{{stack}}</failure>
 					{{/failure}}
 				</testcase>
 			{{/errors}}
