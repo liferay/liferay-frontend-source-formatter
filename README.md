@@ -83,6 +83,9 @@ There are some options that you can pass to the command:
 
 If you pass `--no-lint` it will overwrite the default and disable linting.
 
+`--junit [pathToFile]` If you wish to output the results of the scan to a JUnit compatible XML file (useful for allowing integration servers to automate the check and output the results).
+    If you don't pass the path to the file, it will default to "result.xml".
+
 ### Experimental or less used options
 
 `-r, --relative` This will display the files passed in as relative to you current directory.
