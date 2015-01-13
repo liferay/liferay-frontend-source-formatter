@@ -1,4 +1,4 @@
-<?xml encoding="UTF-8" version="1.0" ?>
+<?xml version="1.0" encoding="UTF-8" ?>
 <testsuites failures="{{stats.failures}}" name="">
 	{{#files}}
 		<testsuite failures="{{stats.failures}}" name="{{file}}">
