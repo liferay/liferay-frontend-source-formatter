@@ -21,6 +21,7 @@
     "colors": "^0.6.2",
     "eslint": "^0.7.4",
     "falafel": "^0.3.1",
+    "glob": "^4.3.5",
     "mustache": "^0.8.2",
     "optimist": "^0.6.1",
     "underscore": "^1.7.0",
