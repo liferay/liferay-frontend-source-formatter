@@ -144,7 +144,7 @@ var processFile = function(file, content, done) {
 
 	var data = content;
 
-	if (formatter) {
+	if (content.length && formatter) {
 		content = formatter(content, file);
 	}
 
