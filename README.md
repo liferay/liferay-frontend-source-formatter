@@ -86,6 +86,8 @@ If you pass `--no-lint` it will overwrite the default and disable linting.
 `--junit [pathToFile]` If you wish to output the results of the scan to a JUnit compatible XML file (useful for allowing integration servers to automate the check and output the results).
     If you don't pass the path to the file, it will default to "result.xml".
 
+`--filenames` Print only the file names of the files that have errors (this option implies `--quiet`). This is useful if you wish to pipe the list of files to other commands.
+
 ### Experimental or less used options
 
 `-r, --relative` This will display the files passed in as relative to you current directory.

@@ -47,6 +47,7 @@ var QUIET = argv.q;
 var VERBOSE = argv.v;
 var RELATIVE = argv.r;
 var INLINE_REPLACE = argv.i;
+var FILE_NAMES = argv.filenames;
 
 var CWD = process.env.GIT_PWD || process.cwd();
 var TOP_LEVEL;
@@ -143,6 +144,18 @@ var logFormatErrors = function(errors, file) {
 	}
 };
 
+var logFileNames = function(errors, file) {
+	if (errors.length) {
+		var fileName = file;
+
+		if (RELATIVE) {
+			file = path.relative(CWD, file);
+		}
+
+		console.log(file);
+	}
+};
+
 var processFile = function(file, content, done) {
 	var formatter = getFormatter(file);
 
@@ -152,7 +165,13 @@ var processFile = function(file, content, done) {
 		content = formatter(content, file);
 	}
 
-	logFormatErrors(getFileErrors(file), file);
+	var logMethod = logFormatErrors;
+
+	if (FILE_NAMES) {
+		logMethod = logFileNames;
+	}
+
+	logMethod(getFileErrors(file), file);
 
 	var changed = (content != data);
 
