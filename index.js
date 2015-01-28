@@ -28,6 +28,10 @@ if (notifier.update) {
 
 colors.setTheme(
 	{
+		bgError: 'bgRed',
+		bgHelp: 'bgCyan',
+		bgSubtle: 'bgGrey',
+		bgWarn: 'bgYellow',
 		error: 'red',
 		help: 'cyan',
 		subtle: 'grey',
