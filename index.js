@@ -2,7 +2,6 @@
 
 var async = require('async');
 var cli = require('cli');
-var colors = require('colors');
 var fs = require('fs');
 var path = require('path');
 var updateNotifier = require('update-notifier');
@@ -26,19 +25,6 @@ if (notifier.update) {
 	notifier.notify(true);
 }
 
-colors.setTheme(
-	{
-		bgError: 'bgRed',
-		bgHelp: 'bgCyan',
-		bgSubtle: 'bgGrey',
-		bgWarn: 'bgYellow',
-		error: 'red',
-		help: 'cyan',
-		subtle: 'grey',
-		warn: 'yellow'
-	}
-);
-
 var args = argv._;
 
 if (argv.h) {
@@ -55,10 +41,6 @@ var FILE_NAMES = argv.filenames;
 
 var CWD = process.env.GIT_PWD || process.cwd();
 var TOP_LEVEL;
-
-if (!argv.color) {
-	colors.mode = 'none';
-}
 
 var getLineNumber = A.cached(
 	function(line) {
