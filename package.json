@@ -1,6 +1,6 @@
 {
   "name": "check-source-formatting",
-  "version": "0.0.31",
+  "version": "0.0.32",
   "description": "Check the source formatting of HTML/JS/CSS",
   "main": "index.js",
   "bin": {
