@@ -39,7 +39,7 @@ var RELATIVE = argv.r;
 var INLINE_REPLACE = argv.i;
 var FILE_NAMES = argv.filenames;
 
-var CWD = process.env.GIT_PWD || process.cwd();
+var CWD = base.CWD;
 var TOP_LEVEL;
 
 var getLineNumber = A.cached(
@@ -58,10 +58,6 @@ var sortErrors = function(a, b) {
 };
 
 var sub = base.sub;
-
-var iterateLines = base.iterateLines;
-
-var iterateRules = re.iterateRules;
 
 var checkCss = require('./lib/css');
 var checkJs = require('./lib/js');
