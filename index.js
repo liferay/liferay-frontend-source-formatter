@@ -6,12 +6,13 @@ var fs = require('fs');
 var path = require('path');
 var updateNotifier = require('update-notifier');
 
+var argv = require('./lib/argv');
 var base = require('./lib/base');
 var junit = require('./lib/junit');
 var re = require('./lib/re');
 
 var A = base.A;
-var argv = base.argv;
+
 var fileErrors = base.fileErrors;
 var trackErr = base.trackErr;
 
@@ -26,10 +27,6 @@ if (notifier.update) {
 }
 
 var args = argv._;
-
-if (argv.h) {
-	return base.optimist.showHelp();
-}
 
 var INDENT = base.INDENT;
 
