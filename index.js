@@ -11,10 +11,12 @@ var base = require('./lib/base');
 var junit = require('./lib/junit');
 var re = require('./lib/re');
 
+var File = require('./lib/file');
+var Formatter = require('./lib/formatter');
+
 var A = base.A;
 
 var fileErrors = base.fileErrors;
-var trackErr = base.trackErr;
 
 var notifier = updateNotifier(
 	{
@@ -64,32 +66,6 @@ var getFileErrors = function(file) {
 	return fileErrors[file] || [];
 };
 
-var getFormatter = function(file) {
-	var formatter;
-
-	if (re.REGEX_EXT_CSS.test(file)) {
-		formatter = checkCss;
-	}
-	else if (re.REGEX_EXT_JS.test(file)) {
-		formatter = checkJs;
-	}
-	else if (re.REGEX_EXT_HTML.test(file)) {
-		formatter = checkHTML;
-	}
-
-	return formatter;
-};
-
-var handleFileReadError = function(err, file) {
-	var errMsg = 'Could not open file';
-
-	if (!fs.existsSync(file)) {
-		errMsg = 'File does not exist';
-	}
-
-	console.log('%s: %s', errMsg.error, path.resolve(file));
-};
-
 var logFormatErrors = function(errors, file) {
 	var includeHeaderFooter = (errors.length || !QUIET);
 
@@ -135,63 +111,35 @@ var logFileNames = function(errors, file) {
 	}
 };
 
-var processFile = function(file, content, done) {
-	var formatter = getFormatter(file);
-
-	var data = content;
-
-	if (content.length && formatter) {
-		content = formatter(content, file);
-	}
-
-	var logMethod = logFormatErrors;
-
-	if (FILE_NAMES) {
-		logMethod = logFileNames;
-	}
-
-	logMethod(getFileErrors(file), file);
-
-	var changed = (content != data);
-
-	if (INLINE_REPLACE && changed) {
-		updateFile(file, content, done);
-	}
-	else {
-		done(null, content);
-	}
-};
-
-var updateFile = function(file, content, done) {
-	fs.writeFile(
-		file,
-		content,
-		function(err, result) {
-			if (err) {
-				return done(null, '');
-			}
-
-			done(null, content);
-		}
-	);
-};
-
 var series = args.map(
 	function(file) {
 		return function(done) {
-			fs.readFile(
-				file,
-				'utf-8',
-				function(err, content) {
-					if (err) {
-						handleFileReadError(err, file);
+			var fileObj = new File(file);
 
-						return done(null, '');
+			var formatter = Formatter.get(fileObj);
+
+			if (formatter) {
+				fileObj.format(formatter).then(function(data) {
+					var logMethod = logFormatErrors;
+
+					if (FILE_NAMES) {
+						logMethod = logFileNames;
 					}
 
-					processFile(file, content, done);
-				}
-			);
+					logMethod(getFileErrors(file), file);
+
+					if (this.isDirty() && INLINE_REPLACE) {
+						this.write().then(
+							function(data) {
+								console.log(data, '----written file----');
+							}
+						).catch(this.handleFileWriteError);
+					}
+
+					done(null, data);
+				})
+				.catch(fileObj.handleFileReadError);
+			}
 		};
 	}
 );
