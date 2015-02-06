@@ -58,9 +58,7 @@ var sortErrors = function(a, b) {
 
 var sub = base.sub;
 
-var checkCss = require('./lib/css');
 var checkJs = require('./lib/js');
-var checkHTML = require('./lib/html');
 
 var getFileErrors = function(file) {
 	return fileErrors[file] || [];
@@ -111,6 +109,8 @@ var logFileNames = function(errors, file) {
 	}
 };
 
+var Logger = require('./lib/logger');
+
 var series = args.map(
 	function(file) {
 		return function(done) {
@@ -138,7 +138,12 @@ var series = args.map(
 
 					done(null, data);
 				})
-				.catch(fileObj.handleFileReadError);
+				.error(fileObj.handleFileReadError)
+				.catch(
+					function(err) {
+						console.error('Something went wrong.\nDetails below:\n%s', err.stack);
+					}
+				);
 			}
 		};
 	}
