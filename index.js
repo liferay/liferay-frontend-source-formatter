@@ -58,8 +58,6 @@ var sortErrors = function(a, b) {
 
 var sub = base.sub;
 
-var checkJs = require('./lib/js');
-
 var getFileErrors = function(file) {
 	return fileErrors[file] || [];
 };
@@ -151,11 +149,11 @@ var series = args.map(
 
 series.push(
 	function(done) {
-		if (checkJs.needsModuleVerification) {
+		if (Formatter.JS.needsModuleVerification) {
 			require('./lib/meta').check(
 				{
-					cb: done,
-					liferayModuleDir: checkJs.liferayModuleDir,
+					done: done,
+					liferayModuleDir: Formatter.JS.liferayModuleDir,
 					series: series
 				}
 			);
