@@ -129,7 +129,7 @@ var series = args.map(
 					if (this.isDirty() && INLINE_REPLACE) {
 						this.write().then(
 							function(data) {
-								console.log(data, '----written file----');
+								console.log('Wrote file: %s', file);
 							}
 						).catch(this.handleFileWriteError);
 					}
@@ -139,7 +139,7 @@ var series = args.map(
 				.error(fileObj.handleFileReadError)
 				.catch(
 					function(err) {
-						console.error('Something went wrong.\nDetails below:\n%s', err.stack);
+						console.error(('Something went wrong.\nDetails below:'.error) + '\n%s', err.stack);
 					}
 				);
 			}
