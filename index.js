@@ -41,71 +41,7 @@ var FILE_NAMES = argv.filenames;
 var CWD = base.CWD;
 var TOP_LEVEL;
 
-var getLineNumber = A.cached(
-	function(line) {
-		var m = line.match(/Lines?: ([0-9]+)/);
-
-		return parseInt(m && m[1], 10) || 0;
-	}
-);
-
-var sortErrors = function(a, b) {
-	var aNum = getLineNumber(a);
-	var bNum = getLineNumber(b);
-
-	return aNum < bNum ? -1 : aNum > bNum ? 1 : 0;
-};
-
 var sub = base.sub;
-
-var getFileErrors = function(file) {
-	return fileErrors[file] || [];
-};
-
-var logFormatErrors = function(errors, file) {
-	var includeHeaderFooter = (errors.length || !QUIET);
-
-	if (includeHeaderFooter) {
-		var fileName = file;
-
-		if (RELATIVE) {
-			file = path.relative(CWD, file);
-		}
-
-		console.log('File:'.blackBG + ' ' + file.underline);
-	}
-
-	errors = errors.map(
-		function(error) {
-			return error.err;
-		}
-	);
-
-	if (errors.length) {
-		errors.sort(sortErrors);
-
-		console.log(INDENT + errors.join('\n' + INDENT));
-	}
-	else if (includeHeaderFooter) {
-		console.log(INDENT + 'clear');
-	}
-
-	if (includeHeaderFooter) {
-		console.log('----'.subtle);
-	}
-};
-
-var logFileNames = function(errors, file) {
-	if (errors.length) {
-		var fileName = file;
-
-		if (RELATIVE) {
-			file = path.relative(CWD, file);
-		}
-
-		console.log(file);
-	}
-};
 
 var Logger = require('./lib/logger');
 
@@ -118,13 +54,12 @@ var series = args.map(
 
 			if (formatter) {
 				fileObj.format(formatter).then(function(data) {
-					var logMethod = logFormatErrors;
-
 					if (FILE_NAMES) {
-						logMethod = logFileNames;
+						Logger.renderFileNames(fileObj, RELATIVE && CWD);
 					}
-
-					logMethod(getFileErrors(file), file);
+					else {
+						Logger.render(fileObj, QUIET);
+					}
 
 					if (this.isDirty() && INLINE_REPLACE) {
 						this.write().then(
