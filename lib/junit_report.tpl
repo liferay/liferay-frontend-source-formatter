@@ -7,7 +7,7 @@
 					{{#failure}}
 						<failure message="{{violationType}}" type="failure">
 							{{~#stack~}}
-								{{line}}: {{{msg}}}{{#unless @last}}
+								{{line}}: {{{msg}}}{{#and @root.showLintIds ruleId}} ({{ruleId}}){{/and}}{{#unless @last}}
 {{/unless}}
 							{{~/stack~}}
 						</failure>

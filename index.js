@@ -37,6 +37,7 @@ var VERBOSE = argv.v;
 var RELATIVE = argv.r;
 var INLINE_REPLACE = argv.i;
 var FILE_NAMES = argv.filenames;
+var LINT_IDS = argv['lint-ids'];
 
 var CWD = base.CWD;
 var TOP_LEVEL;
@@ -65,6 +66,7 @@ var series = args.map(
 					}
 					else {
 						config.showBanner = QUIET;
+						config.showLintIds = LINT_IDS;
 
 						Logger.render(fileObj, config);
 					}
