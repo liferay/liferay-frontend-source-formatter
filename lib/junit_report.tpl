@@ -6,9 +6,10 @@
 				<testcase name="{{testName}}">
 					{{#failure}}
 						<failure message="{{violationType}}" type="failure">
-							{{#stack}}
-								{{line}}: {{{msg}}}
-							{{/stack}}
+							{{~#stack~}}
+								{{line}}: {{{msg}}}{{#unless @last}}
+{{/unless}}
+							{{~/stack~}}
 						</failure>
 					{{/failure}}
 				</testcase>
