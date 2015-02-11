@@ -54,11 +54,19 @@ var series = args.map(
 
 			if (formatter) {
 				fileObj.format(formatter).then(function(data) {
+					var config = {};
+
 					if (FILE_NAMES) {
-						Logger.renderFileNames(fileObj, RELATIVE && CWD);
+						if (RELATIVE) {
+							config.relative = CWD;
+						}
+
+						Logger.renderFileNames(fileObj, config);
 					}
 					else {
-						Logger.render(fileObj, QUIET);
+						config.showBanner = QUIET;
+
+						Logger.render(fileObj, config);
 					}
 
 					if (this.isDirty() && INLINE_REPLACE) {
