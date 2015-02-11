@@ -5,7 +5,11 @@
 			{{#errors}}
 				<testcase name="{{testName}}">
 					{{#failure}}
-						<failure message="{{violationType}}" type="failure">{{stack}}</failure>
+						<failure message="{{violationType}}" type="failure">
+							{{#stack}}
+								{{line}}: {{{msg}}}
+							{{/stack}}
+						</failure>
 					{{/failure}}
 				</testcase>
 			{{/errors}}
