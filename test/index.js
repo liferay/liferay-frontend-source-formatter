@@ -1,5 +1,7 @@
 var path = require('path');
-var expect = require('chai').expect;
+var chai = require('chai');
+var assert = chai.assert;
+var _ = require('lodash');
 
 // var index = require(path.join(__dirname, '..', './index.js'));
 
