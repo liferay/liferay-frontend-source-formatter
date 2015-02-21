@@ -1,0 +1,6 @@
+.needless-quotes {
+	background-image: url('../images/foo.png');
+	background-image: url("../images/foo.png");
+
+	background-image: url(../images/foo.png);
+}

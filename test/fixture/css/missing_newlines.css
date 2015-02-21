@@ -1,0 +1,15 @@
+.missing-new-lines1 {
+	color: #FFF;
+}
+.missing-new-lines2 {
+	.missing-new-lines3 {
+		color: #FFF;
+	}
+	.missing-new-lines4 {
+		color: #FFF;
+	}
+
+	.missing-new-lines5 {
+		color: #FFF;
+	}
+}

@@ -1,0 +1,18 @@
+.invalid-border-reset {
+	border: 0;
+	border: none;
+	border-bottom: 0;
+	border-bottom: none;
+	border-left: 0;
+	border-left: none;
+	border-right: 0;
+	border-right: none;
+	border-top: 0;
+	border-top: none;
+
+	border-bottom-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-top-width: 0;
+	border-width: 0;
+}
