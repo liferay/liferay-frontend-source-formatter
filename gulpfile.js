@@ -3,7 +3,7 @@ var plugins = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
 
 gulp.task('test', function(done) {
-	return runSequence('test-unit', 'test-coverage', 'test-complexity', done);
+	return runSequence('test-unit', 'test-complexity', done);
 });
 
 gulp.task('test-complexity', function() {
@@ -14,6 +14,8 @@ gulp.task('test-complexity', function() {
 });
 
 gulp.task('test-unit', function() {
+	process.argv.push('--no-color');
+
 	return gulp.src(['test/**/*.js', '!test/fixture/*.js'])
 		.pipe(plugins.mocha());
 });
@@ -25,6 +27,8 @@ gulp.task('test-cover', function() {
 });
 
 gulp.task('test-coverage', ['test-cover'], function() {
+	process.argv.push('--no-color');
+
 	return gulp.src(['test/**/*.js', '!test/fixture/*.js'])
 		.pipe(plugins.mocha())
 		.pipe(plugins.istanbul.writeReports());
