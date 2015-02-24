@@ -110,6 +110,11 @@ describe('Formatter.HTML', function () {
 			assert.isArray(scriptBlocks);
 			assert.equal(scriptBlocks.length, 3);
 			scriptBlocks.forEach(assert.isObject);
+
+			scriptBlocks = htmlFormatter.extractJs('<html></html>');
+
+			assert.isArray(scriptBlocks);
+			assert.equal(scriptBlocks.length, 0);
 		}
 	);
 
@@ -275,13 +280,29 @@ describe('Formatter.HTML', function () {
 		}
 	);
 
-	// it(
-	// 	'should handle scriptlet whitespace in script blocks',
-	// 	function() {
-	// 		var scriptBlock = privHTMLFormatter.extractJs('<script>\n\n<% if() { %>\n\nvar test = "foo";\n\n<%= obj.getJavaScript() %>\n\n<% } %>\n\n</script>')[0];
+	it(
+		'should handle scriptlet whitespace in script blocks',
+		function() {
+			var scriptBlock = privHTMLFormatter.extractJs('<script>\n\n<% if() { %>\n\nvar test = "foo";\n\n<%= obj.getJavaScript() %>\n\n<% } %>\n\n</script>')[0];
 
-	// 		console.log(privHTMLFormatter._jsHandleScriptletWhitespace(scriptBlock));
-	// 	}
-	// );
+			var contents = privHTMLFormatter._jsHandleScriptletWhitespace(scriptBlock).contents;
+
+			assert.equal(contents, '\n\n//_SCRIPTLET_\n\nvar test = "foo";\n\n//_SCRIPTLET_\n\n//_SCRIPTLET_\n\n');
+
+			scriptBlock = privHTMLFormatter.extractJs('<script><% foo() %></script>')[0];
+
+			contents = privHTMLFormatter._jsHandleScriptletWhitespace(scriptBlock).contents;
+
+			assert.equal(contents, '//_SCRIPTLET_');
+
+			scriptBlock = privHTMLFormatter.extractJs('<script>\n\n<%foo();\nbar();%>\n\n</script>')[0];
+
+			scriptBlock = privHTMLFormatter._jsRemoveScriptletBlocks(scriptBlock);
+
+			contents = privHTMLFormatter._jsHandleScriptletWhitespace(scriptBlock).contents;
+
+			assert.equal(contents, '\nvoid 0;\n/* scriptlet block \nvoid 0; */\nvoid 0;\n');
+		}
+	);
 
 });
