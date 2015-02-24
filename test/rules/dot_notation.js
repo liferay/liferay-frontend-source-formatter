@@ -1,0 +1,34 @@
+var path = require('path');
+var re = require('../../lib/re.js');
+var base = require('../../lib/base.js');
+
+var lint = require('../../lib/lint');
+
+var linter = lint.linter;
+var ESLintTester = require('eslint-tester');
+var eslintTester = new ESLintTester(linter);
+
+var validRules = [
+	'document["some-prop"];'
+];
+
+base.A.Object.each(
+	base.stubs,
+	function(item, index) {
+		validRules.push('document["' + index + '"];');
+	}
+);
+
+eslintTester.addRuleTest(
+	path.resolve(__dirname, '../', '../', 'lib/rules/' + path.basename(__filename)),
+	{
+		valid: validRules,
+
+		invalid: [
+			{
+				code: 'document["test"]',
+				errors: [ { message: '["test"] is better written in dot notation.' } ]
+			}
+		]
+	}
+);
