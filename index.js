@@ -4,6 +4,7 @@ var async = require('async');
 var cli = require('cli');
 var fs = require('fs');
 var path = require('path');
+var util = require('util');
 var updateNotifier = require('update-notifier');
 
 var argv = require('./lib/argv');
@@ -57,36 +58,47 @@ var series = args.map(
 				fileObj.format(formatter).then(function(data) {
 					var config = {};
 
+					var out;
+
 					if (FILE_NAMES) {
 						if (RELATIVE) {
 							config.relative = CWD;
 						}
 
-						Logger.renderFileNames(fileObj, config);
+						out = Logger.renderFileNames(fileObj, config);
 					}
 					else {
 						config.showBanner = QUIET;
 						config.showLintIds = LINT_IDS;
 
-						Logger.render(fileObj, config);
+						out = Logger.render(fileObj, config);
+					}
+
+					if (out) {
+						console.log(out);
 					}
 
 					if (this.isDirty() && INLINE_REPLACE) {
 						this.write().then(
 							function(data) {
-								console.log('Wrote file: %s', file);
+								return util.format('Wrote file: %s', file);
 							}
-						).catch(this.handleFileWriteError);
+						)
+						.catch(this.handleFileWriteError)
+						.then(console.log)
 					}
-
-					done(null, data);
 				})
-				.error(fileObj.handleFileReadError)
+				.error(
+					function(err) {
+						console.log(fileObj.handleFileReadError(err));
+					}
+				)
 				.catch(
 					function(err) {
 						console.error(('Something went wrong.\nDetails below:'.error) + '\n%s', err.stack);
 					}
-				);
+				)
+				.then(done);
 			}
 		};
 	}
