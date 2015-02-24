@@ -262,6 +262,19 @@ describe('Formatter.HTML', function () {
 		}
 	);
 
+	it(
+		'should handle get a scriptlet block replacement',
+		function() {
+			var result = privHTMLFormatter._getScriptletBlockReplacement(1);
+
+			assert.equal(result, '/* scriptlet block  */');
+
+			result = privHTMLFormatter._getScriptletBlockReplacement(5);
+
+			assert.equal(result, '/* scriptlet block \nvoid 0;\nvoid 0;\nvoid 0;\nvoid 0; */');
+		}
+	);
+
 	// it(
 	// 	'should handle scriptlet whitespace in script blocks',
 	// 	function() {
