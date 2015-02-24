@@ -1,20 +1,12 @@
-process.argv.push('--no-color');
-
 var path = require('path');
-var fs = require('fs');
-// var assert = require('assert');
 var chai = require('chai');
+
 chai.use(require('chai-string'));
-// var expect = require('chai').expect;
-var _ = require('lodash');
 
 var assert = chai.assert;
 
 var File = require('../lib/file');
-var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
-
-var sub = require('../lib/base').sub;
 
 describe('Logger', function () {
 
@@ -156,4 +148,70 @@ describe('Logger', function () {
 		}
 	);
 
+	it(
+		'should render helpers properly',
+		function() {
+			var logger = new Logger.Logger();
+
+			logger.log(1, 'Has error', 'foo.js', 'error', {ruleId: 'rule-name'});
+
+			// specific color
+
+			logger.TPL = '{{#red}}{{file}}{{/red}}';
+
+			var out = logger.render('foo.js');
+
+			assert.equal(out, 'foo.js');
+
+			// color helper by type
+
+			logger.TPL = '{{#errors}}{{#color}}{{line}}{{/color}}{{/errors}}';
+
+			out = logger.render('foo.js');
+
+			assert.equal(out, 'Line 1');
+
+			// color helper default color
+
+			logger.log(1, 'Has error', 'nontype.js', 'nontype');
+
+			out = logger.render('nontype.js');
+
+			assert.equal(out, 'Line 1');
+
+			// line helper
+
+			logger.TPL = '{{#errors}}{{line}}{{/errors}}';
+
+			out = logger.render('nontype.js');
+
+			assert.equal(out, 'Line 1');
+
+			// line helper - arrays
+
+			logger.log([1, 5], 'Has error', 'arrays.js');
+
+			out = logger.render('arrays.js');
+
+			assert.equal(out, 'Lines 1-5');
+		}
+	);
+
+	it(
+		'should sort errors',
+		function() {
+			var logger = new Logger.Logger();
+
+			logger.log(3, 'Has error', 'foo.js');
+			logger.log([1,5], 'Has error', 'foo.js');
+			logger.log(1, 'Has error', 'foo.js');
+			logger.log(2, 'Has error', 'foo.js');
+
+			logger.TPL = '{{#errors}}{{line}}\n{{/errors}}';
+
+			var out = logger.render('foo.js');
+
+			assert.equal(out, 'Lines 1-5\nLine 1\nLine 2\nLine 3\n');
+		}
+	);
 });
