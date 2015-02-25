@@ -4,7 +4,7 @@
   "description": "Check the source formatting of HTML/JS/CSS",
   "main": "index.js",
   "bin": {
-    "check_sf": "./index.js"
+    "check_sf": "./bin/index.js"
   },
   "scripts": {
     "test": "gulp test"
