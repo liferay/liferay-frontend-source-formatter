@@ -12,8 +12,16 @@ eslintTester.addRuleTest(
 		valid: [
 			'({init: function(){}, initializer: function(){}, renderUI: function(){}, bindUI: function(){}, syncUI: function(){}, destructor: function(){}})',
 			'({init: function(){}, initializer: function(){}, renderUI: function(){}, bindUI: function(){}, syncUI: function(){}, destructor: function(){}, abc: function(){}})',
-			'({"$xyz": {}, abc: {}})',
-			'({"@xyz": {}, abc: {}})',
+			'({ 0: 1, "$xyz": 1, abc: 2 })',
+			'({ 0: 1, "@xyz": 1, abc: 2})',
+			{
+				code: "({initString: 1, initsTriangle: 2})",
+				args: [2, {'casesensitive': true}]
+			},
+			{
+				code: "({initsTriangle: 1, initString: 2})",
+				args: [2, {'casesensitive': false}]
+			},
 		],
 
 		invalid: [
