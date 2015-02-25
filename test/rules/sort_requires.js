@@ -10,7 +10,12 @@ eslintTester.addRuleTest(
 	path.resolve(__dirname, '../', '../', 'lib/rules/' + path.basename(__filename)),
 	{
 		valid: [
-			'({requires: ["a", "b"]})'
+			'({requires: []})',
+			'({requires: ["a"]})',
+			'({requires: ["a", "b"]})',
+			'({requires: ["a", xyz, "b"]})',
+			'({required: []})',
+			'({requires: 1})',
 		],
 
 		invalid: [
