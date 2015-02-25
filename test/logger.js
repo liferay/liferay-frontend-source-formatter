@@ -25,7 +25,7 @@ describe('Logger', function () {
 
 			assert.equal(out, 'foo.js');
 
-			out = logger.renderFileNames(new File('foo.js'));
+			out = logger.renderFileNames('foo.js');
 
 			assert.equal(out, 'foo.js');
 

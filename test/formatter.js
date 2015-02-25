@@ -26,7 +26,7 @@ describe('Formatter', function () {
 				}
 			);
 
-			var formatter = Formatter.get(new File('path/to/file.foo'));
+			var formatter = Formatter.get('path/to/file.foo');
 
 			assert.equal(formatter.constructor, customFormatGetter);
 		}
@@ -35,7 +35,7 @@ describe('Formatter', function () {
 	it(
 		'should not return an unregistered formatter',
 		function() {
-			var formatter = Formatter.get(new File('path/to/file.missing'));
+			var formatter = Formatter.get('path/to/file.missing');
 
 			assert.equal(formatter, null);
 		}
@@ -44,24 +44,6 @@ describe('Formatter', function () {
 });
 
 describe('Formatter Base', function () {
-
-	it(
-		'should accept a file object as argument',
-		function() {
-			var formatter = new Formatter(new File('path/to/file'));
-
-			assert.isTrue(formatter.file instanceof File);
-		}
-	);
-
-	it(
-		'should convert a file string argument to a file object',
-		function() {
-			var formatter = new Formatter('path/to/file');
-
-			assert.isTrue(formatter.file instanceof File);
-		}
-	);
 
 	it(
 		'should accept a custom logger',

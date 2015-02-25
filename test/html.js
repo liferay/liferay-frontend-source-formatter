@@ -19,7 +19,6 @@ describe('Formatter.HTML', function () {
 
 	var testFilePath = path.join(__dirname, 'fixture', 'test.jsp');
 
-	// var obj = new File(testFilePath);
 	var htmlLogger = new Logger.Logger();
 	var htmlFormatter = new Formatter.HTML(testFilePath, htmlLogger);
 	var source = fs.readFileSync(testFilePath, 'utf-8');

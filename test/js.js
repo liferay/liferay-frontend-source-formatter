@@ -19,7 +19,6 @@ describe('Formatter.JS', function () {
 
 	var testFilePath = path.join(__dirname, 'fixture', 'test.js');
 
-	// var obj = new File(testFilePath);
 	var jsLogger = new Logger.Logger();
 	var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
 	var source = fs.readFileSync(testFilePath, 'utf-8');
@@ -141,7 +140,6 @@ describe('Formatter.JS Node', function () {
 
 	var testFilePath = path.join(__dirname, 'fixture', 'test_node.js');
 
-	// var obj = new File(testFilePath);
 	var jsLogger = new Logger.Logger();
 	var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
 	var source = fs.readFileSync(testFilePath, 'utf-8');
