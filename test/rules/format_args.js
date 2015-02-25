@@ -47,6 +47,8 @@ eslintTester.addRuleTest(
 			'alert({}, 1);',
 			'alert(function() {}, 1);',
 			'alert(\nfunction() {\n},\n1\n);',
+			'(function foo(){\n}());',
+			'(function(){\n}(\n));',
 		],
 
 		invalid: [
@@ -81,6 +83,14 @@ eslintTester.addRuleTest(
 			{
 				code: 'alert({x: 1}, 1);',
 				errors: [ { message: 'Args should each be on their own line (args on same line): alert(...)' } ]
+			},
+			{
+				code: 'AUI()[\'add\'](function(){\n});',
+				errors: [ { message: 'Args should each be on their own line (args on start line): AUI(...)' } ]
+			},
+			{
+				code: '(function(){\n}(\n{x: 1},2,3\n));',
+				errors: [ { message: 'Args should each be on their own line (args on same line): <anonymous>(...)' } ]
 			},
 		]
 	}
