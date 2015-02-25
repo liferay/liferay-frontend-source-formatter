@@ -82,6 +82,58 @@ describe('Formatter.JS', function () {
 		}
 	);
 
+	it(
+		'should print code as source',
+		function () {
+			var srcCode = 'var foo = 1';
+
+			assert.equal(jsFormatter._printAsSource(srcCode), '1 ' + srcCode);
+		}
+	);
+
+	it(
+		'should parse JS syntax',
+		function () {
+			var jsLoggerParse = new Logger.Logger();
+			var jsFormatterParse = new Formatter.JS(testFilePath, jsLoggerParse);
+			var processed = false;
+
+			jsFormatterParse.processor.VariableDeclaration = function(node, parent) {
+				assert.isObject(node);
+				assert.isObject(parent);
+
+				assert.equal(node.type, 'VariableDeclaration');
+				assert.isArray(node.declarations);
+				assert.equal(node.declarations[0].id.name, 'x');
+
+				processed = true;
+			};
+
+			jsFormatterParse._processSyntax('var x = 123;');
+
+			assert.isTrue(processed, 'JS was not processed');
+
+			jsFormatterParse._processSyntax('var x = ;');
+
+			var parseErrors = jsLoggerParse.getErrors(testFilePath);
+
+			assert.equal(parseErrors.length, 1);
+			assert.equal(parseErrors[0].msg, 'Could not parse JavaScript: Unexpected token ;');
+
+			var jsLoggerParseVerbose = new Logger.Logger();
+			var jsFormatterParseVerbose = new Formatter.JS(testFilePath, jsLoggerParseVerbose);
+
+			jsFormatterParseVerbose.flags.verbose = true;
+			jsFormatterParseVerbose._processSyntax('var x = ;');
+
+			var verboseDetails = jsLoggerParseVerbose.verboseDetails;
+
+			assert.isString(verboseDetails);
+			assert.isAbove(verboseDetails.length, 0);
+		}
+	);
+
+
 });
 
 describe('Formatter.JS Node', function () {
