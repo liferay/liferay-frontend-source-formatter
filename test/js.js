@@ -161,3 +161,51 @@ describe('Formatter.JS Node', function () {
 	);
 
 });
+
+describe('Formatter.JS Lint', function () {
+	'use strict';
+
+	var esLintConfig = require('../lib/eslint_config');
+
+	var testFilePath = path.join(__dirname, 'fixture', 'test.js');
+
+	var jsLogger = new Logger.Logger();
+	var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
+	var source = fs.readFileSync(testFilePath, 'utf-8');
+	var fileErrors = jsLogger.fileErrors;
+
+	jsFormatter.format(source, true);
+
+	var jsErrors = jsLogger.getErrors(testFilePath);
+
+
+	it(
+		'should find at least one lint error',
+		function () {
+			var foundLintErrors = _.reduce(
+				jsErrors,
+				function(res, item, index) {
+					if (!!item.type) {
+						res[item.type] = true;
+					}
+
+					return res;
+				},
+				{}
+			);
+
+			var hasLintError = _.some(
+				esLintConfig.rules,
+				function(item, index) {
+					var val = _.isArray(item) ? item[0] : item;
+
+					return val > 0 && foundLintErrors[index];
+				}
+			);
+
+			assert.isTrue(hasLintError);
+		}
+	);
+
+
+});
