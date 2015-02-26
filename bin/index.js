@@ -1,3 +1,15 @@
 #!/usr/bin/env node
 
-require('../lib/cli');
+var updateNotifier = require('update-notifier');
+
+var notifier = updateNotifier(
+	{
+		pkg: require('../package.json')
+	}
+);
+
+if (notifier.update) {
+	notifier.notify(true);
+}
+
+require('../lib/cli').init();
