@@ -14,6 +14,7 @@
 	<img id="foo" class="foo <%= bar ? "bar" : "abc" %>" />
 	<aui:nav id="nav" cssClass="bar abc"></aui:nav>
 	<aui:nav id='<%= "nav" %>' cssClass='<%= "bar abc" %>'></aui:nav>
+	<span><liferay-ui:message key="count" /> <liferay-ui:message key="used-in-x-assets" arguments="<%= tag.getAssetCount() %>" /></span>
 
 	<!-- Common -->
 	<!-- Invalid space -->
@@ -43,5 +44,15 @@
 			}
 		);
 	</aui:script>
+
+	<aui:script>
+		<%
+		List<String> foo = null;
+		%>
+
+		foo();
+	</aui:script>
+
+	<aui:script use="event"></aui:script>
 </body>
 </html>

@@ -65,7 +65,7 @@ describe('Formatter.HTML', function () {
 	it(
 		'should detect invalid whitespace characters',
 		function() {
-			var msg = getErrorMsgByLine(20, htmlErrors);
+			var msg = getErrorMsgByLine(21, htmlErrors);
 
 			assert.startsWith(msg, 'Invalid whitespace characters');
 		}
@@ -74,7 +74,7 @@ describe('Formatter.HTML', function () {
 	it(
 		'should detect spaces mixed with tabs',
 		function() {
-			var msg = getErrorMsgByLine(22, htmlErrors);
+			var msg = getErrorMsgByLine(23, htmlErrors);
 
 			assert.startsWith(msg, 'Mixed spaces and tabs');
 		}
@@ -86,7 +86,7 @@ describe('Formatter.HTML', function () {
 			var scriptBlocks = htmlFormatter.parseJs(source);
 
 			assert.isArray(scriptBlocks);
-			assert.equal(scriptBlocks.length, 3);
+			assert.equal(scriptBlocks.length, 4);
 			scriptBlocks.forEach(assert.isString);
 		}
 	);
@@ -107,7 +107,7 @@ describe('Formatter.HTML', function () {
 			var scriptBlocks = htmlFormatter.extractJs(source);
 
 			assert.isArray(scriptBlocks);
-			assert.equal(scriptBlocks.length, 3);
+			assert.equal(scriptBlocks.length, 4);
 			scriptBlocks.forEach(assert.isObject);
 
 			scriptBlocks = htmlFormatter.extractJs('<html></html>');
@@ -120,7 +120,7 @@ describe('Formatter.HTML', function () {
 	it(
 		'should format script blocks',
 		function() {
-			var msg = getErrorMsgByLine(34, htmlErrors);
+			var msg = getErrorMsgByLine(35, htmlErrors);
 
 			assert.startsWith(msg, 'Missing semicolon');
 		}
