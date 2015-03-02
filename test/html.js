@@ -126,6 +126,21 @@ describe('Formatter.HTML', function () {
 		}
 	);
 
+	it(
+		'should recognize calls to Liferay.Language.get inside of JSPs',
+		function () {
+			assert.startsWith(getErrorMsgByLine(37, htmlErrors), 'Do not use Liferay.Language.get() outside of .js files:');
+		}
+	);
+
+	it(
+		'should recognize calls to Liferay.provide inside of async script blocks',
+		function () {
+			assert.startsWith(getErrorMsgByLine(39, htmlErrors), 'You can\'t have a Liferay.provide call in a script taglib that has a "use" attribute');
+		}
+	);
+
+
 	// Private methods
 
 	var privHTMLFormatter = new Formatter.HTML(testFilePath, htmlLogger);
