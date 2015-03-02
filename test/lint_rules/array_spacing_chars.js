@@ -9,7 +9,7 @@ var eslintTester = new ESLintTester(linter);
 var STR_ERROR = 'Array items should be separated by exactly one space:';
 
 eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/rules/' + path.basename(__filename)),
+	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
 			'[1, 2, 3]',

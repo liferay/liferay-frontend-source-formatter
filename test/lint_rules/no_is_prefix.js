@@ -9,7 +9,7 @@ var eslintTester = new ESLintTester(linter);
 var STR_ERROR = 'Variable/property names should not start with is*: ';
 
 eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/rules/' + path.basename(__filename)),
+	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
 			'var isString = A.Lang.isString;',

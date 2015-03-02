@@ -7,19 +7,16 @@ var ESLintTester = require('eslint-tester');
 var eslintTester = new ESLintTester(linter);
 
 eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/rules/' + path.basename(__filename)),
+	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
-			'_PN_foo()',
-			'_PN_()',
-			'_PN_.foo',
-			'var a = _PN_;',
+			'try{}catch(e){}',
 		],
 
 		invalid: [
 			{
-				code: 'var a = b;',
-				errors: [ { message: '\'b\' is not defined.' } ]
+				code: 'try{}catch(err){}',
+				errors: [ { message: 'Catch statement param should be "e", not "err"' } ]
 			}
 		]
 	}

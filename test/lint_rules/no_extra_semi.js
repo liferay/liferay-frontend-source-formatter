@@ -7,17 +7,14 @@ var ESLintTester = require('eslint-tester');
 var eslintTester = new ESLintTester(linter);
 
 eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/rules/' + path.basename(__filename)),
+	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
-			'try{}catch(e){}',
+			';(function(){});',
 		],
 
 		invalid: [
-			{
-				code: 'try{}catch(err){}',
-				errors: [ { message: 'Catch statement param should be "e", not "err"' } ]
-			}
+			{ code: ';;(function(){});', errors: [{ message: 'Unnecessary semicolon.'}] }
 		]
 	}
 );

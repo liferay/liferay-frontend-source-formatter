@@ -20,7 +20,7 @@ base.A.Object.each(
 );
 
 eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/rules/' + path.basename(__filename)),
+	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: validRules,
 

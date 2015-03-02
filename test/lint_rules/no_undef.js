@@ -7,16 +7,19 @@ var ESLintTester = require('eslint-tester');
 var eslintTester = new ESLintTester(linter);
 
 eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/rules/' + path.basename(__filename)),
+	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
-			'try{}catch(e){\n}',
+			'_PN_foo()',
+			'_PN_()',
+			'_PN_.foo',
+			'var a = _PN_;',
 		],
 
 		invalid: [
 			{
-				code: 'try{}catch(e){}',
-				errors: [ { message: 'Empty catch statement should be closed on line 2' } ]
+				code: 'var a = b;',
+				errors: [ { message: '\'b\' is not defined.' } ]
 			}
 		]
 	}

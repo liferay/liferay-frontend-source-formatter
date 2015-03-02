@@ -7,7 +7,7 @@ var ESLintTester = require('eslint-tester');
 var eslintTester = new ESLintTester(linter);
 
 eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/rules/' + path.basename(__filename)),
+	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
 			'[1, 2, 3]',

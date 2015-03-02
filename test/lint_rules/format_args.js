@@ -40,7 +40,7 @@ alert(function() {alert('foo');}, 1);
 alert({x: 1}, 1);
 */
 eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/rules/' + path.basename(__filename)),
+	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
 			'alert();',
