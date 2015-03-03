@@ -133,6 +133,31 @@ describe('Formatter.JS', function () {
 	);
 
 
+	it(
+		'should handle errors during JS parsing',
+		function () {
+			var jsLoggerParse = new Logger.Logger();
+			var jsFormatterParse = new Formatter.JS(testFilePath, jsLoggerParse);
+			var processed = false;
+
+			jsFormatterParse.processor.VariableDeclaration = function(node, parent) {
+				(function(){
+					null.indexOf('foo');
+				}());
+			};
+
+			jsFormatterParse._processSyntax('var x = 1;');
+
+			var parseErrors = jsLoggerParse.getErrors(testFilePath);
+
+			assert.equal(parseErrors.length, 1);
+			var parseError = parseErrors[0];
+			assert.equal(parseError.msg, 'Could not parse JavaScript: Cannot call method \'indexOf\' of null');
+			assert.equal(parseError.line, 'n/a');
+		}
+	);
+
+
 });
 
 describe('Formatter.JS Node', function () {
