@@ -1,0 +1,2 @@
+exports.check = function(config) {
+};
