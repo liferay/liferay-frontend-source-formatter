@@ -87,6 +87,18 @@ describe('Formatter Base', function () {
 		}
 	);
 
+	it(
+		'should register an empty file path as <input>',
+		function() {
+			var msg;
+			var expectedMsg = 'init was called';
+
+			var customFormatter = new Formatter('');
+
+			assert.equal(customFormatter.file, '<input>');
+		}
+	);
+
 });
 
 describe('Formatter.create', function () {
