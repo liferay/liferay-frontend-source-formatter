@@ -125,7 +125,7 @@ describe('Formatter.JS', function () {
 			jsFormatterParseVerbose.flags.verbose = true;
 			jsFormatterParseVerbose._processSyntax('var x = ;');
 
-			var verboseDetails = jsLoggerParseVerbose.verboseDetails;
+			var verboseDetails = jsLoggerParseVerbose.verboseDetails[testFilePath];
 
 			assert.isString(verboseDetails);
 			assert.isAbove(verboseDetails.length, 0);
