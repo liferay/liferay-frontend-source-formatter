@@ -224,6 +224,21 @@ describe('Formatter.CSS', function () {
 	);
 
 	it(
+		'should detect property sort',
+		function(done) {
+			testFile(
+				getFilePath('property_sort.css'),
+				function(errors, contents, newContents) {
+					assert.equal(errors.length, 1);
+
+					assert.startsWith(errors[0].msg, 'Sort');
+				},
+				done
+			);
+		}
+	);
+
+	it(
 		'should detect trailing commas in selectors',
 		function(done) {
 			testFile(
@@ -238,18 +253,4 @@ describe('Formatter.CSS', function () {
 		}
 	);
 
-	it(
-		'should detect trailing commas in selectors',
-		function(done) {
-			testFile(
-				getFilePath('trailing_newlines.css'),
-				function(errors, contents, newContents) {
-					assert.equal(errors.length, 1);
-
-					assert.startsWith(errors[0].msg, 'Needless new line');
-				},
-				done
-			);
-		}
-	);
 });
