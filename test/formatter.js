@@ -1,14 +1,9 @@
-var path = require('path');
-var fs = require('fs');
-// var assert = require('assert');
 var chai = require('chai');
+
 chai.use(require('chai-string'));
-// var expect = require('chai').expect;
-var _ = require('lodash');
 
 var assert = chai.assert;
 
-var File = require('../lib/file');
 var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
 
@@ -69,7 +64,7 @@ describe('Formatter Base', function () {
 			var msg;
 			var expectedMsg = 'init was called';
 
-			var customFormatter = Formatter.create(
+			var CustomFormatter = Formatter.create(
 				{
 					id: 'initCustomFormatter',
 					extensions: '*.txt',
@@ -81,7 +76,7 @@ describe('Formatter Base', function () {
 				}
 			);
 
-			new customFormatter('path/to/file');
+			new CustomFormatter('path/to/file');
 
 			assert.equal(msg, expectedMsg);
 		}
@@ -90,9 +85,6 @@ describe('Formatter Base', function () {
 	it(
 		'should register an empty file path as <input>',
 		function() {
-			var msg;
-			var expectedMsg = 'init was called';
-
 			var customFormatter = new Formatter('');
 
 			assert.equal(customFormatter.file, '<input>');
@@ -209,17 +201,17 @@ describe('Formatter.create', function () {
 			var msg;
 			var expectedMsg = 'constructor was called';
 
-			var fooCustom1 = Formatter.create(
+			var FooCustom1 = Formatter.create(
 				{
 					constructor: function() {
 						msg = expectedMsg;
 					},
 					id: 'FooCustom1',
-					extensions: '*.js',
+					extensions: '*.js'
 				}
 			);
 
-			new fooCustom1();
+			new FooCustom1();
 
 			assert.equal(msg, expectedMsg);
 		}

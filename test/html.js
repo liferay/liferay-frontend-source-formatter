@@ -1,14 +1,14 @@
 var path = require('path');
 var fs = require('fs');
-// var assert = require('assert');
+
 var chai = require('chai');
+
 chai.use(require('chai-string'));
-// var expect = require('chai').expect;
+
 var _ = require('lodash');
 
 var assert = chai.assert;
 
-var File = require('../lib/file');
 var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
 
@@ -27,10 +27,6 @@ describe('Formatter.HTML', function () {
 	htmlFormatter.format(source);
 
 	var htmlErrors = fileErrors[testFilePath];
-// console.log(htmlErrors);
-	// it('has the correct number of errors', function () {
-	// 	assert.equal(htmlLogger.testStats.failures, 2);
-	// });
 
 	var getErrorMsgByLine = function(lineNum, errors) {
 		return _.result(_.findWhere(errors, {line: lineNum}), 'msg') || '';
@@ -318,5 +314,4 @@ describe('Formatter.HTML', function () {
 			assert.equal(contents, '\nvoid 0;\n/* scriptlet block \nvoid 0; */\nvoid 0;\n');
 		}
 	);
-
 });

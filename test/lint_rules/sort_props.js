@@ -15,13 +15,13 @@ eslintTester.addRuleTest(
 			'({ 0: 1, "$xyz": 1, abc: 2 })',
 			'({ 0: 1, "@xyz": 1, abc: 2})',
 			{
-				code: "({initString: 1, initsTriangle: 2})",
+				code: '({initString: 1, initsTriangle: 2})',
 				args: [2, {'casesensitive': true}]
 			},
 			{
-				code: "({initsTriangle: 1, initString: 2})",
+				code: '({initsTriangle: 1, initString: 2})',
 				args: [2, {'casesensitive': false}]
-			},
+			}
 		],
 
 		invalid: [
@@ -44,7 +44,7 @@ eslintTester.addRuleTest(
 			{
 				code: '({_getFoo: 1, _getAbc: 2})',
 				errors: [ { message: 'Sort properties: _getFoo _getAbc' } ]
-			},
+			}
 		]
 	}
 );

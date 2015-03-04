@@ -1,20 +1,13 @@
 var path = require('path');
 var fs = require('fs');
-// var assert = require('assert');
 var chai = require('chai');
+
 chai.use(require('chai-string'));
-// var expect = require('chai').expect;
-var _ = require('lodash');
 
 var assert = chai.assert;
 
-var File = require('../lib/file');
 var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
-
-var re = require('../lib/re');
-
-var sub = require('../lib/base').sub;
 
 describe('Formatter.CSS', function () {
 	'use strict';
@@ -164,8 +157,6 @@ describe('Formatter.CSS', function () {
 					);
 
 					assert.equal(formatErrors.length, errors.length);
-
-					// assert.startsWith(errors[0].msg, 'Needs space between comma-separated values');
 				},
 				done
 			);

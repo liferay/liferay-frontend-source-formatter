@@ -15,7 +15,7 @@ eslintTester.addRuleTest(
 			'({requires: ["a", "b"]})',
 			'({requires: ["a", xyz, "b"]})',
 			'({required: []})',
-			'({requires: 1})',
+			'({requires: 1})'
 		],
 
 		invalid: [

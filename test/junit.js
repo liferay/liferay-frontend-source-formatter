@@ -1,18 +1,15 @@
 var path = require('path');
 var fs = require('fs');
-var chai = require('chai');
-var _ = require('lodash');
 var sinon = require('sinon');
+
+var chai = require('chai');
 
 chai.use(require('chai-string'));
 
 var assert = chai.assert;
 
-var base = require('../lib/base');
 var junit = require('../lib/junit');
 
-var File = require('../lib/file');
-var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
 
 describe(
@@ -21,6 +18,7 @@ describe(
 		'use strict';
 
 		var sandbox;
+
 		beforeEach(function () {
 			sandbox = sinon.sandbox.create();
 		});

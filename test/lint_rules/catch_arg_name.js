@@ -10,7 +10,7 @@ eslintTester.addRuleTest(
 	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
-			'try{}catch(e){}',
+			'try{}catch(e){}'
 		],
 
 		invalid: [

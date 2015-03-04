@@ -1,7 +1,4 @@
-var path = require('path');
-var fs = require('fs');
 var chai = require('chai');
-var _ = require('lodash');
 
 chai.use(require('chai-string'));
 
@@ -82,7 +79,7 @@ describe(
 						logging: {
 							message: 'Found foo: {1}',
 							regex: /foo/
-						},
+						}
 					}
 				};
 
@@ -111,7 +108,7 @@ describe(
 						logging: {
 							message: 'Found foo: {1}',
 							regex: /foo/
-						},
+						}
 					}
 				};
 
@@ -142,7 +139,7 @@ describe(
 								replacer: true,
 								message: 'Found foo: {1}',
 								regex: /foo/
-							},
+							}
 						}
 					}
 				);
@@ -178,7 +175,7 @@ describe(
 								replacer: true,
 								message: 'Found foo: {1}',
 								regex: /foo/
-							},
+							}
 						}
 					}
 				);
@@ -229,7 +226,7 @@ describe(
 							logging: {
 								message: 'Found foo: {1}',
 								regex: /foo/
-							},
+							}
 						}
 					}
 				);

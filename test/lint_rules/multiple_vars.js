@@ -11,7 +11,7 @@ eslintTester.addRuleTest(
 	{
 		valid: [
 			'var x = 1;\nvar y = 2;',
-			'var x;\nvar y;',
+			'var x;\nvar y;'
 		],
 
 		invalid: [
@@ -22,7 +22,7 @@ eslintTester.addRuleTest(
 			{
 				code: 'var x, y;',
 				errors: [ { message: 'Each variable should have it\'s own var statement: x, y' } ]
-			},
+			}
 		]
 	}
 );

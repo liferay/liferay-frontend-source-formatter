@@ -19,7 +19,7 @@ eslintTester.addRuleTest(
 			'var o = {isString: Lang.isString}',
 			'var o = {isFoo: Lang.emptyFn}',
 			'var o = {isFoo: Lang.emptyFnTrue}',
-			'var o = {isFoo: Lang.emptyFnFalse}',
+			'var o = {isFoo: Lang.emptyFnFalse}'
 		],
 
 		invalid: [
@@ -46,7 +46,7 @@ eslintTester.addRuleTest(
 			{
 				code: 'var x = function(isString){}',
 				errors: [ { message: STR_ERROR + 'isString' } ]
-			},
+			}
 		]
 	}
 );

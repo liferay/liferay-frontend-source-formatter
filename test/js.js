@@ -1,18 +1,16 @@
 var path = require('path');
 var fs = require('fs');
-// var assert = require('assert');
+
 var chai = require('chai');
+
 chai.use(require('chai-string'));
-// var expect = require('chai').expect;
+
 var _ = require('lodash');
 
 var assert = chai.assert;
 
-var File = require('../lib/file');
 var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
-
-var sub = require('../lib/base').sub;
 
 describe('Formatter.JS', function () {
 	'use strict';
@@ -22,7 +20,6 @@ describe('Formatter.JS', function () {
 	var jsLogger = new Logger.Logger();
 	var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
 	var source = fs.readFileSync(testFilePath, 'utf-8');
-	var fileErrors = jsLogger.fileErrors;
 
 	jsFormatter.format(source, false);
 
@@ -138,7 +135,6 @@ describe('Formatter.JS', function () {
 		function () {
 			var jsLoggerParse = new Logger.Logger();
 			var jsFormatterParse = new Formatter.JS(testFilePath, jsLoggerParse);
-			var processed = false;
 
 			jsFormatterParse.processor.VariableDeclaration = function(node, parent) {
 				(function(){
@@ -168,7 +164,6 @@ describe('Formatter.JS Node', function () {
 	var jsLogger = new Logger.Logger();
 	var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
 	var source = fs.readFileSync(testFilePath, 'utf-8');
-	var fileErrors = jsLogger.fileErrors;
 
 	jsFormatter.format(source, false);
 
@@ -197,7 +192,6 @@ describe('Formatter.JS Lint', function () {
 	var jsLogger = new Logger.Logger();
 	var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
 	var source = fs.readFileSync(testFilePath, 'utf-8');
-	var fileErrors = jsLogger.fileErrors;
 
 	jsFormatter.format(source, true);
 
@@ -231,6 +225,4 @@ describe('Formatter.JS Lint', function () {
 			assert.isTrue(hasLintError);
 		}
 	);
-
-
 });

@@ -1,5 +1,4 @@
 var path = require('path');
-var re = require('../../lib/re.js');
 var base = require('../../lib/base.js');
 
 var lint = require('../../lib/lint');

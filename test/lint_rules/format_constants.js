@@ -10,7 +10,7 @@ eslintTester.addRuleTest(
 	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
-			'var FOO1 = \'\';\n\nvar FOO2 = \'\';',
+			'var FOO1 = \'\';\n\nvar FOO2 = \'\';'
 		],
 
 		invalid: [

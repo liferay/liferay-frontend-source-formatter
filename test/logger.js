@@ -5,7 +5,6 @@ chai.use(require('chai-string'));
 
 var assert = chai.assert;
 
-var File = require('../lib/file');
 var Logger = require('../lib/logger');
 
 describe('Logger', function () {

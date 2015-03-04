@@ -1,7 +1,5 @@
-var path = require('path');
-var fs = require('fs');
-var chai = require('chai');
 var _ = require('lodash');
+var chai = require('chai');
 
 chai.use(require('chai-string'));
 
