@@ -22,7 +22,7 @@
     "eslint": "^0.13.0",
     "falafel": "^0.3.1",
     "glob": "^4.4.1",
-    "handlebars": "^2.0.0",
+    "handlebars": "^3.0.0",
     "lodash": "^3.3.1",
     "minimatch": "^2.0.1",
     "optimist": "^0.6.1",
