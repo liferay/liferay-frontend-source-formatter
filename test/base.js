@@ -1,10 +1,11 @@
 var chai = require('chai');
 
+var base = require('../lib/base');
+
 chai.use(require('chai-string'));
 
 var assert = chai.assert;
 
-var base = require('../lib/base');
 
 describe(
 	'base',

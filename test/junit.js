@@ -1,16 +1,14 @@
-var path = require('path');
+var chai = require('chai');
 var fs = require('fs');
+var path = require('path');
 var sinon = require('sinon');
 
-var chai = require('chai');
+var junit = require('../lib/junit');
+var Logger = require('../lib/logger');
 
 chai.use(require('chai-string'));
 
 var assert = chai.assert;
-
-var junit = require('../lib/junit');
-
-var Logger = require('../lib/logger');
 
 describe(
 	'JUnit reporting',
@@ -52,7 +50,7 @@ describe(
 					callback(null, content);
 				});
 
-				var done = sandbox.spy();
+				var cb = sandbox.spy();
 
 				var reporter = new junit(
 					{
@@ -60,12 +58,12 @@ describe(
 					}
 				);
 
-				reporter.generate(done);
+				reporter.generate(cb);
 
 				assert.isTrue(fs.writeFile.called, 'writeFile should have been called');
-				assert.isTrue(done.called, 'done should have been executed');
+				assert.isTrue(cb.called, 'cb should have been executed');
 
-				assert.equal(done.args[0][1], fs.readFileSync(path.join(__dirname, 'fixture', 'result.xml'), 'utf-8'), 'The result should match what we expect');
+				assert.equal(cb.args[0][1], fs.readFileSync(path.join(__dirname, 'fixture', 'result.xml'), 'utf-8'), 'The result should match what we expect');
 			}
 		);
 
@@ -76,9 +74,7 @@ describe(
 
 				Logger.log(1, 'Content is not valid', 'foo.js');
 
-				sandbox.stub(fs, 'readFile', function(path, encoding, callback) {
-					callback(null, '');
-				});
+				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
 
 				sandbox.stub(fs, 'writeFile', function(path, content, callback) {
 					callback(null, content);

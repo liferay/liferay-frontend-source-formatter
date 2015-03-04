@@ -1,14 +1,13 @@
-var path = require('path');
 var chai = require('chai');
+var path = require('path');
+
+var Logger = require('../lib/logger');
 
 chai.use(require('chai-string'));
 
 var assert = chai.assert;
 
-var Logger = require('../lib/logger');
-
 describe('Logger', function () {
-
 	it(
 		'should render file names properly',
 		function() {
@@ -114,7 +113,7 @@ describe('Logger', function () {
 
 			var loggedErrors = logger.getErrors('foo.js');
 
-			assert.equal(loggedErrors.length, 1);
+			assert.lengthOf(loggedErrors, 1);
 
 			var loggedError = loggedErrors[0];
 
@@ -126,7 +125,7 @@ describe('Logger', function () {
 
 			var unLoggedErrors = logger.getErrors('foo.txt');
 
-			assert.equal(unLoggedErrors.length, 0);
+			assert.lengthOf(unLoggedErrors, 0);
 
 			var fileErrors = logger.getErrors();
 

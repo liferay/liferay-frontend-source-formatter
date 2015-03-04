@@ -1,13 +1,12 @@
-var path = require('path');
 var chai = require('chai');
+var path = require('path');
+
+var sub = require('../lib/base').sub;
+var File = require('../lib/file');
 
 chai.use(require('chai-string'));
 
 var assert = chai.assert;
-
-var sub = require('../lib/base').sub;
-
-var File = require('../lib/file');
 
 describe('File', function () {
 	'use strict';

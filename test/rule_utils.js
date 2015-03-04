@@ -1,13 +1,13 @@
+var _ = require('lodash');
 var chai = require('chai');
+var falafel = require('falafel');
+var sinon = require('sinon');
+
+var ruleUtils = require('../lib/rule_utils');
 
 chai.use(require('chai-string'));
 
-var _ = require('lodash');
-
 var assert = chai.assert;
-
-var ruleUtils = require('../lib/rule_utils');
-var falafel = require('falafel');
 
 var parse = function(contents, cb) {
 	return falafel(
@@ -22,6 +22,16 @@ var parse = function(contents, cb) {
 
 describe('Rule Utils', function () {
 	'use strict';
+
+	var sandbox;
+
+	beforeEach(function () {
+		sandbox = sinon.sandbox.create();
+	});
+
+	afterEach(function () {
+		sandbox.restore();
+	});
 
 	it(
 		'should get constants from node properly',

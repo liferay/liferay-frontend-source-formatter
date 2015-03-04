@@ -1,19 +1,15 @@
-var path = require('path');
-var fs = require('fs');
 var chai = require('chai');
-var _ = require('lodash');
+var fs = require('fs');
+var path = require('path');
 var sinon = require('sinon');
+
+var cli = require('../lib/cli');
+var File = require('../lib/file');
+var Logger = require('../lib/logger');
 
 chai.use(require('chai-string'));
 
 var assert = chai.assert;
-
-var base = require('../lib/base');
-var cli = require('../lib/cli');
-
-var File = require('../lib/file');
-var Formatter = require('../lib/formatter');
-var Logger = require('../lib/logger');
 
 describe(
 	'CLI',
@@ -23,10 +19,19 @@ describe(
 		var MAP_CONTENT = {
 			'foo.js': ['var x = function(){\n};', 'var x = function() {\n};'],
 			'bar.html': ['<div class="foo bar"></div>', '<div class="bar foo"></div>'],
-			'baz.css': ['background: #FFFFFF', 'background: #FFF'],
+			'baz.css': ['background: #FFFFFF', 'background: #FFF']
+		};
+
+		var invalidContentStub = function(path, encoding, callback) {
+			callback(null, MAP_CONTENT[path][0]);
+		};
+
+		var validContentStub = function(path, contents, callback) {
+			callback(null, MAP_CONTENT[path][1]);
 		};
 
 		var sandbox;
+
 		beforeEach(function () {
 			sandbox = sinon.sandbox.create();
 		});
@@ -39,9 +44,7 @@ describe(
 			'should read files correctly',
 			function() {
 
-				sandbox.stub(fs, 'readFile', function (path, encoding, callback) {
-					callback(null, MAP_CONTENT[path][0]);
-				});
+				sandbox.stub(fs, 'readFile', invalidContentStub);
 
 				var cliInstance = new cli.CLI(
 					{
@@ -65,13 +68,8 @@ describe(
 			'should write files correctly',
 			function() {
 
-				sandbox.stub(fs, 'readFile', function (path, encoding, callback) {
-					callback(null, MAP_CONTENT[path][0]);
-				});
-
-				sandbox.stub(fs, 'writeFile', function (path, contents, callback) {
-					callback(null, MAP_CONTENT[path][1]);
-				});
+				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'writeFile', validContentStub);
 
 				var cliInstance = new cli.CLI(
 					{
@@ -106,13 +104,8 @@ describe(
 		it(
 			'should handle file write errors',
 			function() {
-				sandbox.stub(fs, 'readFile', function (path, encoding, callback) {
-					callback(null, MAP_CONTENT[path][0]);
-				});
-
-				sandbox.stub(fs, 'writeFile', function (path, contents, callback) {
-					callback(new Error('Something went wrong'));
-				});
+				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'writeFile').callsArgWith(2, new Error('Something went wrong'));
 
 				sandbox.stub(File, 'handleFileWriteError');
 
@@ -141,10 +134,7 @@ describe(
 		it(
 			'should ignore unrecognized files',
 			function() {
-
-				sandbox.stub(fs, 'readFile', function (path, encoding, callback) {
-					callback(null, '');
-				});
+				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
 
 				var processFileData = sinon.spy();
 
@@ -167,11 +157,7 @@ describe(
 		it(
 			'should handle metadata checking',
 			function() {
-
-				sandbox.stub(fs, 'readFile', function (path, encoding, callback) {
-					callback(null, '');
-				});
-
+				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
 				sandbox.stub(fs, 'existsSync').returns(true);
 
 				var cliInstance = new cli.CLI(
@@ -191,9 +177,7 @@ describe(
 
 				var metaChecker = require(metaCheckerPath);
 
-				var checkMeta = sandbox.stub(metaChecker, 'check', function(config) {
-					config.done();
-				});
+				var checkMeta = sandbox.stub(metaChecker, 'check').yieldsTo('done');
 
 				cliInstance.init();
 
@@ -223,9 +207,7 @@ describe(
 		it(
 			'should log results properly',
 			function() {
-				sandbox.stub(fs, 'readFile', function (path, encoding, callback) {
-					callback(null, MAP_CONTENT[path][1]);
-				});
+				sandbox.stub(fs, 'readFile', validContentStub);
 
 				var log = sandbox.spy();
 
@@ -252,15 +234,11 @@ describe(
 		it(
 			'should log verbose details properly',
 			function() {
-				sandbox.stub(fs, 'readFile', function (path, encoding, callback) {
-					callback(null, 'var x = ;');
-				});
+				sandbox.stub(fs, 'readFile').callsArgWith(2, null, 'var x = ;');
 
 				var log = sandbox.spy();
 
 				var logger = new Logger.Logger();
-
-				// logger.verboseDetails['foo.js'] =
 
 				var cliInstance = new cli.CLI(
 					{
@@ -282,9 +260,13 @@ describe(
 		it(
 			'should log filenames properly',
 			function() {
-				sandbox.stub(fs, 'readFile', function (filePath, encoding, callback) {
-					callback(null, MAP_CONTENT[path.basename(filePath)][0]);
-				});
+				sandbox.stub(
+					fs,
+					'readFile',
+					function(filePath, encoding, callback) {
+						callback(null, MAP_CONTENT[path.basename(filePath)][0]);
+					}
+				);
 
 				var log = sandbox.spy();
 
@@ -344,11 +326,7 @@ describe(
 		it(
 			'should log missing files properly',
 			function() {
-				sandbox.stub(fs, 'readFile', function (path, encoding, callback) {
-					var err = new Error();
-
-					callback(err);
-				});
+				sandbox.stub(fs, 'readFile').callsArgWith(2, new Error());
 
 				sandbox.stub(File, 'handleFileReadError');
 
@@ -392,17 +370,19 @@ describe(
 		it(
 			'should open files properly',
 			function() {
-				sandbox.stub(fs, 'readFile', function (path, encoding, callback) {
-					callback(null, MAP_CONTENT[path][0]);
-				});
+				sandbox.stub(fs, 'readFile', invalidContentStub);
 
 				var cliModule = require('cli');
 
-				sandbox.stub(cliModule, 'exec', function(command, callback) {
-					if (callback) {
-						callback(['sublime']);
+				sandbox.stub(
+					cliModule,
+					'exec',
+					function(command, callback) {
+						if (callback) {
+							callback(['sublime']);
+						}
 					}
-				})
+				);
 
 				var log = sandbox.spy();
 
@@ -446,9 +426,7 @@ describe(
 		it(
 			'should call junit generate',
 			function() {
-				sandbox.stub(fs, 'readFile', function (path, encoding, callback) {
-					callback(null, MAP_CONTENT[path][0]);
-				});
+				sandbox.stub(fs, 'readFile', invalidContentStub);
 
 				var junitReporter = require('../lib/junit');
 

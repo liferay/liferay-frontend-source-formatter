@@ -1,18 +1,15 @@
-var path = require('path');
-var fs = require('fs');
-
-var chai = require('chai');
-
-chai.use(require('chai-string'));
-
 var _ = require('lodash');
-
-var assert = chai.assert;
+var chai = require('chai');
+var fs = require('fs');
+var path = require('path');
 
 var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
-
 var sub = require('../lib/base').sub;
+
+chai.use(require('chai-string'));
+
+var assert = chai.assert;
 
 describe('Formatter.HTML', function () {
 	'use strict';
@@ -247,7 +244,6 @@ describe('Formatter.HTML', function () {
 		'should sort attribute values',
 		function() {
 			var needsSortObj = {
-				// attrName: [attrValue, expectedAttrValue]
 				'class': ['foo bar', 'bar foo'],
 				style: ['color: #F00; border: 1px solid;', 'border: 1px solid; color: #F00;']
 			};

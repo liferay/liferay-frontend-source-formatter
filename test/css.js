@@ -1,13 +1,13 @@
-var path = require('path');
-var fs = require('fs');
 var chai = require('chai');
+var fs = require('fs');
+var path = require('path');
+
+var Formatter = require('../lib/formatter');
+var Logger = require('../lib/logger');
 
 chai.use(require('chai-string'));
 
 var assert = chai.assert;
-
-var Formatter = require('../lib/formatter');
-var Logger = require('../lib/logger');
 
 describe('Formatter.CSS', function () {
 	'use strict';

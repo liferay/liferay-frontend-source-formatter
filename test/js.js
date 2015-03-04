@@ -1,16 +1,18 @@
-var path = require('path');
-var fs = require('fs');
-
-var chai = require('chai');
-
-chai.use(require('chai-string'));
-
 var _ = require('lodash');
-
-var assert = chai.assert;
+var chai = require('chai');
+var fs = require('fs');
+var path = require('path');
 
 var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
+
+chai.use(require('chai-string'));
+
+var assert = chai.assert;
+
+var getErrorMsgByLine = function(lineNum, errors) {
+	return _.result(_.findWhere(errors, {line: lineNum}), 'msg') || '';
+};
 
 describe('Formatter.JS', function () {
 	'use strict';
@@ -24,10 +26,6 @@ describe('Formatter.JS', function () {
 	jsFormatter.format(source, false);
 
 	var jsErrors = jsLogger.getErrors(testFilePath);
-
-	var getErrorMsgByLine = function(lineNum, errors) {
-		return _.result(_.findWhere(errors, {line: lineNum}), 'msg') || '';
-	};
 
 	it(
 		'should ignore values in comments',
@@ -169,10 +167,6 @@ describe('Formatter.JS Node', function () {
 
 	var jsErrors = jsLogger.getErrors(testFilePath);
 
-	var getErrorMsgByLine = function(lineNum, errors) {
-		return _.result(_.findWhere(errors, {line: lineNum}), 'msg') || '';
-	};
-
 	it(
 		'should not recognize debugging statements',
 		function () {
@@ -196,7 +190,6 @@ describe('Formatter.JS Lint', function () {
 	jsFormatter.format(source, true);
 
 	var jsErrors = jsLogger.getErrors(testFilePath);
-
 
 	it(
 		'should find at least one lint error',

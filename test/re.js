@@ -1,4 +1,6 @@
+var _ = require('lodash');
 var chai = require('chai');
+var sinon = require('sinon');
 
 chai.use(require('chai-string'));
 
@@ -11,21 +13,25 @@ describe(
 
 		var re = require('../lib/re');
 
+		var sandbox;
+
+		beforeEach(function () {
+			sandbox = sinon.sandbox.create();
+		});
+
+		afterEach(function () {
+			sandbox.restore();
+		});
+
 		it(
 			'should find extra newlines at beginning',
 			function() {
 				var startingNewLine = ['', 'foo'];
 
-				var results = [];
-
-				var logger = function(line, msg) {
-					return results.push(line + msg);
-				};
-
 				startingNewLine.forEach(
 					function(item, index, collection) {
 						var result = re.hasExtraNewLines(item, index, collection);
-						var loggerResult = re.hasExtraNewLines(item, index, collection, logger);
+						var loggerResult = re.hasExtraNewLines(item, index, collection, _.noop);
 
 						if (index === 0) {
 							assert.isTrue(result);
@@ -45,11 +51,7 @@ describe(
 			function() {
 				var endingNewLine = ['foo', '', ''];
 
-				var results = [];
-
-				var logger = function(line, msg) {
-					return results.push(line + msg);
-				};
+				var logger = sandbox.spy();
 
 				endingNewLine.forEach(
 					function(item, index, collection) {
@@ -67,7 +69,7 @@ describe(
 					}
 				);
 
-				assert.isAbove(results.length, 0);
+				assert.isTrue(logger.called);
 			}
 		);
 
@@ -85,17 +87,15 @@ describe(
 
 				var ruleInstance = new re.re(rulesObject);
 
-				var results = [];
+				var logger = sandbox.spy();
 
 				var item = ruleInstance.iterateRules('ruleTest', 'test foo test', {
 					item: 'test foo test',
 					file: 'foo.js',
-					logger: function(lineNum, msg){
-						results.push(lineNum + msg);
-					}
+					logger: logger
 				});
 
-				assert.isAbove(results.length, 0);
+				assert.isTrue(logger.called);
 				assert.equal(item, 'test foo test');
 			}
 		);
@@ -114,17 +114,15 @@ describe(
 
 				var ruleInstance = new re.re(rulesObject);
 
-				var results = [];
+				var logger = sandbox.spy();
 
 				var item = ruleInstance.iterateRules(rulesObject.ruleTest, 'test foo test', {
 					item: 'test foo test',
 					file: 'foo.js',
-					logger: function(lineNum, msg){
-						results.push(lineNum + msg);
-					}
+					logger: logger
 				});
 
-				assert.isAbove(results.length, 0);
+				assert.isTrue(logger.called);
 				assert.equal(item, 'test foo test');
 			}
 		);
@@ -147,20 +145,18 @@ describe(
 				var results = [];
 				var resultsFormatter = [];
 
+				var formatItem = sandbox.stub().returns('foo');
+				var logger = sandbox.spy();
+
 				var item = ruleInstance.iterateRules('ruleTest', 'test foo test', {
 					item: 'test foo test',
 					file: 'foo.js',
-					formatItem: function(item, context) {
-						resultsFormatter.push(item);
-						return 'foo';
-					},
-					logger: function(lineNum, msg) {
-						results.push(lineNum + msg);
-					}
+					formatItem: formatItem,
+					logger: logger
 				});
 
-				assert.equal(results.length, 1);
-				assert.equal(resultsFormatter.length, 1);
+				assert.isTrue(logger.calledOnce);
+				assert.isTrue(formatItem.calledOnce);
 				assert.equal(item, 'foo');
 			}
 		);
@@ -180,18 +176,16 @@ describe(
 					}
 				);
 
-				var results = [];
+				var logger = sandbox.spy();
 
 				var item = ruleInstance.iterateRules('ruleTest', ' test foo test ', {
 					item: ' test foo test ',
 					file: 'foo.js',
 					formatItem: false,
-					logger: function(lineNum, msg) {
-						results.push(lineNum + msg);
-					}
+					logger: logger
 				});
 
-				assert.equal(results.length, 1);
+				assert.isTrue(logger.calledOnce);
 				assert.equal(item, ' test foo test ');
 			}
 		);
@@ -201,17 +195,15 @@ describe(
 			function() {
 				var ruleInstance = new re.re({});
 
-				var results = [];
+				var logger = sandbox.spy();
 
 				var item = ruleInstance.iterateRules('nonExistantRules', 'test foo test', {
 					item: 'test foo test',
 					file: 'foo.js',
-					logger: function(lineNum, msg){
-						results.push(lineNum + msg);
-					}
+					logger: logger
 				});
 
-				assert.equal(results.length, 0);
+				assert.isTrue(logger.notCalled);
 				assert.equal(item, 'test foo test');
 			}
 		);
@@ -231,19 +223,17 @@ describe(
 					}
 				);
 
-				var results = [];
+				var logger = sandbox.spy();
 
 				var itemString = '	test foo test';
 
 				var item = ruleInstance.iterateRules('ignoredRuleTest', itemString, {
 					item: itemString,
 					file: 'foo.js',
-					logger: function(lineNum, msg){
-						results.push(lineNum + msg);
-					}
+					logger: logger
 				});
 
-				assert.equal(results.length, 0);
+				assert.isTrue(logger.notCalled);
 				assert.equal(item, itemString);
 			}
 		);
