@@ -30,15 +30,15 @@
     "yui": "^3.17.0-rc-1"
   },
   "devDependencies": {
-    "chai": "^2.0.0",
+    "chai": "^2.1.1",
     "chai-string": "^1.1.1",
     "eslint-tester": "^0.6.0",
     "gulp": "^3.8.11",
     "gulp-complexity": "^0.3.0",
     "gulp-istanbul": "^0.6.0",
-    "gulp-load-plugins": "^0.8.0",
+    "gulp-load-plugins": "^0.8.1",
     "gulp-mocha": "^2.0.0",
-    "istanbul": "^0.3.5",
+    "istanbul": "^0.3.7",
     "mocha": "^2.1.0",
     "run-sequence": "^1.0.2",
     "sinon": "^1.12.2"
