@@ -21,12 +21,12 @@
     "colors": "^1.0.3",
     "eslint": "^0.13.0",
     "falafel": "^0.3.1",
-    "glob": "^4.3.5",
+    "glob": "^4.4.1",
     "handlebars": "^2.0.0",
-    "lodash": "^3.2.0",
+    "lodash": "^3.3.1",
     "minimatch": "^2.0.1",
     "optimist": "^0.6.1",
-    "update-notifier": "^0.3.0",
+    "update-notifier": "^0.3.1",
     "yui": "^3.17.0-rc-1"
   },
   "devDependencies": {
