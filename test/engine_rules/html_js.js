@@ -12,7 +12,7 @@ HTML rules are covered by html.js
 
 describe(
 	'HTML Rule Engine Tests',
-	function () {
+	function() {
 		'use strict';
 
 		it(
@@ -26,7 +26,7 @@ describe(
 */
 describe(
 	'HTML JS Rule Engine Tests',
-	function () {
+	function() {
 		'use strict';
 
 		it(
@@ -57,8 +57,8 @@ describe(
 				var item = 'Liferay.provide(window, \'foo\', function() {}, []);';
 
 				var context = {
-					item: item,
-					asyncAUIScript: true
+					asyncAUIScript: true,
+					item: item
 				};
 
 				var result = re.testLine(rule, item, context);

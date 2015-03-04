@@ -9,7 +9,7 @@ var assert = chai.assert;
 
 describe(
 	'JS Rule Engine Tests',
-	function () {
+	function() {
 		'use strict';
 
 		it(

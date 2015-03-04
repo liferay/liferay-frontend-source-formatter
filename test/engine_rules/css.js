@@ -8,7 +8,7 @@ var assert = chai.assert;
 
 describe(
 	'CSS Rule Engine Tests',
-	function () {
+	function() {
 		'use strict';
 
 		it(
@@ -222,7 +222,6 @@ describe(
 			}
 		);
 
-
 		it(
 			'should detect and replace trailing commas in selector',
 			function() {
@@ -244,7 +243,6 @@ describe(
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
-
 
 		it(
 			'should detect and replace invalid border reset',
@@ -325,6 +323,5 @@ describe(
 				);
 			}
 		);
-
 	}
 );

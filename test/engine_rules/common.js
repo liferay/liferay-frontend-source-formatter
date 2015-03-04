@@ -9,7 +9,7 @@ var assert = chai.assert;
 
 describe(
 	'Common Rule Engine Tests',
-	function () {
+	function() {
 		'use strict';
 
 		it(
@@ -18,10 +18,10 @@ describe(
 				var rule = re.common.mixedSpaces;
 
 				var tests = {
+					'	 ': '	',
 					'	 	': '		',
-					'	    ': '		',
 					'	  ': '		',
-					'	 ': '	'
+					'	    ': '		'
 				};
 
 				_.forEach(
