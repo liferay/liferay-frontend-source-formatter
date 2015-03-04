@@ -24,21 +24,21 @@
 
 	<!-- Script tags -->
 	<script type="text">
-		var test = true;
+		var testVar = true;
 	</script>
 
 	<aui:script>
-		var test = true;
+		var testVar = true;
 	</aui:script>
 
 	<aui:script use="aui-base,event,node">
-		var test = true
+		var testVar = true
 
 		Liferay.Language.get('foo');
 
 		Liferay.provide(
 			window,
-			'test',
+			'testFn',
 			function() {
 				var foo = false;
 			}
