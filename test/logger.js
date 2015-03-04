@@ -7,209 +7,216 @@ chai.use(require('chai-string'));
 
 var assert = chai.assert;
 
-describe('Logger', function () {
-	it(
-		'should render file names properly',
-		function() {
-			var logger = new Logger.Logger();
+describe(
+	'Logger',
+	function() {
+		var MAP_RULE_PROPS = {
+			ruleId: 'rule-name'
+		};
 
-			var out = logger.renderFileNames('foo.js');
+		it(
+			'should render file names properly',
+			function() {
+				var logger = new Logger.Logger();
 
-			assert.equal(out, '');
+				var out = logger.renderFileNames('foo.js');
 
-			logger.log(1, 'Has error', 'foo.js', 'error', {ruleId: 'rule-name'});
+				assert.equal(out, '');
 
-			out = logger.renderFileNames('foo.js');
+				logger.log(1, 'Has error', 'foo.js', 'error', MAP_RULE_PROPS);
 
-			assert.equal(out, 'foo.js');
+				out = logger.renderFileNames('foo.js');
 
-			out = logger.renderFileNames('foo.js');
+				assert.equal(out, 'foo.js');
 
-			assert.equal(out, 'foo.js');
+				out = logger.renderFileNames('foo.js');
 
-			out = logger.renderFileNames(
-				'foo.js',
-				{
-					relative: __dirname
-				}
-			);
+				assert.equal(out, 'foo.js');
 
-			assert.equal(out, path.relative(__dirname, 'foo.js'));
-		}
-	);
+				out = logger.renderFileNames(
+					'foo.js',
+					{
+						relative: __dirname
+					}
+				);
 
-	it(
-		'should render TPL properly',
-		function() {
-			var logger = new Logger.Logger();
+				assert.equal(out, path.relative(__dirname, 'foo.js'));
+			}
+		);
 
-			logger.log(1, 'Has error', 'foo.js', 'error', {ruleId: 'rule-name'});
+		it(
+			'should render TPL properly',
+			function() {
+				var logger = new Logger.Logger();
 
-			logger.TPL = 'File:{{{file}}}';
+				logger.log(1, 'Has error', 'foo.js', 'error', MAP_RULE_PROPS);
 
-			var out = logger.render('foo.js');
+				logger.TPL = 'File:{{{file}}}';
 
-			assert.equal(out, 'File:foo.js');
-		}
-	);
+				var out = logger.render('foo.js');
 
-	it(
-		'should render TPL_PATH properly',
-		function() {
-			var logger = new Logger.Logger();
+				assert.equal(out, 'File:foo.js');
+			}
+		);
 
-			logger.log(1, 'Has error', 'foo.js', 'error', {ruleId: 'rule-name'});
+		it(
+			'should render TPL_PATH properly',
+			function() {
+				var logger = new Logger.Logger();
 
-			logger.TPL_PATH = path.join(__dirname, 'fixture', 'logger.tpl');
+				logger.log(1, 'Has error', 'foo.js', 'error', MAP_RULE_PROPS);
 
-			var out = logger.render('foo.js');
+				logger.TPL_PATH = path.join(__dirname, 'fixture', 'logger.tpl');
 
-			assert.isAbove(out.length, 0);
+				var out = logger.render('foo.js');
 
-			assert.equal(out, 'File:foo.js\nLine 1:Has error\n');
+				assert.isAbove(out.length, 0);
 
-			out = logger.render(
-				'foo.js',
-				{
-					showLintIds: true
-				}
-			);
+				assert.equal(out, 'File:foo.js\nLine 1:Has error\n');
 
-			assert.equal(out, 'File:foo.js\nLine 1:Has error\nruleId:rule-name');
+				out = logger.render(
+					'foo.js',
+					{
+						showLintIds: true
+					}
+				);
 
-			out = logger.render('noop.js');
+				assert.equal(out, 'File:foo.js\nLine 1:Has error\nruleId:rule-name');
 
-			assert.equal(out, 'File:noop.js\nNo errors\n');
+				out = logger.render('noop.js');
 
-			out = logger.render(
-				'noop.js',
-				{
-					showBanner: true
-				}
-			);
+				assert.equal(out, 'File:noop.js\nNo errors\n');
 
-			assert.equal(out, '');
-		}
-	);
+				out = logger.render(
+					'noop.js',
+					{
+						showBanner: true
+					}
+				);
 
-	it(
-		'should log errors properly',
-		function() {
-			var logger = new Logger.Logger();
+				assert.equal(out, '');
+			}
+		);
 
-			logger.log(1, 'Has error', 'foo.js', 'error', {ruleId: 'rule-name'});
+		it(
+			'should log errors properly',
+			function() {
+				var logger = new Logger.Logger();
 
-			assert.property(logger.fileErrors, 'foo.js');
-			assert.isArray(logger.fileErrors['foo.js']);
-		}
-	);
+				logger.log(1, 'Has error', 'foo.js', 'error', MAP_RULE_PROPS);
 
-	it(
-		'should get logged errors properly',
-		function() {
-			var logger = new Logger.Logger();
+				assert.property(logger.fileErrors, 'foo.js');
+				assert.isArray(logger.fileErrors['foo.js']);
+			}
+		);
 
-			logger.log(1, 'Has error', 'foo.js', 'error', {ruleId: 'rule-name'});
+		it(
+			'should get logged errors properly',
+			function() {
+				var logger = new Logger.Logger();
 
-			var loggedErrors = logger.getErrors('foo.js');
+				logger.log(1, 'Has error', 'foo.js', 'error', MAP_RULE_PROPS);
 
-			assert.lengthOf(loggedErrors, 1);
+				var loggedErrors = logger.getErrors('foo.js');
 
-			var loggedError = loggedErrors[0];
+				assert.lengthOf(loggedErrors, 1);
 
-			assert.isObject(loggedError);
-			assert.equal(loggedError.msg, 'Has error');
-			assert.equal(loggedError.line, 1);
-			assert.equal(loggedError.type, 'error');
-			assert.equal(loggedError.ruleId, 'rule-name');
+				var loggedError = loggedErrors[0];
 
-			var unLoggedErrors = logger.getErrors('foo.txt');
+				assert.isObject(loggedError);
+				assert.equal(loggedError.msg, 'Has error');
+				assert.equal(loggedError.line, 1);
+				assert.equal(loggedError.type, 'error');
+				assert.equal(loggedError.ruleId, 'rule-name');
 
-			assert.lengthOf(unLoggedErrors, 0);
+				var unLoggedErrors = logger.getErrors('foo.txt');
 
-			var fileErrors = logger.getErrors();
+				assert.lengthOf(unLoggedErrors, 0);
 
-			assert.isObject(fileErrors);
-			assert.equal(fileErrors, logger.fileErrors);
-		}
-	);
+				var fileErrors = logger.getErrors();
 
-	it(
-		'should log failures properly',
-		function() {
-			var logger = new Logger.Logger();
+				assert.isObject(fileErrors);
+				assert.equal(fileErrors, logger.fileErrors);
+			}
+		);
 
-			logger.log(1, 'Has error', 'foo.js', 'error', {ruleId: 'rule-name'});
+		it(
+			'should log failures properly',
+			function() {
+				var logger = new Logger.Logger();
 
-			assert.isObject(logger.testStats);
-			assert.equal(logger.testStats.failures, 1);
-		}
-	);
+				logger.log(1, 'Has error', 'foo.js', 'error', MAP_RULE_PROPS);
 
-	it(
-		'should render helpers properly',
-		function() {
-			var logger = new Logger.Logger();
+				assert.isObject(logger.testStats);
+				assert.equal(logger.testStats.failures, 1);
+			}
+		);
 
-			logger.log(1, 'Has error', 'foo.js', 'error', {ruleId: 'rule-name'});
+		it(
+			'should render helpers properly',
+			function() {
+				var logger = new Logger.Logger();
 
-			// specific color
+				logger.log(1, 'Has error', 'foo.js', 'error', MAP_RULE_PROPS);
 
-			logger.TPL = '{{#red}}{{file}}{{/red}}';
+				// specific color
 
-			var out = logger.render('foo.js');
+				logger.TPL = '{{#red}}{{file}}{{/red}}';
 
-			assert.equal(out, 'foo.js');
+				var out = logger.render('foo.js');
 
-			// color helper by type
+				assert.equal(out, 'foo.js');
 
-			logger.TPL = '{{#errors}}{{#color}}{{line}}{{/color}}{{/errors}}';
+				// color helper by type
 
-			out = logger.render('foo.js');
+				logger.TPL = '{{#errors}}{{#color}}{{line}}{{/color}}{{/errors}}';
 
-			assert.equal(out, 'Line 1');
+				out = logger.render('foo.js');
 
-			// color helper default color
+				assert.equal(out, 'Line 1');
 
-			logger.log(1, 'Has error', 'nontype.js', 'nontype');
+				// color helper default color
 
-			out = logger.render('nontype.js');
+				logger.log(1, 'Has error', 'nontype.js', 'nontype');
 
-			assert.equal(out, 'Line 1');
+				out = logger.render('nontype.js');
 
-			// line helper
+				assert.equal(out, 'Line 1');
 
-			logger.TPL = '{{#errors}}{{line}}{{/errors}}';
+				// line helper
 
-			out = logger.render('nontype.js');
+				logger.TPL = '{{#errors}}{{line}}{{/errors}}';
 
-			assert.equal(out, 'Line 1');
+				out = logger.render('nontype.js');
 
-			// line helper - arrays
+				assert.equal(out, 'Line 1');
 
-			logger.log([1, 5], 'Has error', 'arrays.js');
+				// line helper - arrays
 
-			out = logger.render('arrays.js');
+				logger.log([1, 5], 'Has error', 'arrays.js');
 
-			assert.equal(out, 'Lines 1-5');
-		}
-	);
+				out = logger.render('arrays.js');
 
-	it(
-		'should sort errors',
-		function() {
-			var logger = new Logger.Logger();
+				assert.equal(out, 'Lines 1-5');
+			}
+		);
 
-			logger.log(3, 'Has error', 'foo.js');
-			logger.log([1,5], 'Has error', 'foo.js');
-			logger.log(1, 'Has error', 'foo.js');
-			logger.log(2, 'Has error', 'foo.js');
+		it(
+			'should sort errors',
+			function() {
+				var logger = new Logger.Logger();
 
-			logger.TPL = '{{#errors}}{{line}}\n{{/errors}}';
+				logger.log(3, 'Has error', 'foo.js');
+				logger.log([1, 5], 'Has error', 'foo.js');
+				logger.log(1, 'Has error', 'foo.js');
+				logger.log(2, 'Has error', 'foo.js');
 
-			var out = logger.render('foo.js');
+				logger.TPL = '{{#errors}}{{line}}\n{{/errors}}';
 
-			assert.equal(out, 'Lines 1-5\nLine 1\nLine 2\nLine 3\n');
-		}
-	);
-});
+				var out = logger.render('foo.js');
+
+				assert.equal(out, 'Lines 1-5\nLine 1\nLine 2\nLine 3\n');
+			}
+		);
+	}
+);

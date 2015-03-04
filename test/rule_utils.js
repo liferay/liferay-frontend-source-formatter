@@ -20,87 +20,98 @@ var parse = function(contents, cb) {
 	);
 };
 
-describe('Rule Utils', function () {
-	'use strict';
+describe(
+	'Rule Utils',
+	function() {
+		'use strict';
 
-	var sandbox;
+		var sandbox;
 
-	beforeEach(function () {
-		sandbox = sinon.sandbox.create();
-	});
+		beforeEach(
+			function() {
+				sandbox = sinon.sandbox.create();
+			}
+		);
 
-	afterEach(function () {
-		sandbox.restore();
-	});
+		afterEach(
+			function() {
+				sandbox.restore();
+			}
+		);
 
-	it(
-		'should get constants from node properly',
-		function(done) {
+		it(
+			'should get constants from node properly',
+			function(done) {
 
-			parse(
-				'var regVar = 1; var X = "X_FOO"; var Y = "Y_FOO"; var ZnotConstant = "NOT_CONSTANT"',
-				function(node) {
-					if (node.type === 'Program') {
-						var constants = ruleUtils.getConstants(node);
-						var constantNames = _.pluck(_.pluck(constants, 'id'), 'name');
+				parse(
+					'var regVar = 1; var X = "X_FOO"; var Y = "Y_FOO"; var ZnotConstant = "NOT_CONSTANT"',
+					function(node) {
+						if (node.type === 'Program') {
+							var constants = ruleUtils.getConstants(node);
+							var constantNames = _.pluck(_.pluck(constants, 'id'), 'name');
 
-						assert.equal(constants.length, 2);
-						assert.equal(constantNames.join(''), 'XY');
+							assert.equal(constants.length, 2);
+							assert.equal(constantNames.join(''), 'XY');
 
-						done();
+							done();
+						}
 					}
-				}
-			);
-		}
-	);
+				);
+			}
+		);
 
-	it(
-		'should calculate line distance',
-		function(done) {
+		it(
+			'should calculate line distance',
+			function(done) {
 
-			var varStr = ['var a = 1;', 'var b = 2;', 'var c = 3;', 'var d = 4;'].join('\n');
+				var varStr = ['var a = 1;', 'var b = 2;', 'var c = 3;', 'var d = 4;'].join('\n');
 
-			parse(
-				varStr,
-				function(node) {
-					if (node.type === 'Program') {
-						var variables = _.where(node.body, {type: 'VariableDeclaration'});
+				parse(
+					varStr,
+					function(node) {
+						if (node.type === 'Program') {
+							var variables = _.where(
+								node.body,
+								{
+									type: 'VariableDeclaration'
+								}
+							);
 
-						var lastIndex = variables.length - 1;
+							var lastIndex = variables.length - 1;
 
-						assert.equal(ruleUtils.getLineDistance(variables[0], variables[lastIndex]), lastIndex);
+							assert.equal(ruleUtils.getLineDistance(variables[0], variables[lastIndex]), lastIndex);
 
-						done();
+							done();
+						}
 					}
-				}
-			);
-		}
-	);
+				);
+			}
+		);
 
-	it(
-		'should sort array naturally',
-		function() {
+		it(
+			'should sort array naturally',
+			function() {
+				var naturalCompare = ruleUtils.naturalCompare;
 
-			var naturalCompare = ruleUtils.naturalCompare;
+				assert.equal(naturalCompare('a', 'a', false), 0, 'a should be the same as a');
+				assert.equal(naturalCompare('a', 'A', false), 1, 'a should come before A');
+				assert.equal(naturalCompare('A', 'a', false), -1, 'A should not come before a');
+				assert.equal(naturalCompare('a', 'b', false), -1, 'a should come before b');
+				assert.equal(naturalCompare('iStragedy', 'isTragedy', false), -1, 'iStragedy should come before isTragedy');
 
-			assert.equal(naturalCompare('a', 'a', false), 0, 'a should be the same as a');
-			assert.equal(naturalCompare('a', 'A', false), 1, 'a should come before A');
-			assert.equal(naturalCompare('A', 'a', false), -1, 'A should not come before a');
-			assert.equal(naturalCompare('a', 'b', false), -1, 'a should come before b');
-			assert.equal(naturalCompare('iStragedy', 'isTragedy', false), -1, 'iStragedy should come before isTragedy');
+				assert.equal(naturalCompare(1, 1), 0, '1 should be the same as 1');
+				assert.equal(naturalCompare(1, 2), -1, '1 should come before 2');
+				assert.equal(naturalCompare(2, 1), 1, '2 should not come before 1');
+				assert.equal(naturalCompare('1', '1'), 0, '"1" should be the same as "1"');
+				assert.equal(naturalCompare('1', '2'), -1, '"1" should come before "2"');
+				assert.equal(naturalCompare('2', '1'), 1, '"2" should not come before "1"');
 
-			assert.equal(naturalCompare(1, 1), 0, '1 should be the same as 1');
-			assert.equal(naturalCompare(1, 2), -1, '1 should come before 2');
-			assert.equal(naturalCompare(2, 1), 1, '2 should not come before 1');
-			assert.equal(naturalCompare('1', '1'), 0, '"1" should be the same as "1"');
-			assert.equal(naturalCompare('1', '2'), -1, '"1" should come before "2"');
-			assert.equal(naturalCompare('2', '1'), 1, '"2" should not come before "1"');
-
-			assert.equal(naturalCompare('a', 'a', true), 0, 'a should be the same as a');
-			assert.equal(naturalCompare('a', 'A', true), 0, 'a should be the same as A');
-			assert.equal(naturalCompare('A', 'a', true), 0, 'A should be the same as a');
-			assert.equal(naturalCompare('a', 'b', true), -1, 'a should come before b');
-			assert.equal(naturalCompare('iStragedy', 'isTragedy', true), 0, 'iStragedy should be the same as isTragedy');
-		}
-	);
-});
+				assert.equal(naturalCompare('a', 'a', true), 0, 'a should be the same as a');
+				assert.equal(naturalCompare('a', 'A', true), 0, 'a should be the same as A');
+				assert.equal(naturalCompare('A', 'a', true), 0, 'A should be the same as a');
+				assert.equal(naturalCompare('a', 'b', true), -1, 'a should come before b');
+				assert.equal(naturalCompare('iStragedy', 'isTragedy', true), 0, 'iStragedy should be the same as isTragedy');
+			}
+		);
+	}
+);

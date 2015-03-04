@@ -12,18 +12,22 @@ var assert = chai.assert;
 
 describe(
 	'JUnit reporting',
-	function () {
+	function() {
 		'use strict';
 
 		var sandbox;
 
-		beforeEach(function () {
-			sandbox = sinon.sandbox.create();
-		});
+		beforeEach(
+			function() {
+				sandbox = sinon.sandbox.create();
+			}
+		);
 
-		afterEach(function () {
-			sandbox.restore();
-		});
+		afterEach(
+			function() {
+				sandbox.restore();
+			}
+		);
 
 		it(
 			'should generate a JUnit report',
@@ -38,17 +42,25 @@ describe(
 				logger.log(4, 'Content is not valid', 'foo.js');
 				logger.log(1, 'Content is not valid', 'baz.css', 'error');
 
-				sandbox.stub(fs, 'readFile', function(path, encoding, callback) {
-					if (path.indexOf('junit_report.tpl') > -1) {
-						return callback(null, fs.readFileSync(path, encoding));
+				sandbox.stub(
+					fs,
+					'readFile',
+					function(path, encoding, callback) {
+						if (path.indexOf('junit_report.tpl') > -1) {
+							return callback(null, fs.readFileSync(path, encoding));
+						}
+
+						callback(null, '');
 					}
+				);
 
-					callback(null, '');
-				});
-
-				sandbox.stub(fs, 'writeFile', function(path, content, callback) {
-					callback(null, content);
-				});
+				sandbox.stub(
+					fs,
+					'writeFile',
+					function(path, content, callback) {
+						callback(null, content);
+					}
+				);
 
 				var cb = sandbox.spy();
 
@@ -76,14 +88,18 @@ describe(
 
 				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
 
-				sandbox.stub(fs, 'writeFile', function(path, content, callback) {
-					callback(null, content);
+				sandbox.stub(
+					fs,
+					'writeFile',
+					function(path, content, callback) {
+						callback(null, content);
 
-					assert.isTrue(cb.called, 'cb should have been executed');
-					assert.equal(path, 'custom_result.xml');
+						assert.isTrue(cb.called, 'cb should have been executed');
+						assert.equal(path, 'custom_result.xml');
 
-					done();
-				});
+						done();
+					}
+				);
 
 				var cb = sandbox.spy();
 

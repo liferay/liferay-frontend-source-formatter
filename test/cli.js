@@ -13,13 +13,13 @@ var assert = chai.assert;
 
 describe(
 	'CLI',
-	function () {
+	function() {
 		'use strict';
 
 		var MAP_CONTENT = {
-			'foo.js': ['var x = function(){\n};', 'var x = function() {\n};'],
 			'bar.html': ['<div class="foo bar"></div>', '<div class="bar foo"></div>'],
-			'baz.css': ['background: #FFFFFF', 'background: #FFF']
+			'baz.css': ['background: #FFFFFF', 'background: #FFF'],
+			'foo.js': ['var x = function(){\n};', 'var x = function() {\n};']
 		};
 
 		var invalidContentStub = function(path, encoding, callback) {
@@ -32,18 +32,21 @@ describe(
 
 		var sandbox;
 
-		beforeEach(function () {
-			sandbox = sinon.sandbox.create();
-		});
+		beforeEach(
+			function() {
+				sandbox = sinon.sandbox.create();
+			}
+		);
 
-		afterEach(function () {
-			sandbox.restore();
-		});
+		afterEach(
+			function() {
+				sandbox.restore();
+			}
+		);
 
 		it(
 			'should read files correctly',
 			function() {
-
 				sandbox.stub(fs, 'readFile', invalidContentStub);
 
 				var cliInstance = new cli.CLI(
@@ -67,7 +70,6 @@ describe(
 		it(
 			'should write files correctly',
 			function() {
-
 				sandbox.stub(fs, 'readFile', invalidContentStub);
 				sandbox.stub(fs, 'writeFile', validContentStub);
 
@@ -125,11 +127,8 @@ describe(
 
 				assert.isTrue(fs.writeFile.calledOnce, 'fs.write should have been called 3 times');
 				assert.isTrue(File.handleFileWriteError.calledOnce, 'File.handleFileWriteError should have been called once');
-
-
 			}
 		);
-
 
 		it(
 			'should ignore unrecognized files',
@@ -305,11 +304,11 @@ describe(
 				cliInstance = new cli.CLI(
 					{
 						args: pathArgs,
+						cwd: path.join('home', 'liferay', 'scripts', 'tests'),
 						flags: {
 							filenames: true,
 							relative: true
 						},
-						cwd: path.join('home', 'liferay', 'scripts', 'tests'),
 						log: log,
 						logger: new Logger.Logger()
 					}
@@ -321,7 +320,6 @@ describe(
 				assert.equal(relativeArgs.join(), log.args.join());
 			}
 		);
-
 
 		it(
 			'should log missing files properly',
@@ -452,6 +450,5 @@ describe(
 				assert.isTrue(junit.prototype.generate.called, 'junit.prototype.generate should have been called');
 			}
 		);
-
 	}
 );
