@@ -450,7 +450,11 @@ describe(
 					callback(null, MAP_CONTENT[path][0]);
 				});
 
-				var generateJUnit = sandbox.spy();
+				var junitReporter = require('../lib/junit');
+
+				var junit = sandbox.spy(junitReporter);
+
+				sandbox.stub(junit.prototype, 'generate');
 
 				var cliInstance = new cli.CLI(
 					{
@@ -458,7 +462,7 @@ describe(
 						flags: {
 							junit: true
 						},
-						generateJUnit: generateJUnit,
+						junit: junit,
 						log: sinon.log,
 						logger: new Logger.Logger()
 					}
@@ -466,8 +470,8 @@ describe(
 
 				cliInstance.init();
 
-				assert.isTrue(generateJUnit.called, 'generateJUnit should have been called');
-
+				assert.isTrue(junit.calledWithNew(), 'junit should have been instantiated');
+				assert.isTrue(junit.prototype.generate.called, 'junit.prototype.generate should have been called');
 			}
 		);
 
