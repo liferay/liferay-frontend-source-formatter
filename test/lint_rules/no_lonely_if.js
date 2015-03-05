@@ -12,7 +12,9 @@ eslintTester.addRuleTest(
 		valid: [
 			'if (a) {;} else if (b) {;}',
 			'if (a) {;} else { if (b) {;} ; }',
-			'if (a) { if (b) {;} ; } else { ; }'
+			'if (a) { if (b) {;} ; } else { ; }',
+			'if (a) { if (b) {;} else { ; } } else { ; }',
+			'if (a) { ; } else { if (b) {;} else { ; } }'
 		],
 
 		invalid: [
