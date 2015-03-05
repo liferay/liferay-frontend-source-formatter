@@ -1,6 +1,8 @@
 check-source-formatting
 =======================
-[![Build Status](https://travis-ci.org/natecavanaugh/check-source-formatting.svg?branch=master)](https://travis-ci.org/natecavanaugh/check-source-formatting)
+[![NPM version][npm-image]][npm-url]
+[![build status][travis-image]][travis-url]
+[![Test coverage][coveralls-image]][coveralls-url]
 
 ## Description
 
@@ -127,3 +129,10 @@ The following are known issues where it will say there's an error, but there's n
 then it will still flag that as an error
 - Spaces inside of JS comments will most of the time get flagged as mixed tabs and spaces
 - Double quotes inside of JS (like inside of a regex or in a comment), will get flagged as an error.
+
+[npm-image]: https://img.shields.io/npm/v/check-source-formatting.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/check-source-formatting
+[travis-image]: https://img.shields.io/travis/natecavanaugh/check-source-formatting/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/natecavanaugh/check-source-formatting
+[coveralls-image]: https://img.shields.io/coveralls/natecavanaugh/check-source-formatting/master.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/natecavanaugh/check-source-formatting?branch=master
