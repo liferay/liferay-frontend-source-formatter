@@ -7,6 +7,7 @@
     "check_sf": "./bin/index.js"
   },
   "scripts": {
+    "coveralls": "cat ./coverage/lcov.info | coveralls",
     "test": "gulp test"
   },
   "author": "Nate Cavanaugh",
@@ -32,6 +33,7 @@
   "devDependencies": {
     "chai": "^2.1.1",
     "chai-string": "^1.1.1",
+    "coveralls": "^2.11.2",
     "eslint-tester": "^0.6.0",
     "gulp": "^3.8.11",
     "gulp-complexity": "^0.3.0",
@@ -40,6 +42,7 @@
     "gulp-mocha": "^2.0.0",
     "istanbul": "^0.3.7",
     "mocha": "^2.1.0",
+    "mocha-lcov-reporter": "0.0.2",
     "run-sequence": "^1.0.2",
     "sinon": "^1.12.2"
   }
