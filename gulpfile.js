@@ -2,6 +2,11 @@ var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
 
+gulp.task('coveralls', function () {
+	gulp.src('coverage/**/lcov.info')
+		.pipe(plugins.coveralls());
+});
+
 gulp.task('test', function(done) {
 	return runSequence('test-unit', done);
 });
