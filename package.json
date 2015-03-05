@@ -26,6 +26,7 @@
     "colors": "^1.0.3",
     "eslint": "^0.15.1",
     "falafel": "^0.3.1",
+    "getobject": "^0.1.0",
     "glob": "^4.4.1",
     "handlebars": "^3.0.0",
     "lodash": "^3.3.1",
