@@ -94,5 +94,37 @@ describe(
 				assert.deepEqual(fn3.args[0], [2, 3, 4], 'arguments to fn2 should have been 2, 3, 4');
 			}
 		);
+
+
+		it(
+			'should namespace objects correctly',
+			function() {
+				var obj1 = {};
+				var obj2 = {};
+
+				var value1 = _.namespace(obj1, 'foo.bar');
+				var value2 = _.namespace(obj2, ['baz', 'bah']);
+
+				assert.isObject(value1);
+				assert.lengthOf(Object.keys(value1), 0);
+				assert.deepProperty(obj1, 'foo.bar');
+
+				assert.isObject(value2);
+				assert.lengthOf(Object.keys(value2), 0);
+				assert.deepProperty(obj2, 'baz.bah');
+
+				var value3 = _.namespace('boo.far');
+
+				assert.isObject(value3);
+				assert.lengthOf(Object.keys(value3), 0);
+				assert.deepProperty(_, 'boo.far');
+
+				var obj3 = {};
+				var value4 = _.namespace(obj1, 'foo.bar');
+				var value5 = _.namespace(obj1, 'foo.bar');
+
+				assert.equal(value4, value5, 'value4 should be the same object as value5');
+			}
+		);
 	}
 );
