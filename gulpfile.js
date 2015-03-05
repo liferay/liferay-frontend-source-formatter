@@ -3,7 +3,7 @@ var plugins = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
 
 gulp.task('test', function(done) {
-	return runSequence('test-unit', 'test-complexity', done);
+	return runSequence('test-unit', done);
 });
 
 gulp.task('test-complexity', function() {
