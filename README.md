@@ -1,5 +1,6 @@
 check-source-formatting
 =======================
+[![Build Status](https://travis-ci.org/natecavanaugh/check-source-formatting.svg?branch=master)](https://travis-ci.org/natecavanaugh/check-source-formatting)
 
 ## Description
 
