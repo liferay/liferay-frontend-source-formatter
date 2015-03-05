@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var path = require('path');
 var base = require('../../lib/base.js');
 
@@ -11,7 +12,7 @@ var validRules = [
 	'document["some-prop"];'
 ];
 
-base.A.Object.each(
+_.forEach(
 	base.stubs,
 	function(item, index) {
 		validRules.push('document["' + index + '"];');
