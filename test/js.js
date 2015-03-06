@@ -153,7 +153,7 @@ describe(
 
 				var parseError = parseErrors[0];
 
-				assert.equal(parseError.msg, 'Could not parse JavaScript: Cannot call method \'indexOf\' of null');
+				assert.startsWith(parseError.msg, 'Could not parse JavaScript:');
 				assert.equal(parseError.line, 'n/a');
 			}
 		);
