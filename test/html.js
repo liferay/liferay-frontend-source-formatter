@@ -80,6 +80,15 @@ describe(
 		);
 
 		it(
+			'should ignore attributes with JavaScript',
+			function() {
+				var msg = getErrorMsgByLine(59, htmlErrors);
+
+				assert.equal(msg, '');
+			}
+		);
+
+		it(
 			'should parse script blocks correctly',
 			function() {
 				var scriptBlocks = htmlFormatter.parseJs(source);
@@ -156,7 +165,7 @@ describe(
 				var str = privHTMLFormatter._attrRemoveScriptlets(before, 1);
 
 				assert.isString(str);
-				assert.equal(str,  after);
+				assert.equal(str, after);
 			}
 		);
 
@@ -172,7 +181,7 @@ describe(
 				var str = privHTMLFormatter._attrRemoveTags(before, 1);
 
 				assert.isString(str);
-				assert.equal(str,  after);
+				assert.equal(str, after);
 			}
 		);
 
@@ -189,7 +198,26 @@ describe(
 				var str = privHTMLFormatter._attrRestoreScriptlets(before, 1);
 
 				assert.isString(str);
-				assert.equal(str,  after);
+				assert.equal(str, after);
+			}
+		);
+
+		it(
+			'should clean attr tokens',
+			function() {
+				var token = privHTMLFormatter._TOKEN;
+				var nsToken = privHTMLFormatter._NS_TOKEN;
+
+				var p0 = token + '0' + token;
+				var p1 = nsToken + '1' + nsToken;
+
+				var before = '<p class="' + p0 + ' foo ' + p1 + '">Foo</p>';
+				var after = '<p class="<%...%> foo <po.../>">Foo</p>';
+
+				var str = privHTMLFormatter._attrCleanTokens(before);
+
+				assert.isString(str);
+				assert.equal(str, after);
 			}
 		);
 
@@ -205,7 +233,7 @@ describe(
 				var str = privHTMLFormatter._attrRestoreTags(before, 1);
 
 				assert.isString(str);
-				assert.equal(str,  after);
+				assert.equal(str, after);
 			}
 		);
 

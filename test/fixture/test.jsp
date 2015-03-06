@@ -54,5 +54,8 @@
 	</aui:script>
 
 	<aui:script use="event"></aui:script>
+
+	<!-- attributes with JS -->
+	<aui:nav href="javascript:alert(1);" onClick="alert(2);"></aui:nav>
 </body>
 </html>
