@@ -202,6 +202,8 @@ describe(
 				var expectedWarning = 'Needless new line';
 
 				var context = {
+					collection: ['', input, ''],
+					index: 1,
 					item: input,
 					nextItem: '',
 					previousItem: ''
@@ -219,6 +221,30 @@ describe(
 
 				assert.equal(result, 2);
 				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+			}
+		);
+
+		it(
+			'should ignore newlines around comments in nested selectors',
+			function() {
+				var rule = re.css.trailingNewlines;
+
+				var input = '{';
+				var output = input;
+				var expectedWarning = 'Needless new line';
+
+				var context = {
+					collection: ['', input, '', '/* Comment */'],
+					index: 1,
+					item: input,
+					nextItem: '',
+					previousItem: ''
+				};
+
+				var result = re.testLine(rule, input, context);
+				var lineNum = 1;
+
+				assert.isFalse(result);
 			}
 		);
 
