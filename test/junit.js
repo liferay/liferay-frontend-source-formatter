@@ -86,6 +86,9 @@ describe(
 				var logger = new Logger.Logger();
 
 				logger.log(1, 'Content is not valid', 'foo.js');
+				logger.log(38, 'Missing space between selector and bracket: &.no-title .asset-user-actions{', 'xmlentity.css', 'error');
+				logger.log(39, '<fooo', 'xmlentity.css', 'error');
+				logger.log(141, 'Sort attribute values: javascript:�0�removeGroup(', 'unicode.css', 'error');
 
 				sandbox.stub(
 					fs,
