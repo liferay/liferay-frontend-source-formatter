@@ -80,7 +80,7 @@ describe(
 			}
 		);
 
-		it (
+		it(
 			'should generate a valid JUnit report',
 			function(done) {
 				var logger = new Logger.Logger();
@@ -120,10 +120,14 @@ describe(
 
 				reporter.generate(cb);
 
-				xsd.validateXML(cb.args[0][1], path.join(__dirname, 'fixture', 'junit-4.xsd'), function(err, result) {
-					assert.isTrue(result.valid, err);
-					done();
-				});
+				xsd.validateXML(
+					cb.args[0][1],
+					path.join(__dirname, 'fixture', 'junit-4.xsd'),
+					function(err, result) {
+						assert.isTrue(result.valid, err);
+						done();
+					}
+				);
 			}
 		);
 
