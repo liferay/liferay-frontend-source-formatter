@@ -127,6 +127,55 @@ describe(
 		);
 
 		it(
+			'should detect and replace missing new lines around directives',
+			function() {
+				var rule = re.css.missingNewlines;
+
+				var input = '@if $direction == vertical {';
+				var output = '\n@if $direction == vertical {';
+				var expectedWarning = 'There should be a newline between } and ".foo {"';
+
+				var context = {
+					item: input,
+					// This is actually working around a bug in the missing newlines
+					// however, I need to fix it after the implementation of all of the tests
+					// I'll do that later :)
+					nextItem: '.foo {',
+					previousItem: '}'
+				};
+
+				var result = re.testLine(rule, input, context);
+				var lineNum = 1;
+
+				assert.isTrue(result);
+				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
+			}
+		);
+
+		it(
+			'should ignore missing new lines around @else directives',
+			function() {
+				var rule = re.css.missingNewlines;
+
+				var input = '@else if $direction == vertical {';
+
+				var context = {
+					item: input,
+					// This is actually working around a bug in the missing newlines
+					// however, I need to fix it after the implementation of all of the tests
+					// I'll do that later :)
+					nextItem: '.foo {',
+					previousItem: '}'
+				};
+
+				var result = re.testLine(rule, input, context);
+
+				assert.isFalse(result);
+			}
+		);
+
+		it(
 			'should detect missing selector space',
 			function() {
 				var rule = re.css.missingSelectorSpace;
@@ -230,8 +279,6 @@ describe(
 				var rule = re.css.trailingNewlines;
 
 				var input = '{';
-				var output = input;
-				var expectedWarning = 'Needless new line';
 
 				var context = {
 					collection: ['', input, '', '/* Comment */'],
@@ -242,7 +289,6 @@ describe(
 				};
 
 				var result = re.testLine(rule, input, context);
-				var lineNum = 1;
 
 				assert.isFalse(result);
 			}
