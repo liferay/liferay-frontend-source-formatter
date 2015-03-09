@@ -19,7 +19,7 @@ gulp.task('test-complexity', function() {
 });
 
 gulp.task('test-unit', function() {
-	process.argv.push('--no-color');
+	process.argv.push('--display-raw');
 
 	return gulp.src(['test/**/*.js', '!test/fixture/*.js'])
 		.pipe(plugins.mocha());
@@ -32,7 +32,7 @@ gulp.task('test-cover', function() {
 });
 
 gulp.task('test-coverage', ['test-cover'], function() {
-	process.argv.push('--no-color');
+	process.argv.push('--display-raw');
 
 	return gulp.src(['test/**/*.js', '!test/fixture/*.js'])
 		.pipe(plugins.mocha())
