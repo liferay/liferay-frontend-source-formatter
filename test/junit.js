@@ -2,6 +2,7 @@ var chai = require('chai');
 var fs = require('fs');
 var path = require('path');
 var sinon = require('sinon');
+var xsd = require('xsd-schema-validator');
 
 var junit = require('../lib/junit');
 var Logger = require('../lib/logger');
@@ -76,6 +77,53 @@ describe(
 				assert.isTrue(cb.called, 'cb should have been executed');
 
 				assert.equal(cb.args[0][1], fs.readFileSync(path.join(__dirname, 'fixture', 'result.xml'), 'utf-8'), 'The result should match what we expect');
+			}
+		);
+
+		it (
+			'should generate a valid JUnit report',
+			function(done) {
+				var logger = new Logger.Logger();
+
+				logger.log(1, 'Content is not valid', 'foo.js');
+				logger.log(38, 'Missing space between selector and bracket: &.no-title .asset-user-actions{', 'xmlentity.css', 'error');
+				logger.log(39, '<fooo', 'xmlentity.css', 'error');
+				logger.log(141, 'Sort attribute values: javascript:�0�removeGroup(', 'unicode.css', 'error');
+
+				sandbox.stub(
+					fs,
+					'readFile',
+					function(path, encoding, callback) {
+						if (path.indexOf('junit_report.tpl') > -1) {
+							return callback(null, fs.readFileSync(path, encoding));
+						}
+
+						callback(null, '');
+					}
+				);
+
+				sandbox.stub(
+					fs,
+					'writeFile',
+					function(path, content, callback) {
+						callback(null, content);
+					}
+				);
+
+				var cb = sandbox.spy();
+
+				var reporter = new junit(
+					{
+						logger: logger
+					}
+				);
+
+				reporter.generate(cb);
+
+				xsd.validateXML(cb.args[0][1], path.join(__dirname, 'fixture', 'junit-4.xsd'), function(err, result) {
+					assert.isTrue(result.valid, err);
+					done();
+				});
 			}
 		);
 
