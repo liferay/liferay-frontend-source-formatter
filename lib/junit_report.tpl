@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testsuites failures="{{stats.failures}}" name="">
 	{{#files}}
-		<testsuite failures="{{stats.failures}}" name="{{file}}">
+		<testsuite failures="{{stats.failures}}" name="{{file}}" tests="1">
 			{{#errors}}
 				<testcase name="{{testName}}">
 					{{#failure}}

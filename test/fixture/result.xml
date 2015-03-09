@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <testsuites failures="7" name="">
-		<testsuite failures="5" name="foo.js">
+		<testsuite failures="5" name="foo.js" tests="1">
 				<testcase name="undefined">
 						<failure message="" type="failure">Line 1: Content is not valid
 Line 4: Content is not valid</failure>
@@ -13,12 +13,12 @@ Line 5: Something is not valid</failure>
 						<failure message="" type="failure">Line 3: Content is not valid</failure>
 				</testcase>
 		</testsuite>
-		<testsuite failures="1" name="bar.html">
+		<testsuite failures="1" name="bar.html" tests="1">
 				<testcase name="warning">
 						<failure message="" type="failure">Line 10: Content is not valid</failure>
 				</testcase>
 		</testsuite>
-		<testsuite failures="1" name="baz.css">
+		<testsuite failures="1" name="baz.css" tests="1">
 				<testcase name="error">
 						<failure message="" type="failure">Line 1: Content is not valid</failure>
 				</testcase>
