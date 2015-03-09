@@ -14,6 +14,7 @@ gulp.task('test', function(done) {
 gulp.task('test-complexity', function() {
 	return gulp.src(['lib/**/*.js'])
 		.pipe(plugins.complexity({
+			cyclomatic: [4, 7, 12],
 			halstead: [15, 15, 20]
 		}));
 });
