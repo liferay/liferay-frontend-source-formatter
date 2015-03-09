@@ -1,4 +1,4 @@
-{{#banner}}{{#blackBG}}File:{{/blackBG}} {{#underline}}{{{file}}}{{/underline}}{{/banner}}
+{{#banner}}{{#bgBlack}}File:{{/bgBlack}} {{#underline}}{{{file}}}{{/underline}}{{/banner}}
 {{#errors}}
     {{#color}}{{line}}: {{{msg}}}{{#and @root.showLintIds ruleId}} ({{ruleId}}){{/and}}{{/color}}
 {{else}}
