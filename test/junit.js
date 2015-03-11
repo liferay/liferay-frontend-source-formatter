@@ -110,6 +110,11 @@ describe(
 					}
 				);
 
+				// Raise mocha's default timeout of 2s to 10s...
+				// I'm hoping this keeps travis from failing so often :P
+
+				this.timeout(5000);
+
 				var cb = sandbox.spy();
 
 				var reporter = new junit(
