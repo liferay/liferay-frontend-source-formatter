@@ -30,7 +30,6 @@
     "glob": "^5.0.1",
     "handlebars": "^3.0.0",
     "lodash": "^3.3.1",
-    "minimatch": "^2.0.1",
     "optimist": "^0.6.1",
     "update-notifier": "^0.3.1"
   },

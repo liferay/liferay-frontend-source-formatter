@@ -17,7 +17,7 @@ describe(
 			function() {
 				var customFormatGetter = Formatter.create(
 					{
-						extensions: '*.foo',
+						extensions: /\.foo$/,
 						id: 'customFormatGetter'
 					}
 				);
@@ -81,7 +81,7 @@ describe(
 
 				var CustomFormatter = Formatter.create(
 					{
-						extensions: '*.txt',
+						extensions: /\.txt$/,
 						id: 'initCustomFormatter',
 						prototype: {
 							init: init
@@ -152,7 +152,7 @@ describe(
 
 				Formatter.create(
 					{
-						extensions: '*.js',
+						extensions: /\.js$/,
 						id: testFormatterId
 					}
 				);
@@ -161,7 +161,7 @@ describe(
 					function() {
 						Formatter.create(
 							{
-								extensions: '*.js',
+								extensions: /\.js$/,
 								id: testFormatterId
 							}
 						);
@@ -182,7 +182,7 @@ describe(
 							}
 						);
 					},
-					'The extensions property must be a string, and must be glob expression'
+					'The extensions property must be a RegExp Object'
 				);
 
 				assert.throws(
@@ -194,7 +194,7 @@ describe(
 							}
 						);
 					},
-					'The extensions property must be a string, and must be glob expression'
+					'The extensions property must be a RegExp Object'
 				);
 			}
 		);
@@ -207,7 +207,7 @@ describe(
 				var FooCustom1 = Formatter.create(
 					{
 						constructor: constructor,
-						extensions: '*.js',
+						extensions: /\.js$/,
 						id: 'FooCustom1'
 					}
 				);
