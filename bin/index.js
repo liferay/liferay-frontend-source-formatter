@@ -9,7 +9,7 @@ var notifier = updateNotifier(
 );
 
 if (notifier.update) {
-	notifier.notify(true);
+	notifier.notify();
 }
 
 require('../lib/cli').init();
