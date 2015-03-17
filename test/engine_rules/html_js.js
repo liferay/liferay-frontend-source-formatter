@@ -6,24 +6,6 @@ var re = require('../../lib/re');
 
 var assert = chai.assert;
 
-/*
-currently there are no HTML-specific rules in the engine,
-HTML rules are covered by html.js
-
-describe(
-	'HTML Rule Engine Tests',
-	function() {
-		'use strict';
-
-		it(
-			'should do something',
-			function() {
-
-			}
-		);
-	}
-);
-*/
 describe(
 	'HTML JS Rule Engine Tests',
 	function() {
