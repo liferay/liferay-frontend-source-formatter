@@ -18,7 +18,8 @@ eslintTester.addRuleTest(
 			'FOO1 = \'\';',
 			'FOO1 = \'something\' +\n\'else\';',
 			'FOO1 = \'something\' +\nLiferay.foo();',
-			'FOO1 = \'something\' +\nLiferay.foo() + \'foo\';'
+			'FOO1 = \'something\' +\nLiferay.foo() + \'foo\';',
+			'FOO1 = (\nbar && baz\n);'
 		],
 
 		invalid: [
@@ -68,6 +69,10 @@ eslintTester.addRuleTest(
 			},
 			{
 				code: 'FOO1 =\n\'something\';',
+				errors: [ { message: 'Variable values should start on the same line as the variable name "FOO1"' } ]
+			},
+			{
+				code: 'FOO1 =\n(\nbar && baz\n);',
 				errors: [ { message: 'Variable values should start on the same line as the variable name "FOO1"' } ]
 			}
 		]
