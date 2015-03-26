@@ -14,6 +14,7 @@ eslintTester.addRuleTest(
 		valid: [
 			'var isString = A.Lang.isString;',
 			'var isString = Lang.isString;',
+			'var isString = function(){};',
 			'var o = {isString: function(){}}',
 			'var o = {isString: A.Lang.isString}',
 			'var o = {isString: Lang.isString}',
