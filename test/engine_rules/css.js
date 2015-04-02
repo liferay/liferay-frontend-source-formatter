@@ -100,6 +100,25 @@ describe(
 		);
 
 		it(
+			'should ignore list value spaces in content properties',
+			function() {
+				var rule = re.css.missingListValuesSpace;
+
+				var input = 'content: ","';
+				var output = 'content: ","';
+				var expectedWarning = 'Needs space between comma-separated values';
+
+				var context = {
+					item: input
+				};
+
+				var result = re.testLine(rule, input, context);
+
+				assert.isFalse(result);
+			}
+		);
+
+		it(
 			'should detect and replace missing new lines',
 			function() {
 				var rule = re.css.missingNewlines;
