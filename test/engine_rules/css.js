@@ -104,8 +104,8 @@ describe(
 			function() {
 				var rule = re.css.missingListValuesSpace;
 
-				var input = 'content: ","';
-				var output = 'content: ","';
+				var input = 'content: ",";';
+				var output = 'content: ",";';
 				var expectedWarning = 'Needs space between comma-separated values';
 
 				var context = {
