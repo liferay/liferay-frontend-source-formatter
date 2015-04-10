@@ -97,7 +97,7 @@ If you pass `--no-lint` it will overwrite the default and disable linting.
 This is mainly useful when you want to show the file name relative to your current working directory.
 I use it mainly when I'm running this on a git branch. In order for it to work from your alias, you would need to change the above alias to be:
 ```
-sfm = "!f() { export GIT_PWD=\"$GIT_PREFIX\"; git diff --stat --name-only master.. | grep -E '.(jsp.?|vm|ftl|js|(s)?css)$' | xargs check_sf $@; }; f"
+sfm = "!f() { export GIT_PWD=\"$GIT_PREFIX\"; git diff --stat --name-only master.. | grep -E '.(jsp.?|vm|ftl|tag|tpl|tmpl|js|(s)?css)$' | xargs check_sf $@; }; f"
 ```
 
 `-v, --verbose` This will log out any possible error, even ones that are probably a false positive.
