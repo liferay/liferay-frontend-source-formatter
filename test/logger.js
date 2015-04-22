@@ -218,5 +218,19 @@ describe(
 				assert.equal(out, 'Lines 1-5\nLine 1\nLine 2\nLine 3\n');
 			}
 		);
+
+		it(
+			'should not add duplicate errors',
+			function() {
+				var logger = new Logger.Logger();
+
+				logger.log(3, 'Has error', 'foo.js');
+				logger.log(3, 'Has error', 'foo.js');
+
+				var errors = logger.getErrors('foo.js');
+
+				assert.equal(errors.length, 1);
+			}
+		);
 	}
 );
