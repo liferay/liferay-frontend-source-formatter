@@ -135,6 +135,52 @@ describe(
 		);
 
 		it(
+			'should parse style blocks correctly',
+			function() {
+				var styleBlocks = htmlFormatter.parseCSS(source);
+
+				assert.isArray(styleBlocks);
+				assert.equal(styleBlocks.length, 1);
+				styleBlocks.forEach(assert.isString);
+			}
+		);
+
+		it(
+			'should not find non-existant style blocks',
+			function() {
+				var styleBlocks = htmlFormatter.parseCSS('<p>Foo</p>');
+
+				assert.isArray(styleBlocks);
+				assert.equal(styleBlocks.length, 0);
+			}
+		);
+
+		it(
+			'should extract style blocks correctly',
+			function() {
+				var styleBlocks = htmlFormatter.extractCSS(source);
+
+				assert.isArray(styleBlocks);
+				assert.equal(styleBlocks.length, 1);
+				styleBlocks.forEach(assert.isObject);
+
+				styleBlocks = htmlFormatter.extractCSS('<html></html>');
+
+				assert.isArray(styleBlocks);
+				assert.equal(styleBlocks.length, 0);
+			}
+		);
+
+		it(
+			'should format style blocks',
+			function() {
+				var msg = getErrorMsgByLine(64, htmlErrors);
+
+				assert.startsWith(msg, 'You should use "border-width: 0;": border: none;');
+			}
+		);
+
+		it(
 			'should recognize calls to Liferay.Language.get inside of JSPs',
 			function() {
 				assert.startsWith(getErrorMsgByLine(37, htmlErrors), 'Do not use Liferay.Language.get() outside of .js files:');

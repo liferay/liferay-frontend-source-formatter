@@ -57,5 +57,14 @@
 
 	<!-- attributes with JS -->
 	<aui:nav href="javascript:alert(1);" onClick="alert(2);"></aui:nav>
+
+	<!-- Style Blocks -->
+	<style>
+		.foo {
+			border: none;
+		}
+	</style>
+
+	<style></style>
 </body>
 </html>
