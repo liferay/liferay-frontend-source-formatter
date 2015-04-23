@@ -14,6 +14,7 @@ eslintTester.addRuleTest(
 			'({init: function(){}, initializer: function(){}, renderUI: function(){}, bindUI: function(){}, syncUI: function(){}, destructor: function(){}, abc: function(){}})',
 			'({ 0: 1, "$xyz": 1, abc: 2 })',
 			'({ 0: 1, "@xyz": 1, abc: 2})',
+			'({ a: 1,\nb: 2,\n\na:3})',
 			{
 				code: '({initString: 1, initsTriangle: 2})',
 				args: [2, {'casesensitive': true}]
@@ -39,6 +40,10 @@ eslintTester.addRuleTest(
 			},
 			{
 				code: '({_getFoo: 1, _getAbc: 2})',
+				errors: [ { message: 'Sort properties: _getFoo _getAbc' } ]
+			},
+			{
+				code: '({_getFoo: function(){},\n\n_getAbc: function(){}})',
 				errors: [ { message: 'Sort properties: _getFoo _getAbc' } ]
 			},
 			{
