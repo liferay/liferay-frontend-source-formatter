@@ -154,7 +154,8 @@ describe(
 
 						var formatErrors = errors.filter(
 							function(item, index) {
-								return item.msg.indexOf('There should be a newline between } and "') === 0;
+								console.log(item.msg);
+								return item.msg.indexOf('There should be a newline between') === 0;
 							}
 						);
 

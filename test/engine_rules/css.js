@@ -125,7 +125,7 @@ describe(
 
 				var input = '.foo {';
 				var output = '\n.foo {';
-				var expectedWarning = 'There should be a newline between } and ".foo {"';
+				var expectedWarning = 'There should be a newline between "}" and ".foo {"';
 
 				var context = {
 					item: input,
@@ -152,7 +152,7 @@ describe(
 
 				var input = '@if $direction == vertical {';
 				var output = '\n@if $direction == vertical {';
-				var expectedWarning = 'There should be a newline between } and ".foo {"';
+				var expectedWarning = 'There should be a newline between "}" and ".foo {"';
 
 				var context = {
 					item: input,
