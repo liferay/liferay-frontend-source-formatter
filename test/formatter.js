@@ -12,6 +12,20 @@ var assert = chai.assert;
 describe(
 	'Formatter',
 	function() {
+		var sandbox;
+
+		beforeEach(
+			function() {
+				sandbox = sinon.sandbox.create();
+			}
+		);
+
+		afterEach(
+			function() {
+				sandbox.restore();
+			}
+		);
+
 		it(
 			'should return the proper formatter for a file',
 			function() {
@@ -34,6 +48,48 @@ describe(
 				var formatter = Formatter.get('path/to/file.missing');
 
 				assert.isUndefined(formatter);
+			}
+		);
+
+		it(
+			'should ignore excluded files',
+			function() {
+				var constructor = sandbox.spy();
+
+				sandbox.spy(Formatter.prototype, 'format');
+
+				var customFormat = sandbox.spy();
+
+				var FooCustom1 = Formatter.create(
+					{
+						extensions: /\.test$/,
+						id: 'TestFiles',
+						excludes: /foo\.test$/,
+						prototype: {
+							format: customFormat
+						}
+					}
+				);
+
+				var logger = new Logger.Logger();
+
+				var formatter1 = Formatter.get('foo.test', logger);
+
+				formatter1.format('blah');
+
+				assert.isFalse(customFormat.called, '.format should not have been called');
+
+				var formatter2 = Formatter.get('hello.test', logger);
+
+				formatter2.format('blah');
+
+				assert.isTrue(customFormat.called, '.format should have been called');
+
+				var formatter3 = Formatter.get('foo.test', logger, {force: true});
+
+				formatter3.format('blah');
+
+				assert.isTrue(customFormat.called, '.format should have been called with force');
 			}
 		);
 	}

@@ -91,6 +91,8 @@ If you pass `--no-lint` it will overwrite the default and disable linting.
 
 `--filenames` Print only the file names of the files that have errors (this option implies `--quiet`). This is useful if you wish to pipe the list of files to other commands.
 
+`--f, --force` Formatters can choose to ignore certain files (for example, the JS formatter ignores files that end with `-min.js`). If you want to force the formatter to run on that file, pass this option.
+
 ### Experimental or less used options
 
 `-r, --relative` This will display the files passed in as relative to you current directory.
