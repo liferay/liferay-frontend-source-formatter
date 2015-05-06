@@ -326,7 +326,7 @@ describe(
 			function() {
 				sandbox.stub(fs, 'readFile').callsArgWith(2, new Error());
 
-				sandbox.stub(File, 'handleFileReadError');
+				sandbox.stub(File, 'handleFileReadError').returns('Missing file');
 
 				var log = sandbox.spy();
 
@@ -342,6 +342,35 @@ describe(
 
 				assert.isTrue(log.calledThrice, 'log should have been called 3 times');
 				assert.isTrue(File.handleFileReadError.calledOnce, 'File.handleFileReadError should have been called');
+			}
+		);
+
+		it(
+			'should ignore directories properly',
+			function() {
+				var err = new Error();
+
+				err.errno = -21;
+				err.code = 'EISDIR';
+
+				sandbox.stub(fs, 'readFile').callsArgWith(2, err);
+
+				sandbox.spy(File, 'handleFileReadError');
+
+				var log = sandbox.spy();
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['./'],
+						log: log,
+						logger: new Logger.Logger()
+					}
+				);
+
+				cliInstance.init();
+
+				assert.isTrue(log.notCalled, 'log should not have been called');
+				assert.isTrue(File.handleFileReadError.returned(''), 'File.handleFileReadError should have returned nothing');
 			}
 		);
 
