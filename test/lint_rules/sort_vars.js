@@ -14,6 +14,7 @@ eslintTester.addRuleTest(
 			'var abc = 123;\nvar def = 456;',
 			'var abc = 123; var def = 456;',
 			'var cde = 123;\nvar def = 123;\n\nvar abc = 456;',
+			'for (var i = 0; i < 10; i++) {\nvar current = 1;\n}'
 		],
 
 		invalid: [
