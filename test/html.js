@@ -45,6 +45,10 @@ describe(
 						assert.startsWith(msg, 'Sort attribute values');
 					}
 				);
+
+				assert.equal(getErrorMsgByLine(71, htmlErrors), '');
+				assert.equal(getErrorMsgByLine(72, htmlErrors), '');
+				assert.startsWith(getErrorMsgByLine(73, htmlErrors), 'Sort attribute values');
 			}
 		);
 

@@ -66,5 +66,10 @@
 	</style>
 
 	<style></style>
+
+	<!-- Sort attribute values JSTL -->
+	<div class="tab tab-title ${currentTab == tab ? 'active' : ''}"></div>
+	<aui:nav cssClass="${currentTab == tab ? 'active' : ''} abc foo"></aui:nav>
+	<aui:nav cssClass="${currentTab == tab ? 'active' : ''} foo abc <%= "scriptletblock" %>"></aui:nav>
 </body>
 </html>
