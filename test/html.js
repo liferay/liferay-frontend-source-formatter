@@ -208,9 +208,10 @@ describe(
 				var token = privHTMLFormatter._TOKEN;
 				var p0 = token + '0' + token;
 				var p1 = token + '1' + token;
+				var p2 = token + '2' + token;
 
-				var before = '<p class="<%= "Some value" %> foo <%= "Another value" %>">Foo</p>';
-				var after = '<p class="' + p0 + ' foo ' + p1 + '">Foo</p>';
+				var before = '<p class="<%= "Some value" %> foo <%= "Another value" %> ${tab}">Foo</p>';
+				var after = '<p class="' + p0 + ' foo ' + p1 + ' ' + p2 + '">Foo</p>';
 
 				var str = privHTMLFormatter._attrRemoveScriptlets(before, 1);
 
@@ -241,9 +242,10 @@ describe(
 				var token = privHTMLFormatter._TOKEN;
 				var p0 = token + '0' + token;
 				var p1 = token + '1' + token;
+				var p2 = token + '2' + token;
 
-				var before = '<p class="' + p0 + ' foo ' + p1 + '">Foo</p>';
-				var after = '<p class="<%= "Some value" %> foo <%= "Another value" %>">Foo</p>';
+				var before = '<p class="' + p0 + ' foo ' + p1 + ' ' + p2 + '">Foo</p>';
+				var after = '<p class="<%= "Some value" %> foo <%= "Another value" %> ${tab}">Foo</p>';
 
 				var str = privHTMLFormatter._attrRestoreScriptlets(before, 1);
 
