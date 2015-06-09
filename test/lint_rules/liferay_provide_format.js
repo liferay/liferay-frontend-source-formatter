@@ -14,6 +14,7 @@ eslintTester.addRuleTest(
 			'Liferay.provide(Liferay.Util, "foo", function(){}, ["dep"])',
 			'Liferay.provide(window, str, function(){}, ["dep"])',
 			'Liferay.provide(window, "foo", fooFn, ["dep"])',
+			'Liferay.provide(window, "foo", fooFn, ["dep"].concat("foo"))',
 		],
 
 		invalid: [
@@ -35,6 +36,10 @@ eslintTester.addRuleTest(
 			},
 			{
 				code: 'Liferay.provide(window, "foo", function(){}, "foo")',
+				errors: [ { message: 'Liferay.provide expects an array as the last argument.' } ]
+			},
+			{
+				code: 'Liferay.provide(window, "foo", function(){}, "foo".toLowerCase())',
 				errors: [ { message: 'Liferay.provide expects an array as the last argument.' } ]
 			},
 			{
