@@ -121,6 +121,19 @@ If you pass `--no-color` it will overwrite the default and give you plain text.
 
 If you pass `-v`, it will give you the lines in each file, as well as a merged version (useful for copy/pasting to update the metadata).
 
+## Sublime Text Integration
+You can setup Sublime Text to check source formating of the file you are working on when you build it. To do it follow the next steps:
+- Go to Tools/Build System/New Build System
+- Use the following code for the new build system and save the file
+```
+{
+	"shell_cmd": "check_sf $file"
+}
+```
+- Go to Tools/Build System and select the system you created
+
+And that's it. When you build the file (Tools/Build) the check result will be shown in the Sublime Text command line. You can also install SublimeOnSaveBuild plugin via Control Panel to automatically build the file when you save it
+
 ## Known issues
 The following are known issues where it will say there's an error, but there's not (or where there should be an error but there's not)
 
