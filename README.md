@@ -122,17 +122,34 @@ If you pass `--no-color` it will overwrite the default and give you plain text.
 If you pass `-v`, it will give you the lines in each file, as well as a merged version (useful for copy/pasting to update the metadata).
 
 ## Sublime Text Integration
-You can setup Sublime Text to check source formating of the file you are working on when you build it. To do it follow the next steps:
-- Go to Tools/Build System/New Build System
+There are now two ways you can integrate this module with Sublime Text:
+
+### As a build system
+You can setup a build system in Sublime Text to run the formatter on the file you are working in, and this is the simplest of the options.
+You can set up your build system using the following steps:
+- Go to the menu labeled Tools > Build System > New Build System
 - Use the following code for the new build system and save the file
 ```
 {
 	"shell_cmd": "check_sf $file"
 }
 ```
-- Go to Tools/Build System and select the system you created
+- Go to Tools > Build System and select the system you created
 
-And that's it. When you build the file (Tools/Build) the check result will be shown in the Sublime Text command line. You can also install SublimeOnSaveBuild plugin via Control Panel to automatically build the file when you save it
+And that's it. When you build the file (Tools > Build) the result will be shown in the Sublime Text command line. You can also install [SublimeOnSaveBuild](https://packagecontrol.io/packages/SublimeOnSaveBuild) plugin via [Package Control](https://packagecontrol.io/) to automatically build the file when you save it.
+Thanks to @carloslancha for the idea and docs.
+
+### As a Sublime Linter plugin
+You can also use [Sublime Linter](http://www.sublimelinter.com/en/latest/) to visually see in your code where the errors are:
+[![Sublime Linter](/../screenshots/images/sublime_linter.png?raw=true "Sublime Linter")](https://packagecontrol.io/packages/SublimeLinter-contrib-check-source-formatting)
+
+You can install it via a couple of steps:
+- Install [Sublime Linter](http://www.sublimelinter.com/en/latest/) via Package Control
+- Install the [SublimeLinter-contrib-check-source-formatting](https://packagecontrol.io/packages/SublimeLinter-contrib-check-source-formatting) package via Package Control
+- In order to get it to lint, you may need to either manually lint it (in the Command Palette, type "Lint this view" and select it), or you may wish to change when it lints (in the Command Palette again, type "Choose Lint Mode", and select when you want it to lint the file).
+
+You can read more on [the project page](https://packagecontrol.io/packages/SublimeLinter-contrib-check-source-formatting).
+Thanks to @drewbrokke for writing the plugin and publishing it.
 
 ## Known issues
 The following are known issues where it will say there's an error, but there's not (or where there should be an error but there's not)
