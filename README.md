@@ -137,7 +137,7 @@ You can set up your build system using the following steps:
 - Go to Tools > Build System and select the system you created
 
 And that's it. When you build the file (Tools > Build) the result will be shown in the Sublime Text command line. You can also install [SublimeOnSaveBuild](https://packagecontrol.io/packages/SublimeOnSaveBuild) plugin via [Package Control](https://packagecontrol.io/) to automatically build the file when you save it.
-Thanks to @carloslancha for the idea and docs.
+Thanks to [Carlos Lancha](https://github.com/carloslancha) for the idea and docs.
 
 ### As a Sublime Linter plugin
 You can also use [Sublime Linter](http://www.sublimelinter.com/en/latest/) to visually see in your code where the errors are:
@@ -149,7 +149,7 @@ You can install it via a couple of steps:
 - In order to get it to lint, you may need to either manually lint it (in the Command Palette, type "Lint this view" and select it), or you may wish to change when it lints (in the Command Palette again, type "Choose Lint Mode", and select when you want it to lint the file).
 
 You can read more on [the project page](https://packagecontrol.io/packages/SublimeLinter-contrib-check-source-formatting).
-Thanks to @drewbrokke for writing the plugin and publishing it.
+Thanks to [Drew Brokke](https://github.com/drewbrokke) for writing the plugin and publishing it.
 
 ## Known issues
 The following are known issues where it will say there's an error, but there's not (or where there should be an error but there's not)
