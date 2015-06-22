@@ -119,6 +119,8 @@ If you pass `--no-color` it will overwrite the default and give you plain text.
 
 `-m`, `--check-metadata` If we're inside of a portal repository, and one of the files is in the /html/js/liferay/ directory, check all of the modules in that directory, and see if the requires metadata in the files matches the metadata in the modules.js file.
 
+`--show-columns` If this is passed, it will show the column where the error has taken place. At this time, it only works on JavaScript, since ESLint will give us column information, but I may work something out for this in the future. This one is added mainly for Sublime Linter and other scripts that may wish use the information. It defaults to false, since it's not super useful in regular usage (at least I haven't found it to be).
+
 If you pass `-v`, it will give you the lines in each file, as well as a merged version (useful for copy/pasting to update the metadata).
 
 ## Sublime Text Integration

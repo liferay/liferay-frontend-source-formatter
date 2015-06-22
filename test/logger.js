@@ -198,6 +198,27 @@ describe(
 				out = logger.render('arrays.js');
 
 				assert.equal(out, 'Lines 1-5');
+
+				// line helper - columns
+
+				logger.log(
+					1,
+					'Has error',
+					'columns.js',
+					'error',
+					{
+						column: 6
+					}
+				);
+
+				out = logger.render(
+					'columns.js',
+					{
+						showColumns: true
+					}
+				);
+
+				assert.equal(out, 'Line 1, Column 6');
 			}
 		);
 
