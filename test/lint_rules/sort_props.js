@@ -49,6 +49,14 @@ eslintTester.addRuleTest(
 			{
 				code: '({_getFoo: 1, _getAbc: 2})',
 				errors: [ { message: 'Sort properties: _getFoo _getAbc' } ]
+			},
+			{
+				code: '({_getFoo: 1, getAbc: 2})',
+				errors: [ { message: 'Sort properties: _getFoo getAbc' } ]
+			},
+			{
+				code: '({_getFoo: function(){},\n\n getAbc: function(){}})',
+				errors: [ { message: 'Sort properties: _getFoo getAbc' } ]
 			}
 		]
 	}
