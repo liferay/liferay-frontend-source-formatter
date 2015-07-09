@@ -32,7 +32,7 @@
 	</aui:script>
 
 	<aui:script use="aui-base,event,node">
-		var testVar = true
+		var Liferay = true
 
 		Liferay.Language.get('foo');
 
