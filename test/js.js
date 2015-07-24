@@ -2,6 +2,7 @@ var _ = require('lodash');
 var chai = require('chai');
 var fs = require('fs');
 var path = require('path');
+var sinon = require('sinon');
 
 var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
@@ -22,6 +23,20 @@ describe(
 	'Formatter.JS',
 	function() {
 		'use strict';
+
+		var sandbox;
+
+		beforeEach(
+			function() {
+				sandbox = sinon.sandbox.create();
+			}
+		);
+
+		afterEach(
+			function() {
+				sandbox.restore();
+			}
+		);
 
 		var testFilePath = path.join(__dirname, 'fixture', 'test.js');
 
@@ -88,6 +103,22 @@ describe(
 				var srcCode = 'var foo = 1';
 
 				assert.equal(jsFormatter._printAsSource(srcCode), '1 ' + srcCode);
+			}
+		);
+
+		it(
+			'should use a custom lint log filter',
+			function() {
+				var jsLoggerFilter = new Logger.Logger();
+				var jsFormatterFilter = new Formatter.JS(testFilePath, jsLoggerFilter);
+
+				var lintLogFilter = sinon.stub().returnsArg(0);
+
+				jsFormatterFilter.lintLogFilter = lintLogFilter;
+
+				jsFormatterFilter.format('var _PN_var = 1;');
+
+				assert.isTrue(lintLogFilter.called);
 			}
 		);
 
