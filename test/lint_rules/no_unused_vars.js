@@ -14,18 +14,18 @@ eslintTester.addRuleTest(
 		valid: [
 			'var _PN_xyz = 1;',
 			{
-				code: 'var _PN_xyz = function(){}',
+				code: '(function(){ var _PN_xyz = function(){}; });',
 				args: args
 			},
 			{
-				code: 'function _PN_xyz(){}',
+				code: '(function(){ function _PN_xyz(){} })',
 				args: args
 			},
 		],
 
 		invalid: [
 			{
-				code: 'var _PN_xyz = 1;',
+				code: '(function(){ var _PN_xyz = 1; });',
 				errors: [ { message: '_PN_xyz is defined but never used' } ],
 				args: args
 			}
