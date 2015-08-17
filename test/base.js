@@ -13,8 +13,6 @@ describe(
 	function() {
 		'use strict';
 
-		var sub = base.sub;
-
 		var sandbox;
 
 		beforeEach(
@@ -26,26 +24,6 @@ describe(
 		afterEach(
 			function() {
 				sandbox.restore();
-			}
-		);
-
-		it(
-			'should substitute strings correctly',
-			function() {
-				assert.equal('Foo bar', sub('Foo {0}', 'bar'));
-				assert.equal('Foo bar', sub('Foo {0}', ['bar']));
-
-				assert.equal(
-					'Foo bar',
-					sub(
-						'Foo {key}',
-						{
-							key: 'bar'
-						}
-					)
-				);
-
-				assert.equal(1, sub(1, 'bar'));
 			}
 		);
 

@@ -5,7 +5,7 @@ var path = require('path');
 
 var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
-var sub = require('../lib/base').sub;
+var sub = require('string-sub');
 
 chai.use(require('chai-string'));
 

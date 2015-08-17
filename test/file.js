@@ -1,7 +1,7 @@
 var chai = require('chai');
 var path = require('path');
 
-var sub = require('../lib/base').sub;
+var sub = require('string-sub');
 var File = require('../lib/file');
 
 chai.use(require('chai-string'));

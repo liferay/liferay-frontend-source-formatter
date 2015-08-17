@@ -4,7 +4,7 @@ var _ = require('lodash');
 chai.use(require('chai-string'));
 
 var re = require('../../lib/re');
-var sub = require('../../lib/base').sub;
+var sub = require('string-sub');
 
 var assert = chai.assert;
 
