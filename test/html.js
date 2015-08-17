@@ -18,7 +18,7 @@ describe(
 
 		var testFilePath = path.join(__dirname, 'fixture', 'test.jsp');
 
-		var htmlLogger = new Logger.Logger();
+		var htmlLogger = new Logger.constructor();
 		var htmlFormatter = new Formatter.HTML(testFilePath, htmlLogger);
 		var source = fs.readFileSync(testFilePath, 'utf-8');
 		var fileErrors = htmlLogger.fileErrors;

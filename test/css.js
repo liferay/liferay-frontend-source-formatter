@@ -14,7 +14,7 @@ describe(
 	function() {
 		'use strict';
 
-		var cssLogger = new Logger.Logger();
+		var cssLogger = new Logger.constructor();
 
 		var cssTestsPath = path.join(__dirname, 'fixture', 'css');
 

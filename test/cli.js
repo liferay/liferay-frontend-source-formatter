@@ -53,7 +53,7 @@ describe(
 					{
 						args: ['foo.js', 'bar.html', 'baz.css'],
 						log: sinon.log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -80,7 +80,7 @@ describe(
 							inlineEdit: true
 						},
 						log: sinon.log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -118,7 +118,7 @@ describe(
 							inlineEdit: true
 						},
 						log: sinon.log,
-						logger: new Logger.Logger(),
+						logger: new Logger.constructor(),
 						write: fs.writeFile
 					}
 				);
@@ -141,7 +141,7 @@ describe(
 					{
 						args: ['foo.NOOP'],
 						log: sinon.log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -166,7 +166,7 @@ describe(
 							checkMetadata: true
 						},
 						log: sinon.log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -189,7 +189,7 @@ describe(
 							checkMetadata: true
 						},
 						log: sinon.log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -214,7 +214,7 @@ describe(
 					{
 						args: ['foo.js'],
 						log: log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -237,7 +237,7 @@ describe(
 
 				var log = sandbox.spy();
 
-				var logger = new Logger.Logger();
+				var logger = new Logger.constructor();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -278,7 +278,7 @@ describe(
 							filenames: true
 						},
 						log: log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -310,7 +310,7 @@ describe(
 							relative: true
 						},
 						log: log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -334,7 +334,7 @@ describe(
 					{
 						args: ['foo.js'],
 						log: log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -363,7 +363,7 @@ describe(
 					{
 						args: ['./'],
 						log: log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -383,7 +383,7 @@ describe(
 					{
 						args: [],
 						log: log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -420,7 +420,7 @@ describe(
 							open: true
 						},
 						log: log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -439,7 +439,7 @@ describe(
 							open: true
 						},
 						log: log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 
@@ -469,7 +469,7 @@ describe(
 						},
 						junit: junit,
 						log: sinon.log,
-						logger: new Logger.Logger()
+						logger: new Logger.constructor()
 					}
 				);
 

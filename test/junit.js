@@ -33,7 +33,7 @@ describe(
 		it(
 			'should generate a JUnit report',
 			function() {
-				var logger = new Logger.Logger();
+				var logger = new Logger.constructor();
 
 				logger.log(1, 'Content is not valid', 'foo.js');
 				logger.log(2, 'Content is not valid', 'foo.js', 'error');
@@ -83,7 +83,7 @@ describe(
 		it(
 			'should generate a valid JUnit report',
 			function(done) {
-				var logger = new Logger.Logger();
+				var logger = new Logger.constructor();
 
 				logger.log(1, 'Content is not valid', 'foo.js');
 				logger.log(38, 'Missing space between selector and bracket: &.no-title .asset-user-actions{', 'xmlentity.css', 'error');

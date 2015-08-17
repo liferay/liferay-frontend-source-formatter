@@ -40,7 +40,7 @@ describe(
 
 		var testFilePath = path.join(__dirname, 'fixture', 'test.js');
 
-		var jsLogger = new Logger.Logger();
+		var jsLogger = new Logger.constructor();
 		var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
 		var source = fs.readFileSync(testFilePath, 'utf-8');
 
@@ -109,7 +109,7 @@ describe(
 		it(
 			'should use a custom lint log filter',
 			function() {
-				var jsLoggerFilter = new Logger.Logger();
+				var jsLoggerFilter = new Logger.constructor();
 				var jsFormatterFilter = new Formatter.JS(testFilePath, jsLoggerFilter);
 
 				var lintLogFilter = sinon.stub().returnsArg(0);
@@ -125,7 +125,7 @@ describe(
 		it(
 			'should parse JS syntax',
 			function() {
-				var jsLoggerParse = new Logger.Logger();
+				var jsLoggerParse = new Logger.constructor();
 				var jsFormatterParse = new Formatter.JS(testFilePath, jsLoggerParse);
 				var processed = false;
 
@@ -151,7 +151,7 @@ describe(
 				assert.equal(parseErrors.length, 1);
 				assert.equal(parseErrors[0].msg, 'Could not parse JavaScript: Unexpected token ;');
 
-				var jsLoggerParseVerbose = new Logger.Logger();
+				var jsLoggerParseVerbose = new Logger.constructor();
 				var jsFormatterParseVerbose = new Formatter.JS(testFilePath, jsLoggerParseVerbose);
 
 				jsFormatterParseVerbose.flags.verbose = true;
@@ -167,7 +167,7 @@ describe(
 		it(
 			'should handle errors during JS parsing',
 			function() {
-				var jsLoggerParse = new Logger.Logger();
+				var jsLoggerParse = new Logger.constructor();
 				var jsFormatterParse = new Formatter.JS(testFilePath, jsLoggerParse);
 
 				jsFormatterParse.processor.VariableDeclaration = function(node, parent) {
@@ -198,7 +198,7 @@ describe(
 
 		var testFilePath = path.join(__dirname, 'fixture', 'test_node.js');
 
-		var jsLogger = new Logger.Logger();
+		var jsLogger = new Logger.constructor();
 		var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
 		var source = fs.readFileSync(testFilePath, 'utf-8');
 
@@ -224,7 +224,7 @@ describe(
 
 		var testFilePath = path.join(__dirname, 'fixture', 'test.js');
 
-		var jsLogger = new Logger.Logger();
+		var jsLogger = new Logger.constructor();
 		var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
 		var source = fs.readFileSync(testFilePath, 'utf-8');
 
