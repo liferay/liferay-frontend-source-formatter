@@ -32,7 +32,7 @@ describe(
 						var lineNum = 1;
 
 						assert.isTrue(result, sub('Expected {0} to match', item));
-						assert.startsWith(re.getMessage(lineNum, result, rule, context), rule.message.split(':')[0]);
+						assert.startsWith(re.getMessage(result, rule, context), rule.message.split(':')[0]);
 					}
 				);
 			}
