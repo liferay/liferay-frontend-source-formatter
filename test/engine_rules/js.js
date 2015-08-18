@@ -53,7 +53,7 @@ describe(
 						var lineNum = 1;
 
 						assert.isTrue(result);
-						assert.startsWith(re.getMessage(lineNum, item, result, rule, context), 'These arguments should each be on their own line');
+						assert.startsWith(re.getMessage(lineNum, result, rule, context), 'These arguments should each be on their own line');
 						assert.equal(item, re.replaceItem(lineNum, result, rule, context));
 					}
 				);
@@ -91,7 +91,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
 			}
 		);
@@ -114,7 +114,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
 			}
 		);
@@ -160,7 +160,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
 
 				context.item = context.fullItem = 'Liferay.Language.get("foo")';
@@ -186,7 +186,7 @@ describe(
 						var lineNum = 1;
 
 						assert.isTrue(result);
-						assert.startsWith(re.getMessage(lineNum, item, result, rule, context), 'Debugging statement');
+						assert.startsWith(re.getMessage(lineNum, result, rule, context), 'Debugging statement');
 						assert.equal(item, re.replaceItem(lineNum, result, rule, context));
 					}
 				);
@@ -212,7 +212,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
 
 				context.nextItem = '';
