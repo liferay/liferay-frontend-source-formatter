@@ -24,10 +24,11 @@ describe(
 					tests,
 					function(item, index) {
 						var context = {
+							fullItem: item,
 							item: item
 						};
 
-						var result = re.testLine(rule, item, context);
+						var result = re.testLine(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result, sub('Expected {0} to match', item));

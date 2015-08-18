@@ -95,9 +95,9 @@ describe(
 
 				var item = ruleInstance.iterateRules(
 					'ruleTest',
-					'test foo test',
 					{
 						file: 'foo.js',
+						fullItem: 'test foo test',
 						item: 'test foo test',
 						logger: logger
 					}
@@ -126,9 +126,9 @@ describe(
 
 				var item = ruleInstance.iterateRules(
 					rulesObject.ruleTest,
-					'test foo test',
 					{
 						file: 'foo.js',
+						fullItem: 'test foo test',
 						item: 'test foo test',
 						logger: logger
 					}
@@ -159,10 +159,10 @@ describe(
 
 				var item = ruleInstance.iterateRules(
 					'ruleTest',
-					'test foo test',
 					{
 						file: 'foo.js',
 						formatItem: formatItem,
+						fullItem: 'test foo test',
 						item: 'test foo test',
 						logger: logger
 					}
@@ -193,10 +193,10 @@ describe(
 
 				var item = ruleInstance.iterateRules(
 					'ruleTest',
-					' test foo test ',
 					{
 						file: 'foo.js',
 						formatItem: false,
+						fullItem: ' test foo test ',
 						item: ' test foo test ',
 						logger: logger
 					}
@@ -216,9 +216,9 @@ describe(
 
 				var item = ruleInstance.iterateRules(
 					'nonExistantRules',
-					'test foo test',
 					{
 						file: 'foo.js',
+						fullItem: 'test foo test',
 						item: 'test foo test',
 						logger: logger
 					}
@@ -250,9 +250,9 @@ describe(
 
 				var item = ruleInstance.iterateRules(
 					'ignoredRuleTest',
-					itemString,
 					{
 						file: 'foo.js',
+						fullItem: itemString,
 						item: itemString,
 						logger: logger
 					}

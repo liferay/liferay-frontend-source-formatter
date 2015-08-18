@@ -19,10 +19,11 @@ describe(
 				var item = 'Liferay.Language.get(\'foo\');';
 
 				var context = {
+					fullItem: item,
 					item: item
 				};
 
-				var result = re.testLine(rule, item, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -40,10 +41,11 @@ describe(
 
 				var context = {
 					asyncAUIScript: true,
+					fullItem: item,
 					item: item
 				};
 
-				var result = re.testLine(rule, item, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);

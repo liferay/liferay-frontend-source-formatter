@@ -22,10 +22,11 @@ describe(
 				var expectedResult = ['} else', undefined, 'else'];
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.deepEqual(expectedResult, _.toArray(result));
@@ -44,10 +45,11 @@ describe(
 				shouldMatch.forEach(
 					function(item, index) {
 						var context = {
+							fullItem: item,
 							item: item
 						};
 
-						var result = re.testLine(rule, item, context);
+						var result = re.testLine(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result);
@@ -61,10 +63,11 @@ describe(
 				shouldNotMatch.forEach(
 					function(item, index) {
 						var context = {
+							fullItem: item,
 							item: item
 						};
 
-						assert.isFalse(re.testLine(rule, item, context));
+						assert.isFalse(re.testLine(rule, context));
 					}
 				);
 			}
@@ -80,10 +83,11 @@ describe(
 				var expectedWarning = 'Needs a space between ")" and "{"';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -102,10 +106,11 @@ describe(
 				var expectedWarning = 'Anonymous function expressions should be formatted as function(';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -124,10 +129,11 @@ describe(
 				var expectedResult = ['while(', 'while', '('];
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.deepEqual(expectedResult, _.toArray(result));
@@ -146,18 +152,19 @@ describe(
 				var expectedWarning = 'You should never pass variables to Liferay.Language.get()';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 
-				context.item = 'Liferay.Language.get("foo")';
-				assert.isFalse(re.testLine(rule, context.item, context));
+				context.item = context.fullItem = 'Liferay.Language.get("foo")';
+				assert.isFalse(re.testLine(rule, context));
 			}
 		);
 
@@ -171,10 +178,11 @@ describe(
 				shouldMatch.forEach(
 					function(item, index) {
 						var context = {
+							fullItem: item,
 							item: item
 						};
 
-						var result = re.testLine(rule, item, context);
+						var result = re.testLine(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result);
@@ -195,11 +203,12 @@ describe(
 				var expectedWarning = 'Variable declaration needs a new line after it';
 
 				var context = {
+					fullItem: input,
 					item: input,
 					nextItem: 'instance.foo()'
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -207,9 +216,9 @@ describe(
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 
 				context.nextItem = '';
-				assert.isFalse(re.testLine(rule, input, context));
+				assert.isFalse(re.testLine(rule, context));
 				context.nextItem = input;
-				assert.isFalse(re.testLine(rule, input, context));
+				assert.isFalse(re.testLine(rule, context));
 			}
 		);
 

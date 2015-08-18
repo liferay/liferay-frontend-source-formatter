@@ -28,10 +28,11 @@ describe(
 					tests,
 					function(output, input) {
 						var context = {
+							fullItem: input,
 							item: input
 						};
 
-						var result = re.testLine(rule, input, context);
+						var result = re.testLine(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result);
@@ -62,10 +63,11 @@ describe(
 					tests,
 					function(output, input) {
 						var context = {
+							fullItem: input,
 							item: input
 						};
 
-						var result = re.testLine(rule, input, context);
+						var result = re.testLine(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result);

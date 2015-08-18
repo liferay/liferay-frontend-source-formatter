@@ -21,10 +21,11 @@ describe(
 				var expectedWarning = 'Hex code should be all uppercase';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -43,10 +44,11 @@ describe(
 				var expectedWarning = 'Hex code can be reduced to #000';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -65,10 +67,11 @@ describe(
 				var expectedWarning = 'Missing integer';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -87,10 +90,11 @@ describe(
 				var expectedWarning = 'Needs space between comma-separated values';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -109,10 +113,11 @@ describe(
 				var expectedWarning = 'Needs space between comma-separated values';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 
 				assert.isFalse(result);
 			}
@@ -128,6 +133,7 @@ describe(
 				var expectedWarning = 'There should be a newline between "}" and ".foo {"';
 
 				var context = {
+					fullItem: input,
 					item: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
@@ -136,7 +142,7 @@ describe(
 					previousItem: '}'
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -155,6 +161,7 @@ describe(
 				var expectedWarning = 'There should be a newline between "}" and ".foo {"';
 
 				var context = {
+					fullItem: input,
 					item: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
@@ -163,7 +170,7 @@ describe(
 					previousItem: '}'
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -180,6 +187,7 @@ describe(
 				var input = '@else if $direction == vertical {';
 
 				var context = {
+					fullItem: input,
 					item: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
@@ -188,7 +196,7 @@ describe(
 					previousItem: '}'
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 
 				assert.isFalse(result);
 			}
@@ -204,10 +212,11 @@ describe(
 				var expectedWarning = 'Missing space between selector and bracket';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -226,10 +235,11 @@ describe(
 				var expectedWarning = 'Needless quotes';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -248,10 +258,11 @@ describe(
 				var expectedWarning = 'Needless unit';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -271,21 +282,22 @@ describe(
 
 				var context = {
 					collection: ['', input, ''],
+					fullItem: input,
 					index: 1,
 					item: input,
 					nextItem: '',
 					previousItem: ''
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.equal(result, 1);
 				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 
-				context.item = '.foo {';
-				result = re.testLine(rule, context.item, context);
+				context.item = context.fullItem = '.foo {';
+				result = re.testLine(rule, context);
 
 				assert.equal(result, 2);
 				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
@@ -301,13 +313,14 @@ describe(
 
 				var context = {
 					collection: ['', input, '', '/* Comment */'],
+					fullItem: input,
 					index: 1,
 					item: input,
 					nextItem: '',
 					previousItem: ''
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 
 				assert.isFalse(result);
 			}
@@ -323,10 +336,11 @@ describe(
 				var expectedWarning = 'Trailing comma in selector';
 
 				var context = {
+					fullItem: input,
 					item: input
 				};
 
-				var result = re.testLine(rule, input, context);
+				var result = re.testLine(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -367,13 +381,14 @@ describe(
 				input.forEach(
 					function(item, index) {
 						var context = {
+							fullItem: item,
 							item: item
 						};
 
 						var output = item.split(':')[0] + '-width: 0;';
 						var expectedWarning = 'You should use "' + output + '"';
 
-						var result = re.testLine(rule, item, context);
+						var result = re.testLine(rule, context);
 						var lineNum = 1;
 
 						assert.isArray(result);
@@ -401,10 +416,11 @@ describe(
 				input.forEach(
 					function(item, index) {
 						var context = {
+							fullItem: item,
 							item: item
 						};
 
-						var result = re.testLine(rule, item, context);
+						var result = re.testLine(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result);
