@@ -28,7 +28,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
@@ -50,7 +50,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
@@ -72,7 +72,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
@@ -94,7 +94,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
@@ -140,7 +140,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
@@ -167,7 +167,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
@@ -211,7 +211,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
@@ -233,7 +233,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
@@ -255,7 +255,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
@@ -281,14 +281,14 @@ describe(
 				var lineNum = 1;
 
 				assert.equal(result, 1);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 
 				context.item = '.foo {';
 				result = re.testLine(rule, context.item, context);
 
 				assert.equal(result, 2);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 			}
 		);
 
@@ -330,7 +330,7 @@ describe(
 				var lineNum = 1;
 
 				assert.isTrue(result);
-				assert.startsWith(re.getWarning(lineNum, input, result, rule, context), expectedWarning);
+				assert.startsWith(re.getMessage(lineNum, input, result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 			}
 		);
@@ -377,7 +377,7 @@ describe(
 						var lineNum = 1;
 
 						assert.isArray(result);
-						assert.startsWith(re.getWarning(lineNum, item, result, rule, context), expectedWarning);
+						assert.startsWith(re.getMessage(lineNum, item, result, rule, context), expectedWarning);
 						assert.equal(output, re.replaceItem(lineNum, item, result, rule, context));
 					}
 				);
@@ -408,7 +408,7 @@ describe(
 						var lineNum = 1;
 
 						assert.isTrue(result);
-						assert.startsWith(re.getWarning(lineNum, item, result, rule, context), expectedWarning);
+						assert.startsWith(re.getMessage(lineNum, item, result, rule, context), expectedWarning);
 						assert.equal(output, re.replaceItem(lineNum, item, result, rule, context));
 					}
 				);

@@ -35,7 +35,7 @@ describe(
 						var lineNum = 1;
 
 						assert.isTrue(result);
-						assert.startsWith(re.getWarning(lineNum, input, result, rule, context), rule.message.split(':')[0]);
+						assert.startsWith(re.getMessage(lineNum, input, result, rule, context), rule.message.split(':')[0]);
 						assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 					}
 				);
@@ -69,7 +69,7 @@ describe(
 						var lineNum = 1;
 
 						assert.isTrue(result);
-						assert.startsWith(re.getWarning(lineNum, input, result, rule, context), rule.MSG);
+						assert.startsWith(re.getMessage(lineNum, input, result, rule, context), rule.MSG);
 						assert.equal(output, re.replaceItem(lineNum, input, result, rule, context));
 					}
 				);
