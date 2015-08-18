@@ -30,7 +30,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -53,7 +53,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -76,7 +76,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -99,7 +99,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -147,7 +147,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -175,7 +175,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -221,7 +221,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -244,7 +244,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -267,7 +267,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -294,7 +294,7 @@ describe(
 
 				assert.equal(result, 1);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 
 				context.item = context.fullItem = '.foo {';
 				result = re.testLine(rule, context);
@@ -345,7 +345,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -393,7 +393,7 @@ describe(
 
 						assert.isArray(result);
 						assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-						assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+						assert.equal(output, re.replaceItem(result, rule, context));
 					}
 				);
 			}
@@ -425,7 +425,7 @@ describe(
 
 						assert.isTrue(result);
 						assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-						assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+						assert.equal(output, re.replaceItem(result, rule, context));
 					}
 				);
 			}

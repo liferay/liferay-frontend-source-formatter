@@ -28,7 +28,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), rule.message.split(':')[0]);
-				assert.equal(item, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(item, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -50,7 +50,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), rule.message.split(':')[0]);
-				assert.equal(item, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(item, re.replaceItem(result, rule, context));
 			}
 		);
 	}

@@ -31,7 +31,7 @@ describe(
 
 				assert.deepEqual(expectedResult, _.toArray(result));
 
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -54,7 +54,7 @@ describe(
 
 						assert.isTrue(result);
 						assert.startsWith(re.getMessage(result, rule, context), 'These arguments should each be on their own line');
-						assert.equal(item, re.replaceItem(lineNum, result, rule, context));
+						assert.equal(item, re.replaceItem(result, rule, context));
 					}
 				);
 
@@ -92,7 +92,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -115,7 +115,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -138,7 +138,7 @@ describe(
 
 				assert.deepEqual(expectedResult, _.toArray(result));
 
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -161,7 +161,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 
 				context.item = context.fullItem = 'Liferay.Language.get("foo")';
 				assert.isFalse(re.testLine(rule, context));
@@ -187,7 +187,7 @@ describe(
 
 						assert.isTrue(result);
 						assert.startsWith(re.getMessage(result, rule, context), 'Debugging statement');
-						assert.equal(item, re.replaceItem(lineNum, result, rule, context));
+						assert.equal(item, re.replaceItem(result, rule, context));
 					}
 				);
 			}
@@ -213,7 +213,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+				assert.equal(output, re.replaceItem(result, rule, context));
 
 				context.nextItem = '';
 				assert.isFalse(re.testLine(rule, context));

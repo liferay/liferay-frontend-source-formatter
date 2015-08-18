@@ -37,7 +37,7 @@ describe(
 
 						assert.isTrue(result);
 						assert.startsWith(re.getMessage(result, rule, context), rule.message.split(':')[0]);
-						assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+						assert.equal(output, re.replaceItem(result, rule, context));
 					}
 				);
 			}
@@ -72,7 +72,7 @@ describe(
 
 						assert.isTrue(result);
 						assert.startsWith(re.getMessage(result, rule, context), rule.MSG);
-						assert.equal(output, re.replaceItem(lineNum, result, rule, context));
+						assert.equal(output, re.replaceItem(result, rule, context));
 					}
 				);
 			}
