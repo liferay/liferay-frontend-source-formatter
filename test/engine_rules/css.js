@@ -14,7 +14,7 @@ describe(
 		it(
 			'should detect and replace improper hex format',
 			function() {
-				var rule = re.css.hexLowerCase;
+				var rule = re.rules.css.hexLowerCase;
 
 				var input = '#fff';
 				var output = '#FFF';
@@ -36,7 +36,7 @@ describe(
 		it(
 			'should detect and replace redundant hex colors',
 			function() {
-				var rule = re.css.hexRedundant;
+				var rule = re.rules.css.hexRedundant;
 
 				var input = '#000000';
 				var output = '#000';
@@ -58,7 +58,7 @@ describe(
 		it(
 			'should detect and replace missing integers',
 			function() {
-				var rule = re.css.missingInteger;
+				var rule = re.rules.css.missingInteger;
 
 				var input = 'width: .1px';
 				var output = 'width: 0.1px';
@@ -80,7 +80,7 @@ describe(
 		it(
 			'should detect and replace list value spaces',
 			function() {
-				var rule = re.css.missingListValuesSpace;
+				var rule = re.rules.css.missingListValuesSpace;
 
 				var input = 'clip: rect(0,0,0,0)';
 				var output = 'clip: rect(0, 0, 0, 0)';
@@ -102,7 +102,7 @@ describe(
 		it(
 			'should ignore list value spaces in content properties',
 			function() {
-				var rule = re.css.missingListValuesSpace;
+				var rule = re.rules.css.missingListValuesSpace;
 
 				var input = 'content: ",";';
 				var output = 'content: ",";';
@@ -121,7 +121,7 @@ describe(
 		it(
 			'should detect and replace missing new lines',
 			function() {
-				var rule = re.css.missingNewlines;
+				var rule = re.rules.css.missingNewlines;
 
 				var input = '.foo {';
 				var output = '\n.foo {';
@@ -148,7 +148,7 @@ describe(
 		it(
 			'should detect and replace missing new lines around directives',
 			function() {
-				var rule = re.css.missingNewlines;
+				var rule = re.rules.css.missingNewlines;
 
 				var input = '@if $direction == vertical {';
 				var output = '\n@if $direction == vertical {';
@@ -175,7 +175,7 @@ describe(
 		it(
 			'should ignore missing new lines around @else directives',
 			function() {
-				var rule = re.css.missingNewlines;
+				var rule = re.rules.css.missingNewlines;
 
 				var input = '@else if $direction == vertical {';
 
@@ -197,7 +197,7 @@ describe(
 		it(
 			'should detect missing selector space',
 			function() {
-				var rule = re.css.missingSelectorSpace;
+				var rule = re.rules.css.missingSelectorSpace;
 
 				var input = '.foo{';
 				var output = input;
@@ -219,7 +219,7 @@ describe(
 		it(
 			'should detect and replace needless quotes',
 			function() {
-				var rule = re.css.needlessQuotes;
+				var rule = re.rules.css.needlessQuotes;
 
 				var input = 'background: url("foo.png");';
 				var output = 'background: url(foo.png);';
@@ -241,7 +241,7 @@ describe(
 		it(
 			'should detect and replace needless units',
 			function() {
-				var rule = re.css.needlessUnit;
+				var rule = re.rules.css.needlessUnit;
 
 				var input = 'width: 0px;';
 				var output = 'width: 0;';
@@ -263,7 +263,7 @@ describe(
 		it(
 			'should detect trailing newlines',
 			function() {
-				var rule = re.css.trailingNewlines;
+				var rule = re.rules.css.trailingNewlines;
 
 				var input = '}';
 				var output = input;
@@ -295,7 +295,7 @@ describe(
 		it(
 			'should ignore newlines around comments in nested selectors',
 			function() {
-				var rule = re.css.trailingNewlines;
+				var rule = re.rules.css.trailingNewlines;
 
 				var input = '{';
 
@@ -316,7 +316,7 @@ describe(
 		it(
 			'should detect and replace trailing commas in selector',
 			function() {
-				var rule = re.css.trailingComma;
+				var rule = re.rules.css.trailingComma;
 
 				var input = '.foo, {';
 				var output = '.foo {';
@@ -338,7 +338,7 @@ describe(
 		it(
 			'should detect and replace invalid border reset',
 			function() {
-				var rule = re.css._properties.invalidBorderReset;
+				var rule = re.rules.css._properties.invalidBorderReset;
 				var prop = 'border';
 
 				var input = ['', 'top', 'right', 'bottom', 'left'].reduce(
@@ -387,7 +387,7 @@ describe(
 		it(
 			'should detect and replace invalid property format',
 			function() {
-				var rule = re.css._properties.invalidFormat;
+				var rule = re.rules.css._properties.invalidFormat;
 
 				var input = [
 					'width:10px;',

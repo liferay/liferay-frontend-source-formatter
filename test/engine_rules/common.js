@@ -15,7 +15,7 @@ describe(
 		it(
 			'should detect and replace mixed spaces and tabs',
 			function() {
-				var rule = re.common.mixedSpaces;
+				var rule = re.rules.common.mixedSpaces;
 
 				var tests = {
 					'	 ': '	',
@@ -45,9 +45,9 @@ describe(
 		it(
 			'should detect and replace invalid whitespace',
 			function() {
-				var MAP_WHITESPACE = re.common._MAP_WHITESPACE;
+				var MAP_WHITESPACE = re.rules.common._MAP_WHITESPACE;
 
-				var rule = re.common.invalidWhiteSpace;
+				var rule = re.rules.common.invalidWhiteSpace;
 
 				var tests = {};
 

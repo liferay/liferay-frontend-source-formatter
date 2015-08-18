@@ -14,7 +14,7 @@ describe(
 		it(
 			'should handle Liferay.Language.get()',
 			function() {
-				var rule = re.htmlJS.liferayLanguage;
+				var rule = re.rules.htmlJS.liferayLanguage;
 
 				var item = 'Liferay.Language.get(\'foo\');';
 
@@ -34,7 +34,7 @@ describe(
 		it(
 			'should handle Liferay.provide()',
 			function() {
-				var rule = re.htmlJS.liferayProvide;
+				var rule = re.rules.htmlJS.liferayProvide;
 
 				var item = 'Liferay.provide(window, \'foo\', function() {}, []);';
 

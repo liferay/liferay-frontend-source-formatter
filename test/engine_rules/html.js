@@ -16,7 +16,7 @@ describe(
 		it(
 			'should detect anonymous block containers',
 			function() {
-				var rule = re.html.anonymousBlockContainers;
+				var rule = re.rules.html.anonymousBlockContainers;
 
 				var tests = ['<div>', '<div>foo</div>', '<div ></div>'];
 
