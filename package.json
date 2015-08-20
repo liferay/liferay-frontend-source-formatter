@@ -27,6 +27,7 @@
     "cli-color-keywords": "0.0.1",
     "content-formatter": "^1.1.0",
     "content-logger": "0.0.1",
+    "content-logger-handlebars-helpers": "0.0.1",
     "drip": "^1.4.0",
     "eslint": "^0.24.0",
     "falafel": "^0.3.1",
