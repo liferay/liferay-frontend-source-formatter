@@ -2,7 +2,9 @@ var chai = require('chai');
 
 chai.use(require('chai-string'));
 
-var re = require('../../lib/re');
+var RE = require('../../lib/re');
+
+var re = new RE(require('../../lib/rules'));
 
 var assert = chai.assert;
 

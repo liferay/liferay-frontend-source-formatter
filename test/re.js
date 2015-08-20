@@ -6,12 +6,14 @@ chai.use(require('chai-string'));
 
 var assert = chai.assert;
 
+var RE = require('../lib/re');
+
+var re = new RE(require('../lib/rules'));
+
 describe(
 	're.js',
 	function() {
 		'use strict';
-
-		var re = require('../lib/re');
 
 		var sandbox;
 
@@ -89,7 +91,7 @@ describe(
 					}
 				};
 
-				var ruleInstance = new re.re(rulesObject);
+				var ruleInstance = new RE(rulesObject);
 
 				var logger = sandbox.spy();
 
@@ -121,7 +123,7 @@ describe(
 					}
 				};
 
-				var ruleInstance = new re.re(rulesObject);
+				var ruleInstance = new RE(rulesObject);
 
 				var logger = sandbox.spy();
 
@@ -144,7 +146,7 @@ describe(
 		it(
 			'should handle formatItem properly',
 			function() {
-				var ruleInstance = new re.re(
+				var ruleInstance = new RE(
 					{
 						ruleTest: {
 							logging: {
@@ -180,7 +182,7 @@ describe(
 		it(
 			'should trim line by default',
 			function() {
-				var ruleInstance = new re.re(
+				var ruleInstance = new RE(
 					{
 						ruleTest: {
 							logging: {
@@ -214,7 +216,7 @@ describe(
 		it(
 			'should not iterate non-existant rules',
 			function() {
-				var ruleInstance = new re.re({});
+				var ruleInstance = new RE({});
 
 				var logger = sandbox.spy();
 
@@ -236,7 +238,7 @@ describe(
 		it(
 			'should not iterate ignored lines',
 			function() {
-				var ruleInstance = new re.re(
+				var ruleInstance = new RE(
 					{
 						ignoredRuleTest: {
 							IGNORE: /^\t/,
@@ -270,7 +272,7 @@ describe(
 		it(
 			'should get the value from an object properly',
 			function() {
-				var ruleInstance = new re.re({});
+				var ruleInstance = new RE({});
 
 				var obj = {
 					foo: {
