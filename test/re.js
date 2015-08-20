@@ -93,13 +93,14 @@ describe(
 
 				var logger = sandbox.spy();
 
+				ruleInstance.on('message', logger);
+
 				var item = ruleInstance.iterateRules(
 					'ruleTest',
 					{
 						file: 'foo.js',
 						fullItem: 'test foo test',
-						item: 'test foo test',
-						logger: logger
+						item: 'test foo test'
 					}
 				);
 
@@ -124,13 +125,14 @@ describe(
 
 				var logger = sandbox.spy();
 
+				ruleInstance.on('message', logger);
+
 				var item = ruleInstance.iterateRules(
 					rulesObject.ruleTest,
 					{
 						file: 'foo.js',
 						fullItem: 'test foo test',
-						item: 'test foo test',
-						logger: logger
+						item: 'test foo test'
 					}
 				);
 
@@ -157,14 +159,15 @@ describe(
 				var formatItem = sandbox.stub().returns('foo');
 				var logger = sandbox.spy();
 
+				ruleInstance.on('message', logger);
+
 				var item = ruleInstance.iterateRules(
 					'ruleTest',
 					{
 						file: 'foo.js',
 						formatItem: formatItem,
 						fullItem: 'test foo test',
-						item: 'test foo test',
-						logger: logger
+						item: 'test foo test'
 					}
 				);
 
@@ -191,14 +194,15 @@ describe(
 
 				var logger = sandbox.spy();
 
+				ruleInstance.on('message', logger);
+
 				var item = ruleInstance.iterateRules(
 					'ruleTest',
 					{
 						file: 'foo.js',
 						formatItem: false,
 						fullItem: ' test foo test ',
-						item: ' test foo test ',
-						logger: logger
+						item: ' test foo test '
 					}
 				);
 
