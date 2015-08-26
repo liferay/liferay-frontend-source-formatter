@@ -27,10 +27,10 @@ describe(
 					function(item, index) {
 						var context = {
 							fullItem: item,
-							item: item
+							content: item
 						};
 
-						var result = re.testLine(rule, context);
+						var result = re.testContent(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result, sub('Expected {0} to match', item));

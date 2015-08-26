@@ -57,8 +57,6 @@ describe(
 			function() {
 				var endingNewLine = ['foo', '', ''];
 
-				var logger = sandbox.spy();
-
 				endingNewLine.forEach(
 					function(item, index, collection) {
 						var result = re.hasExtraNewLines(item, index, collection);
@@ -74,8 +72,6 @@ describe(
 						}
 					}
 				);
-
-				assert.isTrue(logger.called);
 			}
 		);
 	}

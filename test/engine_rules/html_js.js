@@ -22,10 +22,10 @@ describe(
 
 				var context = {
 					fullItem: item,
-					item: item
+					content: item
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -44,10 +44,10 @@ describe(
 				var context = {
 					asyncAUIScript: true,
 					fullItem: item,
-					item: item
+					content: item
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);

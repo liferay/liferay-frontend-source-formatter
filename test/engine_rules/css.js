@@ -24,10 +24,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -47,10 +47,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -70,10 +70,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -93,10 +93,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -116,10 +116,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 
 				assert.isFalse(result);
 			}
@@ -136,7 +136,7 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input,
+					content: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
 					// I'll do that later :)
@@ -144,7 +144,7 @@ describe(
 					previousItem: '}'
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -164,7 +164,7 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input,
+					content: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
 					// I'll do that later :)
@@ -172,7 +172,7 @@ describe(
 					previousItem: '}'
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -190,7 +190,7 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input,
+					content: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
 					// I'll do that later :)
@@ -198,7 +198,7 @@ describe(
 					previousItem: '}'
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 
 				assert.isFalse(result);
 			}
@@ -215,10 +215,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -238,10 +238,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -261,10 +261,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -286,20 +286,20 @@ describe(
 					collection: ['', input, ''],
 					fullItem: input,
 					index: 1,
-					item: input,
+					content: input,
 					nextItem: '',
 					previousItem: ''
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.equal(result, 1);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(result, rule, context));
 
-				context.item = context.fullItem = '.foo {';
-				result = re.testLine(rule, context);
+				context.content = context.fullItem = '.foo {';
+				result = re.testContent(rule, context);
 
 				assert.equal(result, 2);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
@@ -317,12 +317,12 @@ describe(
 					collection: ['', input, '', '/* Comment */'],
 					fullItem: input,
 					index: 1,
-					item: input,
+					content: input,
 					nextItem: '',
 					previousItem: ''
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 
 				assert.isFalse(result);
 			}
@@ -339,10 +339,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -384,13 +384,13 @@ describe(
 					function(item, index) {
 						var context = {
 							fullItem: item,
-							item: item
+							content: item
 						};
 
 						var output = item.split(':')[0] + '-width: 0;';
 						var expectedWarning = 'You should use "' + output + '"';
 
-						var result = re.testLine(rule, context);
+						var result = re.testContent(rule, context);
 						var lineNum = 1;
 
 						assert.isArray(result);
@@ -419,10 +419,10 @@ describe(
 					function(item, index) {
 						var context = {
 							fullItem: item,
-							item: item
+							content: item
 						};
 
-						var result = re.testLine(rule, context);
+						var result = re.testContent(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result);

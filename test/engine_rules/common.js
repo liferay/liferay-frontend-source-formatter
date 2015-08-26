@@ -31,10 +31,10 @@ describe(
 					function(output, input) {
 						var context = {
 							fullItem: input,
-							item: input
+							content: input
 						};
 
-						var result = re.testLine(rule, context);
+						var result = re.testContent(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result);
@@ -66,10 +66,10 @@ describe(
 					function(output, input) {
 						var context = {
 							fullItem: input,
-							item: input
+							content: input
 						};
 
-						var result = re.testLine(rule, context);
+						var result = re.testContent(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result);

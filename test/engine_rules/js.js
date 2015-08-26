@@ -25,10 +25,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.deepEqual(expectedResult, _.toArray(result));
@@ -48,10 +48,10 @@ describe(
 					function(item, index) {
 						var context = {
 							fullItem: item,
-							item: item
+							content: item
 						};
 
-						var result = re.testLine(rule, context);
+						var result = re.testContent(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result);
@@ -66,10 +66,10 @@ describe(
 					function(item, index) {
 						var context = {
 							fullItem: item,
-							item: item
+							content: item
 						};
 
-						assert.isFalse(re.testLine(rule, context));
+						assert.isFalse(re.testContent(rule, context));
 					}
 				);
 			}
@@ -86,10 +86,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -109,10 +109,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -132,10 +132,10 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.deepEqual(expectedResult, _.toArray(result));
@@ -155,18 +155,18 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input
+					content: input
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(result, rule, context));
 
-				context.item = context.fullItem = 'Liferay.Language.get("foo")';
-				assert.isFalse(re.testLine(rule, context));
+				context.content = context.fullItem = 'Liferay.Language.get("foo")';
+				assert.isFalse(re.testContent(rule, context));
 			}
 		);
 
@@ -181,10 +181,10 @@ describe(
 					function(item, index) {
 						var context = {
 							fullItem: item,
-							item: item
+							content: item
 						};
 
-						var result = re.testLine(rule, context);
+						var result = re.testContent(rule, context);
 						var lineNum = 1;
 
 						assert.isTrue(result);
@@ -206,11 +206,11 @@ describe(
 
 				var context = {
 					fullItem: input,
-					item: input,
+					content: input,
 					nextItem: 'instance.foo()'
 				};
 
-				var result = re.testLine(rule, context);
+				var result = re.testContent(rule, context);
 				var lineNum = 1;
 
 				assert.isTrue(result);
@@ -218,9 +218,9 @@ describe(
 				assert.equal(output, re.replaceItem(result, rule, context));
 
 				context.nextItem = '';
-				assert.isFalse(re.testLine(rule, context));
+				assert.isFalse(re.testContent(rule, context));
 				context.nextItem = input;
-				assert.isFalse(re.testLine(rule, context));
+				assert.isFalse(re.testContent(rule, context));
 			}
 		);
 
