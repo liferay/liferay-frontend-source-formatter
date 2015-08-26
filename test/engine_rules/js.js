@@ -24,8 +24,8 @@ describe(
 				var expectedResult = ['} else', undefined, 'else'];
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -47,8 +47,8 @@ describe(
 				shouldMatch.forEach(
 					function(item, index) {
 						var context = {
-							rawContent: item,
-							content: item
+							content: item,
+							rawContent: item
 						};
 
 						var result = re.testContent(rule, context);
@@ -65,8 +65,8 @@ describe(
 				shouldNotMatch.forEach(
 					function(item, index) {
 						var context = {
-							rawContent: item,
-							content: item
+							content: item,
+							rawContent: item
 						};
 
 						assert.isFalse(re.testContent(rule, context));
@@ -85,8 +85,8 @@ describe(
 				var expectedWarning = 'Needs a space between ")" and "{"';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -108,8 +108,8 @@ describe(
 				var expectedWarning = 'Anonymous function expressions should be formatted as function(';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -131,8 +131,8 @@ describe(
 				var expectedResult = ['while(', 'while', '('];
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -154,8 +154,8 @@ describe(
 				var expectedWarning = 'You should never pass variables to Liferay.Language.get()';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -180,8 +180,8 @@ describe(
 				shouldMatch.forEach(
 					function(item, index) {
 						var context = {
-							rawContent: item,
-							content: item
+							content: item,
+							rawContent: item
 						};
 
 						var result = re.testContent(rule, context);
@@ -205,9 +205,9 @@ describe(
 				var expectedWarning = 'Variable declaration needs a new line after it';
 
 				var context = {
-					rawContent: input,
 					content: input,
-					nextItem: 'instance.foo()'
+					nextItem: 'instance.foo()',
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);

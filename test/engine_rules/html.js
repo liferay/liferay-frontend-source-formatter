@@ -26,8 +26,8 @@ describe(
 					tests,
 					function(item, index) {
 						var context = {
-							rawContent: item,
-							content: item
+							content: item,
+							rawContent: item
 						};
 
 						var result = re.testContent(rule, context);

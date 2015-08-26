@@ -23,8 +23,8 @@ describe(
 				var expectedWarning = 'Hex code should be all uppercase';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -46,8 +46,8 @@ describe(
 				var expectedWarning = 'Hex code can be reduced to #000';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -69,8 +69,8 @@ describe(
 				var expectedWarning = 'Missing integer';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -92,8 +92,8 @@ describe(
 				var expectedWarning = 'Needs space between comma-separated values';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -115,8 +115,8 @@ describe(
 				var expectedWarning = 'Needs space between comma-separated values';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -135,8 +135,8 @@ describe(
 				var expectedWarning = 'There should be a newline between "}" and ".foo {"';
 
 				var context = {
-					rawContent: input,
 					content: input,
+					rawContent: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
 					// I'll do that later :)
@@ -163,8 +163,8 @@ describe(
 				var expectedWarning = 'There should be a newline between "}" and ".foo {"';
 
 				var context = {
-					rawContent: input,
 					content: input,
+					rawContent: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
 					// I'll do that later :)
@@ -189,8 +189,8 @@ describe(
 				var input = '@else if $direction == vertical {';
 
 				var context = {
-					rawContent: input,
 					content: input,
+					rawContent: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
 					// I'll do that later :)
@@ -214,8 +214,8 @@ describe(
 				var expectedWarning = 'Missing space between selector and bracket';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -237,8 +237,8 @@ describe(
 				var expectedWarning = 'Needless quotes';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -260,8 +260,8 @@ describe(
 				var expectedWarning = 'Needless unit';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -284,11 +284,11 @@ describe(
 
 				var context = {
 					collection: ['', input, ''],
-					rawContent: input,
-					index: 1,
 					content: input,
+					index: 1,
 					nextItem: '',
-					previousItem: ''
+					previousItem: '',
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -315,11 +315,11 @@ describe(
 
 				var context = {
 					collection: ['', input, '', '/* Comment */'],
-					rawContent: input,
-					index: 1,
 					content: input,
+					index: 1,
 					nextItem: '',
-					previousItem: ''
+					previousItem: '',
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -338,8 +338,8 @@ describe(
 				var expectedWarning = 'Trailing comma in selector';
 
 				var context = {
-					rawContent: input,
-					content: input
+					content: input,
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -383,8 +383,8 @@ describe(
 				input.forEach(
 					function(item, index) {
 						var context = {
-							rawContent: item,
-							content: item
+							content: item,
+							rawContent: item
 						};
 
 						var output = item.split(':')[0] + '-width: 0;';
@@ -418,8 +418,8 @@ describe(
 				input.forEach(
 					function(item, index) {
 						var context = {
-							rawContent: item,
-							content: item
+							content: item,
+							rawContent: item
 						};
 
 						var result = re.testContent(rule, context);

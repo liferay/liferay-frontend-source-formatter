@@ -30,8 +30,8 @@ describe(
 					tests,
 					function(output, input) {
 						var context = {
-							rawContent: input,
-							content: input
+							content: input,
+							rawContent: input
 						};
 
 						var result = re.testContent(rule, context);
@@ -65,8 +65,8 @@ describe(
 					tests,
 					function(output, input) {
 						var context = {
-							rawContent: input,
-							content: input
+							content: input,
+							rawContent: input
 						};
 
 						var result = re.testContent(rule, context);
