@@ -30,7 +30,7 @@ describe(
 					tests,
 					function(output, input) {
 						var context = {
-							fullItem: input,
+							rawContent: input,
 							content: input
 						};
 
@@ -65,7 +65,7 @@ describe(
 					tests,
 					function(output, input) {
 						var context = {
-							fullItem: input,
+							rawContent: input,
 							content: input
 						};
 

@@ -23,7 +23,7 @@ describe(
 				var expectedWarning = 'Hex code should be all uppercase';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -46,7 +46,7 @@ describe(
 				var expectedWarning = 'Hex code can be reduced to #000';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -69,7 +69,7 @@ describe(
 				var expectedWarning = 'Missing integer';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -92,7 +92,7 @@ describe(
 				var expectedWarning = 'Needs space between comma-separated values';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -115,7 +115,7 @@ describe(
 				var expectedWarning = 'Needs space between comma-separated values';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -135,7 +135,7 @@ describe(
 				var expectedWarning = 'There should be a newline between "}" and ".foo {"';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
@@ -163,7 +163,7 @@ describe(
 				var expectedWarning = 'There should be a newline between "}" and ".foo {"';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
@@ -189,7 +189,7 @@ describe(
 				var input = '@else if $direction == vertical {';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
@@ -214,7 +214,7 @@ describe(
 				var expectedWarning = 'Missing space between selector and bracket';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -237,7 +237,7 @@ describe(
 				var expectedWarning = 'Needless quotes';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -260,7 +260,7 @@ describe(
 				var expectedWarning = 'Needless unit';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -284,7 +284,7 @@ describe(
 
 				var context = {
 					collection: ['', input, ''],
-					fullItem: input,
+					rawContent: input,
 					index: 1,
 					content: input,
 					nextItem: '',
@@ -298,7 +298,7 @@ describe(
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(result, rule, context));
 
-				context.content = context.fullItem = '.foo {';
+				context.content = context.rawContent = '.foo {';
 				result = re.testContent(rule, context);
 
 				assert.equal(result, 2);
@@ -315,7 +315,7 @@ describe(
 
 				var context = {
 					collection: ['', input, '', '/* Comment */'],
-					fullItem: input,
+					rawContent: input,
 					index: 1,
 					content: input,
 					nextItem: '',
@@ -338,7 +338,7 @@ describe(
 				var expectedWarning = 'Trailing comma in selector';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -383,7 +383,7 @@ describe(
 				input.forEach(
 					function(item, index) {
 						var context = {
-							fullItem: item,
+							rawContent: item,
 							content: item
 						};
 
@@ -418,7 +418,7 @@ describe(
 				input.forEach(
 					function(item, index) {
 						var context = {
-							fullItem: item,
+							rawContent: item,
 							content: item
 						};
 

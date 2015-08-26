@@ -21,7 +21,7 @@ describe(
 				var item = 'Liferay.Language.get(\'foo\');';
 
 				var context = {
-					fullItem: item,
+					rawContent: item,
 					content: item
 				};
 
@@ -43,7 +43,7 @@ describe(
 
 				var context = {
 					asyncAUIScript: true,
-					fullItem: item,
+					rawContent: item,
 					content: item
 				};
 

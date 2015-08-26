@@ -26,7 +26,7 @@ describe(
 					tests,
 					function(item, index) {
 						var context = {
-							fullItem: item,
+							rawContent: item,
 							content: item
 						};
 

@@ -24,7 +24,7 @@ describe(
 				var expectedResult = ['} else', undefined, 'else'];
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -47,7 +47,7 @@ describe(
 				shouldMatch.forEach(
 					function(item, index) {
 						var context = {
-							fullItem: item,
+							rawContent: item,
 							content: item
 						};
 
@@ -65,7 +65,7 @@ describe(
 				shouldNotMatch.forEach(
 					function(item, index) {
 						var context = {
-							fullItem: item,
+							rawContent: item,
 							content: item
 						};
 
@@ -85,7 +85,7 @@ describe(
 				var expectedWarning = 'Needs a space between ")" and "{"';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -108,7 +108,7 @@ describe(
 				var expectedWarning = 'Anonymous function expressions should be formatted as function(';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -131,7 +131,7 @@ describe(
 				var expectedResult = ['while(', 'while', '('];
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -154,7 +154,7 @@ describe(
 				var expectedWarning = 'You should never pass variables to Liferay.Language.get()';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input
 				};
 
@@ -165,7 +165,7 @@ describe(
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(result, rule, context));
 
-				context.content = context.fullItem = 'Liferay.Language.get("foo")';
+				context.content = context.rawContent = 'Liferay.Language.get("foo")';
 				assert.isFalse(re.testContent(rule, context));
 			}
 		);
@@ -180,7 +180,7 @@ describe(
 				shouldMatch.forEach(
 					function(item, index) {
 						var context = {
-							fullItem: item,
+							rawContent: item,
 							content: item
 						};
 
@@ -205,7 +205,7 @@ describe(
 				var expectedWarning = 'Variable declaration needs a new line after it';
 
 				var context = {
-					fullItem: input,
+					rawContent: input,
 					content: input,
 					nextItem: 'instance.foo()'
 				};
