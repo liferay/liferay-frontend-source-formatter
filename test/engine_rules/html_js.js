@@ -18,11 +18,10 @@ describe(
 			function() {
 				var rule = re.rules.htmlJS.liferayLanguage;
 
-				var item = 'Liferay.Language.get(\'foo\');';
+				var content = 'Liferay.Language.get(\'foo\');';
 
 				var context = {
-					content: item,
-					rawContent: item
+					content: content
 				};
 
 				var result = re.testContent(rule, context);
@@ -30,7 +29,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), rule.message.split(':')[0]);
-				assert.equal(item, re.replaceItem(result, rule, context));
+				assert.equal(content, re.replaceItem(result, rule, context));
 			}
 		);
 
@@ -39,12 +38,11 @@ describe(
 			function() {
 				var rule = re.rules.htmlJS.liferayProvide;
 
-				var item = 'Liferay.provide(window, \'foo\', function() {}, []);';
+				var content = 'Liferay.provide(window, \'foo\', function() {}, []);';
 
 				var context = {
 					asyncAUIScript: true,
-					content: item,
-					rawContent: item
+					content: content
 				};
 
 				var result = re.testContent(rule, context);
@@ -52,7 +50,7 @@ describe(
 
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), rule.message.split(':')[0]);
-				assert.equal(item, re.replaceItem(result, rule, context));
+				assert.equal(content, re.replaceItem(result, rule, context));
 			}
 		);
 	}

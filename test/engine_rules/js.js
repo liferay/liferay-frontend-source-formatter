@@ -24,8 +24,7 @@ describe(
 				var expectedResult = ['} else', undefined, 'else'];
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -45,10 +44,9 @@ describe(
 				var shouldMatch = ['fire("foo",', 'setTimeout(function(', 'alert({'];
 
 				shouldMatch.forEach(
-					function(item, index) {
+					function(content, index) {
 						var context = {
-							content: item,
-							rawContent: item
+							content: content
 						};
 
 						var result = re.testContent(rule, context);
@@ -56,17 +54,16 @@ describe(
 
 						assert.isTrue(result);
 						assert.startsWith(re.getMessage(result, rule, context), 'These arguments should each be on their own line');
-						assert.equal(item, re.replaceItem(result, rule, context));
+						assert.equal(content, re.replaceItem(result, rule, context));
 					}
 				);
 
 				var shouldNotMatch = ['fire(', 'setTimeout(function(){})', 'alert({})', 'function("foo"'];
 
 				shouldNotMatch.forEach(
-					function(item, index) {
+					function(content, index) {
 						var context = {
-							content: item,
-							rawContent: item
+							content: content
 						};
 
 						assert.isFalse(re.testContent(rule, context));
@@ -85,8 +82,7 @@ describe(
 				var expectedWarning = 'Needs a space between ")" and "{"';
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -108,8 +104,7 @@ describe(
 				var expectedWarning = 'Anonymous function expressions should be formatted as function(';
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -131,8 +126,7 @@ describe(
 				var expectedResult = ['while(', 'while', '('];
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -154,8 +148,7 @@ describe(
 				var expectedWarning = 'You should never pass variables to Liferay.Language.get()';
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -165,7 +158,7 @@ describe(
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(result, rule, context));
 
-				context.content = context.rawContent = 'Liferay.Language.get("foo")';
+				context.content = 'Liferay.Language.get("foo")';
 				assert.isFalse(re.testContent(rule, context));
 			}
 		);
@@ -178,10 +171,9 @@ describe(
 				var shouldMatch = ['console.trace()', 'console.log()', 'console.dir()'];
 
 				shouldMatch.forEach(
-					function(item, index) {
+					function(content, index) {
 						var context = {
-							content: item,
-							rawContent: item
+							content: content
 						};
 
 						var result = re.testContent(rule, context);
@@ -189,7 +181,7 @@ describe(
 
 						assert.isTrue(result);
 						assert.startsWith(re.getMessage(result, rule, context), 'Debugging statement');
-						assert.equal(item, re.replaceItem(result, rule, context));
+						assert.equal(content, re.replaceItem(result, rule, context));
 					}
 				);
 			}
@@ -206,8 +198,7 @@ describe(
 
 				var context = {
 					content: input,
-					nextItem: 'instance.foo()',
-					rawContent: input
+					nextItem: 'instance.foo()'
 				};
 
 				var result = re.testContent(rule, context);

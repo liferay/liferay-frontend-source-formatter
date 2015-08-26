@@ -69,8 +69,7 @@ describe(
 				var expectedWarning = 'Missing integer';
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -92,8 +91,7 @@ describe(
 				var expectedWarning = 'Needs space between comma-separated values';
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -115,8 +113,7 @@ describe(
 				var expectedWarning = 'Needs space between comma-separated values';
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -136,12 +133,12 @@ describe(
 
 				var context = {
 					content: input,
-					rawContent: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
 					// I'll do that later :)
 					nextItem: '.foo {',
-					previousItem: '}'
+					previousItem: '}',
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -164,12 +161,12 @@ describe(
 
 				var context = {
 					content: input,
-					rawContent: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
 					// I'll do that later :)
 					nextItem: '.foo {',
-					previousItem: '}'
+					previousItem: '}',
+					rawContent: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -190,7 +187,6 @@ describe(
 
 				var context = {
 					content: input,
-					rawContent: input,
 					// This is actually working around a bug in the missing newlines
 					// however, I need to fix it after the implementation of all of the tests
 					// I'll do that later :)
@@ -214,8 +210,7 @@ describe(
 				var expectedWarning = 'Missing space between selector and bracket';
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -237,8 +232,7 @@ describe(
 				var expectedWarning = 'Needless quotes';
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -260,8 +254,7 @@ describe(
 				var expectedWarning = 'Needless unit';
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -287,8 +280,7 @@ describe(
 					content: input,
 					index: 1,
 					nextItem: '',
-					previousItem: '',
-					rawContent: input
+					previousItem: ''
 				};
 
 				var result = re.testContent(rule, context);
@@ -298,7 +290,7 @@ describe(
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(result, rule, context));
 
-				context.content = context.rawContent = '.foo {';
+				context.content = '.foo {';
 				result = re.testContent(rule, context);
 
 				assert.equal(result, 2);
@@ -318,8 +310,7 @@ describe(
 					content: input,
 					index: 1,
 					nextItem: '',
-					previousItem: '',
-					rawContent: input
+					previousItem: ''
 				};
 
 				var result = re.testContent(rule, context);
@@ -338,8 +329,7 @@ describe(
 				var expectedWarning = 'Trailing comma in selector';
 
 				var context = {
-					content: input,
-					rawContent: input
+					content: input
 				};
 
 				var result = re.testContent(rule, context);
@@ -381,13 +371,13 @@ describe(
 				);
 
 				input.forEach(
-					function(item, index) {
+					function(content, index) {
 						var context = {
-							content: item,
-							rawContent: item
+							content: content,
+							rawContent: content
 						};
 
-						var output = item.split(':')[0] + '-width: 0;';
+						var output = content.split(':')[0] + '-width: 0;';
 						var expectedWarning = 'You should use "' + output + '"';
 
 						var result = re.testContent(rule, context);
@@ -416,10 +406,10 @@ describe(
 				var expectedWarning = 'There should be one space after ":"';
 
 				input.forEach(
-					function(item, index) {
+					function(content, index) {
 						var context = {
-							content: item,
-							rawContent: item
+							content: content,
+							rawContent: content
 						};
 
 						var result = re.testContent(rule, context);

@@ -24,16 +24,15 @@ describe(
 
 				_.forEach(
 					tests,
-					function(item, index) {
+					function(content, index) {
 						var context = {
-							content: item,
-							rawContent: item
+							content: content
 						};
 
 						var result = re.testContent(rule, context);
 						var lineNum = 1;
 
-						assert.isTrue(result, sub('Expected {0} to match', item));
+						assert.isTrue(result, sub('Expected {0} to match', content));
 						assert.startsWith(re.getMessage(result, rule, context), rule.message.split(':')[0]);
 					}
 				);
