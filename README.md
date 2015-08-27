@@ -65,7 +65,7 @@ I find it easier to use it with pull requests and check the files that were chan
 In my .gitconfig I have:
 
 ```
-sfm = "!f() { git diff --stat --name-only master.. | grep -E '.(jsp.?|vm|ftl|js|(s)?css)$' | tr \"\\n\" \"\\0\" | xargs -0 -J{} check_sf {} $@; }; f"
+sfm = "!f() { git diff --stat --name-only master.. | grep -E '.(jsp.?|vm|ftl|tag|tpl|tmpl|js|soy|hbs|(s)?css)$' | tr \"\\n\" \"\\0\" | xargs -0 -J{} check_sf {} $@; }; f"
 ```
 
 (You could get rid of the grep portion, but I find it easier to just filter them out on this level).
