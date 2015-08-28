@@ -4,6 +4,19 @@ check-source-formatting
 [![build status][travis-image]][travis-url]
 [![Test coverage][coveralls-image]][coveralls-url]
 
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+## Sections
+
+- [Description](#description)
+- [Installation](#installation)
+- [Running](#running)
+- [Options](#options)
+- [Sublime Text Integration](#sublime-text-integration)
+- [Known issues](#known-issues)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Description
 
 Runs common checks against your files to check for issues according to Liferay's formatting guidelines.
