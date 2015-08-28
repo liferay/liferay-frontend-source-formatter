@@ -6,11 +6,11 @@ check-source-formatting
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
-## Sections
+### Jump to Section
 
 - [Description](#description)
 - [Installation](#installation)
-- [Running](#running)
+- [Usage](#usage)
 - [Options](#options)
 - [Sublime Text Integration](#sublime-text-integration)
 - [Known issues](#known-issues)
@@ -60,7 +60,7 @@ This will scan through HTML(-like) files, JS files, and CSS files and detect man
 <sudo> npm install -g check-source-formatting
 ```
 
-## Running
+## Usage
 
 The simplest way to run it is:
 
