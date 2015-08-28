@@ -39,3 +39,16 @@ gulp.task('test-coverage', ['test-cover'], function() {
 		.pipe(plugins.mocha())
 		.pipe(plugins.istanbul.writeReports());
 });
+
+gulp.task('toc', function(done) {
+	gulp.src('./README.md')
+	.pipe(
+		plugins.doctoc(
+			{
+				title: '### Jump to Section',
+				depth: 2
+			}
+		)
+	)
+	.pipe(gulp.dest('./'));
+});
