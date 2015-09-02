@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var chai = require('chai');
 var fs = require('fs');
 var path = require('path');
@@ -242,6 +243,43 @@ describe(
 						assert.startsWith(errors[0].msg, 'Trailing comma in selector');
 					},
 					done
+				);
+			}
+		);
+	}
+);
+
+describe(
+	'Formatter.CSS Excludes',
+	function() {
+		'use strict';
+
+		var getErrorMsgByLine = function(lineNum, errors) {
+			var whereLine = {
+				line: lineNum
+			};
+
+			return _.result(_.findWhere(errors, whereLine), 'msg') || '';
+		};
+
+		it(
+			'should ignore excluded files',
+			function() {
+				_.forEach(
+					['nocsf'],
+					function(item, index) {
+						['-', '_', '.'].forEach(
+							function(n, i) {
+								var testFilePath = 'test' + n + item + '.css';
+								var logger = new Logger.constructor();
+								var formatter = new Formatter.get(testFilePath, logger);
+
+								var errors = logger.getErrors(testFilePath);
+
+								assert.startsWith(getErrorMsgByLine('n/a', errors), 'This file was ignored.');
+							}
+						);
+					}
 				);
 			}
 		);

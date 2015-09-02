@@ -216,6 +216,36 @@ describe(
 );
 
 describe(
+	'Formatter.JS Excludes',
+	function() {
+		'use strict';
+
+		it(
+			'should ignore excluded files',
+			function() {
+				_.forEach(
+					['min', 'soy', 'nocsf'],
+					function(item, index) {
+						['-', '_', '.'].forEach(
+							function(n, i) {
+								var testFilePath = 'test' + n + item + '.js';
+								var jsLogger = new Logger.constructor();
+								var jsFormatter = new Formatter.get(testFilePath, jsLogger);
+
+								var jsErrors = jsLogger.getErrors(testFilePath);
+
+								assert.startsWith(getErrorMsgByLine('n/a', jsErrors), 'This file was ignored.');
+							}
+						);
+					}
+				);
+
+			}
+		);
+	}
+);
+
+describe(
 	'Formatter.JS Lint',
 	function() {
 		'use strict';

@@ -397,3 +397,40 @@ describe(
 		);
 	}
 );
+
+describe(
+	'Formatter.HTML Excludes',
+	function() {
+		'use strict';
+
+		var getErrorMsgByLine = function(lineNum, errors) {
+			var whereLine = {
+				line: lineNum
+			};
+
+			return _.result(_.findWhere(errors, whereLine), 'msg') || '';
+		};
+
+		it(
+			'should ignore excluded files',
+			function() {
+				_.forEach(
+					['nocsf'],
+					function(item, index) {
+						['-', '_', '.'].forEach(
+							function(n, i) {
+								var testFilePath = 'test' + n + item + '.html';
+								var logger = new Logger.constructor();
+								var formatter = new Formatter.get(testFilePath, logger);
+
+								var errors = logger.getErrors(testFilePath);
+
+								assert.startsWith(getErrorMsgByLine('n/a', errors), 'This file was ignored.');
+							}
+						);
+					}
+				);
+			}
+		);
+	}
+);
