@@ -15,6 +15,8 @@ eslintTester.addRuleTest(
 			'({ 0: 1, "$xyz": 1, abc: 2 })',
 			'({ 0: 1, "@xyz": 1, abc: 2})',
 			'({ a: 1,\nb: 2,\n\na:3})',
+			'({ ATTRS: {a: 1,\n\nb: 2,}})',
+			'({ ATTRS: {a: 1,\nb: 2,}})',
 			{
 				code: '({initString: 1, initsTriangle: 2})',
 				args: [2, {'casesensitive': true}]
@@ -57,6 +59,10 @@ eslintTester.addRuleTest(
 			{
 				code: '({_getFoo: function(){},\n\n getAbc: function(){}})',
 				errors: [ { message: 'Sort properties: _getFoo getAbc' } ]
+			},
+			{
+				code: '({ ATTRS: {z: 1,\n\nb: {}}})',
+				errors: [ { message: 'Sort properties: z b' } ]
 			}
 		]
 	}
