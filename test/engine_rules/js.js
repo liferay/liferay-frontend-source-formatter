@@ -139,31 +139,6 @@ describe(
 		);
 
 		it(
-			'should detect variables passed to Liferay.Language.get',
-			function() {
-				var rule = re.rules.js.liferayLanguageVar;
-
-				var input = 'Liferay.Language.get(foo)';
-				var output = input;
-				var expectedWarning = 'You should never pass variables to Liferay.Language.get()';
-
-				var context = {
-					content: input
-				};
-
-				var result = re.testContent(rule, context);
-				var lineNum = 1;
-
-				assert.isTrue(result);
-				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
-				assert.equal(output, re.replaceItem(result, rule, context));
-
-				context.content = 'Liferay.Language.get("foo")';
-				assert.isFalse(re.testContent(rule, context));
-			}
-		);
-
-		it(
 			'should detect invalid logging statements',
 			function() {
 				var rule = re.rules.js.logging;

@@ -77,23 +77,16 @@ describe(
 		);
 
 		it(
-			'should recognize variables passed to Liferay.Language.get',
-			function() {
-				assert.startsWith(getErrorMsgByLine(21, jsErrors), 'You should never pass variables to Liferay.Language.get():');
-			}
-		);
-
-		it(
 			'should recognize debugging statements',
 			function() {
-				assert.startsWith(getErrorMsgByLine(23, jsErrors), 'Debugging statement:');
+				assert.startsWith(getErrorMsgByLine(21, jsErrors), 'Debugging statement:');
 			}
 		);
 
 		it(
 			'should recognize variable line spacing',
 			function() {
-				assert.startsWith(getErrorMsgByLine(25, jsErrors), 'Variable declaration needs a new line after it:');
+				assert.startsWith(getErrorMsgByLine(23, jsErrors), 'Variable declaration needs a new line after it:');
 			}
 		);
 

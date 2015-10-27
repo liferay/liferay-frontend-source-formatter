@@ -18,8 +18,6 @@ foo(
 	}
 );
 
-Liferay.Language.get(x);
-
 console.log('foo');
 
 var something = 'foo';
