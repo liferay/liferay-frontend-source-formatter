@@ -1,4 +1,5 @@
 var chai = require('chai');
+var _ = require('lodash');
 
 chai.use(require('chai-string'));
 
@@ -219,6 +220,62 @@ describe(
 				assert.isTrue(result);
 				assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
 				assert.equal(output, re.replaceItem(result, rule, context));
+			}
+		);
+
+		it(
+			'should detect and replace missing combinator space',
+			function() {
+				var rule = re.rules.css.missingInternalSelectorSpace;
+
+				var inputs = {
+					'ul>li {': 'ul > li {',
+					'&:nth-child(5n+1) {': '&:nth-child(5n + 1) {',
+					'ul~li {': 'ul ~ li {',
+					'ul+li {': 'ul + li {',
+					'ul +li {': 'ul + li {',
+					'ul+ li {': 'ul + li {',
+					'ul>li, ul + li {': 'ul > li, ul + li {',
+					'>li {': '> li {'
+				};
+
+				_.forEach(
+					inputs,
+					function(output, input) {
+						var expectedWarning = 'Missing space around combinator';
+
+						var context = {
+							content: input,
+							rawContent: input
+						};
+
+						var result = re.testContent(rule, context);
+						var lineNum = 1;
+
+						assert.isTrue(result);
+						assert.startsWith(re.getMessage(result, rule, context), expectedWarning);
+						assert.equal(output, re.replaceItem(result, rule, context));
+					}
+				);
+
+				var ignoreInputs = [
+					'[class~="form-validator-message"]',
+					'@if $some-var >= $other-var {'
+				];
+				_.forEach(
+					ignoreInputs,
+					function(input, index) {
+						var context = {
+							content: input,
+							rawContent: input
+						};
+
+						var result = re.testContent(rule, context);
+
+						assert.isFalse(result);
+						assert.equal(input, re.replaceItem(result, rule, context));
+					}
+				);
 			}
 		);
 
