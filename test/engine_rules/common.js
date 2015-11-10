@@ -15,6 +15,36 @@ describe(
 		'use strict';
 
 		it(
+			'should detect and replace extraneous whitespace',
+			function() {
+				var rule = re.rules.common.extraneousSpaces;
+
+				var tests = [
+					' ',
+					'	',
+					'some code	'
+				];
+
+				_.forEach(
+					tests,
+					function(input) {
+						var context = {
+							content: input,
+							rawContent: input
+						};
+
+						var result = re.testContent(rule, context);
+						var lineNum = 1;
+
+						assert.isTrue(result);
+						assert.startsWith(re.getMessage(result, rule, context), rule.message.split(':')[0]);
+						assert.equal('', re.replaceItem(result, rule, context));
+					}
+				);
+			}
+		);
+
+		it(
 			'should detect and replace mixed spaces and tabs',
 			function() {
 				var rule = re.rules.common.mixedSpaces;
