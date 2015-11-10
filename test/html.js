@@ -326,6 +326,66 @@ describe(
 		);
 
 		it(
+			'should sort attributes',
+			function() {
+				var expectedMultiElementResult = '<a class="foo" href="about:blank"><span aria-role="menuitem" title="foo">Test</span></a>';
+				var needsSortObj = {
+					'<a href="about:blank" class="foo" />': '<a class="foo" href="about:blank" />',
+					'<a href="about:blank" class="foo">Test</a>': '<a class="foo" href="about:blank">Test</a>',
+					'<a href="about:blank" class="foo"><span title="foo" aria-role="menuitem">Test</span></a>': expectedMultiElementResult,
+					'<a href="about:blank" class="foo"><span title="foo" aria-role="menuitem">Test</span></a>': expectedMultiElementResult
+				};
+				var needsInnerSortObj = {
+					'<a class="foo" href="about:blank"><span title="foo" aria-role="menuitem">Test</span></a>': expectedMultiElementResult
+				};
+				var needsOuterSortObj = {
+					'<a href="about:blank" class="foo"><span aria-role="menuitem" title="foo">Test</span></a>': expectedMultiElementResult
+				};
+
+				var doesNotNeedSortArr = [
+					'<a class="foo" href="about:blank">Test</a>',
+					expectedMultiElementResult
+				];
+
+				_.forEach(
+					needsSortObj,
+					function(item, index) {
+						var result = privHTMLFormatter._processAttrs(index, 1);
+
+						assert.equal(result, item, 'Sorting failed');
+					}
+				);
+
+				_.forEach(
+					needsInnerSortObj,
+					function(item, index) {
+						var result = privHTMLFormatter._processAttrs(index, 1);
+
+						assert.equal(result, item, 'Inner element sorting failed');
+					}
+				);
+
+				_.forEach(
+					needsOuterSortObj,
+					function(item, index) {
+						var result = privHTMLFormatter._processAttrs(index, 1);
+
+						assert.equal(result, item, 'Outer element sorting failed');
+					}
+				);
+
+				_.forEach(
+					doesNotNeedSortArr,
+					function(item, index) {
+						var result = privHTMLFormatter._processAttrs(item, 1);
+
+						assert.equal(result, item, 'Shouldn\'t need formatting');
+					}
+				);
+			}
+		);
+
+		it(
 			'should sort attribute values',
 			function() {
 				var needsSortObj = {
