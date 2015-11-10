@@ -363,11 +363,11 @@ describe(
 			function() {
 				var result = privHTMLFormatter._getScriptletBlockReplacement(1);
 
-				assert.equal(result, '/* scriptlet block  */');
+				assert.equal(result, '/* scriptlet block */');
 
 				result = privHTMLFormatter._getScriptletBlockReplacement(5);
 
-				assert.equal(result, '/* scriptlet block \nvoid 0;\nvoid 0;\nvoid 0;\nvoid 0; */');
+				assert.equal(result, '/* scriptlet block\nvoid 0;\nvoid 0;\nvoid 0;\nvoid 0; */');
 			}
 		);
 
@@ -392,7 +392,7 @@ describe(
 
 				contents = privHTMLFormatter._jsHandleScriptletWhitespace(scriptBlock).contents;
 
-				assert.equal(contents, '\nvoid 0;\n/* scriptlet block \nvoid 0; */\nvoid 0;\n');
+				assert.equal(contents, '\nvoid 0;\n/* scriptlet block\nvoid 0; */\nvoid 0;\n');
 			}
 		);
 	}
