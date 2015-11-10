@@ -332,7 +332,6 @@ describe(
 				var needsSortObj = {
 					'<a href="about:blank" class="foo" />': '<a class="foo" href="about:blank" />',
 					'<a href="about:blank" class="foo">Test</a>': '<a class="foo" href="about:blank">Test</a>',
-					'<a href="about:blank" class="foo"><span title="foo" aria-role="menuitem">Test</span></a>': expectedMultiElementResult,
 					'<a href="about:blank" class="foo"><span title="foo" aria-role="menuitem">Test</span></a>': expectedMultiElementResult
 				};
 				var needsInnerSortObj = {
