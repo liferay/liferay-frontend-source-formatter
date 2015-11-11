@@ -1,6 +1,6 @@
 {
   "name": "check-source-formatting",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "Check the source formatting of HTML/JS/CSS",
   "main": "lib/cli.js",
   "bin": {
