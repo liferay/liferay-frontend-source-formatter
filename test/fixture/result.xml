@@ -23,4 +23,6 @@ Line 5: Something is not valid]]></failure>
 						<failure message="" type="failure"><![CDATA[Line 1: Content is not valid]]></failure>
 				</testcase>
 		</testsuite>
+		<testsuite failures="0" name="bar.min.js" tests="1">
+		</testsuite>
 </testsuites>

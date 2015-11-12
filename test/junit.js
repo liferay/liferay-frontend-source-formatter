@@ -42,6 +42,8 @@ describe(
 				logger.log(10, 'Content is not valid', 'bar.html', 'warning');
 				logger.log(4, 'Content is not valid', 'foo.js');
 				logger.log(1, 'Content is not valid', 'baz.css', 'error');
+				logger.log(1, 'Content is not valid', 'baz.css', 'error');
+				logger.log('N/A', 'This file was ignored. Pass the "force" flag if you wish to have it included.', 'bar.min.js', 'ignored');
 
 				sandbox.stub(
 					fs,
