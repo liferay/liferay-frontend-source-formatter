@@ -260,7 +260,8 @@ describe(
 
 				var ignoreInputs = [
 					'[class~="form-validator-message"]',
-					'@if $some-var >= $other-var {'
+					'@if $some-var >= $other-var {',
+					'content: "+";'
 				];
 				_.forEach(
 					ignoreInputs,
