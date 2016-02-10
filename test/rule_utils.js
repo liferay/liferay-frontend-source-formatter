@@ -48,7 +48,7 @@ describe(
 					function(node) {
 						if (node.type === 'Program') {
 							var constants = ruleUtils.getConstants(node);
-							var constantNames = _.pluck(_.pluck(constants, 'id'), 'name');
+							var constantNames = _.map(_.map(constants, 'id'), 'name');
 
 							assert.equal(constants.length, 2);
 							assert.equal(constantNames.join(''), 'XY');
@@ -70,7 +70,7 @@ describe(
 					varStr,
 					function(node) {
 						if (node.type === 'Program') {
-							var variables = _.where(
+							var variables = _.filter(
 								node.body,
 								{
 									type: 'VariableDeclaration'

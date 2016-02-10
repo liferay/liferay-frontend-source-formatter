@@ -34,7 +34,7 @@
     "getobject": "^0.1.0",
     "glob": "^5.0.5",
     "handlebars": "^3.0.1",
-    "lodash": "^3.6.0",
+    "lodash": "^4.3.0",
     "lodash-bindright": "^1.0.1",
     "lodash-namespace": "^1.0.0",
     "optimist": "^0.6.1",

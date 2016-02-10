@@ -16,7 +16,7 @@ var getErrorMsgByLine = function(lineNum, errors) {
 		line: lineNum
 	};
 
-	return _.result(_.findWhere(errors, whereLine), 'msg') || '';
+	return _.result(_.find(errors, whereLine), 'msg') || '';
 };
 
 describe(
