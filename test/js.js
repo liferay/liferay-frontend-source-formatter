@@ -142,7 +142,7 @@ describe(
 				var parseErrors = jsLoggerParse.getErrors(testFilePath);
 
 				assert.equal(parseErrors.length, 1);
-				assert.equal(parseErrors[0].msg, 'Could not parse JavaScript: Unexpected token ;');
+				assert.startsWith(parseErrors[0].msg, 'Could not parse JavaScript: Unexpected token ');
 
 				var jsLoggerParseVerbose = new Logger.constructor();
 				var jsFormatterParseVerbose = new Formatter.JS(testFilePath, jsLoggerParseVerbose);

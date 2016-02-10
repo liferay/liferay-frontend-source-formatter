@@ -13,7 +13,7 @@ var parse = function(contents, cb) {
 	return falafel(
 		contents,
 		{
-			loc: true,
+			locations: true,
 			tolerant: true
 		},
 		cb
