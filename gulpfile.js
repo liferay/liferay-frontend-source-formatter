@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
@@ -17,6 +18,25 @@ gulp.task('test-complexity', function() {
 			cyclomatic: [4, 7, 12],
 			halstead: [15, 15, 20]
 		}));
+});
+
+gulp.task('test-file', function() {
+	var file = process.argv.slice(3).pop();
+
+	if (file) {
+		file = file.slice(2);
+		file = !_.startsWith(file, 'test/') ? 'test/' + file : file;
+		file = !_.endsWith(file, '.js') ? file + '.js' : file;
+
+		file = [file];
+	}
+	else {
+		file = ['test/**/*.js', '!test/fixture/*.js'];
+	}
+	process.argv.push('--display-raw');
+
+	return gulp.src(file)
+		.pipe(plugins.mocha());
 });
 
 gulp.task('test-unit', function() {
