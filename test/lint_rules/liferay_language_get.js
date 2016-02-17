@@ -3,8 +3,9 @@ var path = require('path');
 var lint = require('../../lib/lint');
 
 var linter = lint.linter;
-var ESLintTester = require('eslint-tester');
-var eslintTester = new ESLintTester(linter);
+var RuleTester = lint.eslint.RuleTester;
+
+var ruleTester = new RuleTester();
 
 var invalidTests = ['1', 'function(){}', '/f/', 'new Date()', 'foo'].map(
 	function(item, index) {
@@ -15,8 +16,9 @@ var invalidTests = ['1', 'function(){}', '/f/', 'new Date()', 'foo'].map(
 	}
 );
 
-eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
+ruleTester.run(
+	path.basename(__filename, '.js'),
+	require('../../lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
 			'Liferay.Language.get("foo")',

@@ -3,11 +3,13 @@ var path = require('path');
 var lint = require('../../lib/lint');
 
 var linter = lint.linter;
-var ESLintTester = require('eslint-tester');
-var eslintTester = new ESLintTester(linter);
+var RuleTester = lint.eslint.RuleTester;
 
-eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
+var ruleTester = new RuleTester();
+
+ruleTester.run(
+	path.basename(__filename, '.js'),
+	require('../../lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
 			'var ABC = 123;\n\nvar DEF = 456;',

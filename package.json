@@ -29,7 +29,7 @@
     "content-logger": "^0.0.3",
     "content-logger-handlebars-helpers": "0.0.1",
     "drip": "^1.4.0",
-    "eslint": "^0.24.0",
+    "eslint": "^1.10.3",
     "falafel": "^1.2.0",
     "getobject": "^0.1.0",
     "glob": "^7.0.0",

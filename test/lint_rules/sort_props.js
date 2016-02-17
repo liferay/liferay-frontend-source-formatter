@@ -3,11 +3,13 @@ var path = require('path');
 var lint = require('../../lib/lint');
 
 var linter = lint.linter;
-var ESLintTester = require('eslint-tester');
-var eslintTester = new ESLintTester(linter);
+var RuleTester = lint.eslint.RuleTester;
 
-eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
+var ruleTester = new RuleTester();
+
+ruleTester.run(
+	path.basename(__filename, '.js'),
+	require('../../lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
 			'({init: function(){}, initializer: function(){}, renderUI: function(){}, bindUI: function(){}, syncUI: function(){}, destructor: function(){}})',
@@ -19,11 +21,11 @@ eslintTester.addRuleTest(
 			'({ ATTRS: {a: 1,\nb: 2,}})',
 			{
 				code: '({initString: 1, initsTriangle: 2})',
-				args: [2, {'casesensitive': true}]
+				options: [{'casesensitive': true}]
 			},
 			{
 				code: '({initsTriangle: 1, initString: 2})',
-				args: [2, {'casesensitive': false}]
+				options: [{'casesensitive': false}]
 			}
 		],
 

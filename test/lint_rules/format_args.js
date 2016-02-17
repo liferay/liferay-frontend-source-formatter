@@ -3,8 +3,9 @@ var path = require('path');
 var lint = require('../../lib/lint');
 
 var linter = lint.linter;
-var ESLintTester = require('eslint-tester');
-var eslintTester = new ESLintTester(linter);
+var RuleTester = lint.eslint.RuleTester;
+
+var ruleTester = new RuleTester();
 /*
 alert({}, 1);
 alert(function() {}, 1);
@@ -39,8 +40,9 @@ alert(function() {
 alert(function() {alert('foo');}, 1);
 alert({x: 1}, 1);
 */
-eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
+ruleTester.run(
+	path.basename(__filename, '.js'),
+	require('../../lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: [
 			'alert();',

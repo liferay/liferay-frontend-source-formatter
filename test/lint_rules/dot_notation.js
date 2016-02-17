@@ -5,8 +5,9 @@ var base = require('../../lib/base.js');
 var lint = require('../../lib/lint');
 
 var linter = lint.linter;
-var ESLintTester = require('eslint-tester');
-var eslintTester = new ESLintTester(linter);
+var RuleTester = lint.eslint.RuleTester;
+
+var ruleTester = new RuleTester();
 
 var validRules = [
 	'document["some-prop"];'
@@ -19,8 +20,9 @@ _.forEach(
 	}
 );
 
-eslintTester.addRuleTest(
-	path.resolve(__dirname, '../', '../', 'lib/lint_rules/' + path.basename(__filename)),
+ruleTester.run(
+	path.basename(__filename, '.js'),
+	require('../../lib/lint_rules/' + path.basename(__filename)),
 	{
 		valid: validRules,
 
