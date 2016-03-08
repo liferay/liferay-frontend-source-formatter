@@ -50,7 +50,8 @@ ruleTester.run(
 			'alert(function() {}, 1);',
 			'alert(\nfunction() {\n},\n1\n);',
 			'(function foo(){\n}());',
-			'(function(){\n}(\n));'
+			'(function(){\n}(\n));',
+			'alert(\n{\nx: 1\n}\n)(foo);'
 		],
 
 		invalid: [
@@ -93,6 +94,14 @@ ruleTester.run(
 			{
 				code: '(function(){\n}(\n{x: 1},2,3\n));',
 				errors: [ { message: 'Args should each be on their own line (args on same line): <anonymous>(...)' } ]
+			},
+			{
+				code: 'alert({\nx: 1\n})(foo);',
+				errors: [ { message: 'Args should each be on their own line (args on start line): alert(...)' } ]
+			},
+			{
+				code: 'alert()(foo, {\nx: 1\n});',
+				errors: [ { message: 'Args should each be on their own line (args on same line): alert(...)' } ]
 			}
 		]
 	}
