@@ -7,6 +7,17 @@ var RuleTester = lint.eslint.RuleTester;
 
 var ruleTester = new RuleTester();
 
+var addES6 = function(item, index) {
+	item.parserOptions = {
+		ecmaVersion: 6,
+		ecmaFeatures: {
+			experimentalObjectRestSpread: true
+		}
+	};
+
+	return item;
+};
+
 ruleTester.run(
 	path.basename(__filename, '.js'),
 	require('../../lib/lint_rules/' + path.basename(__filename)),
@@ -27,7 +38,13 @@ ruleTester.run(
 				code: '({initsTriangle: 1, initString: 2})',
 				options: [{'casesensitive': false}]
 			}
-		],
+		].concat(
+			[
+				{ code: '({[bar]: 1, [foo]: 1})' },
+				{ code: '({a: 1, [bar()]: 1, [foo]: 1, [obj.bar()]: 1, [obj.foo]: 1, [str + \'other\']: 1 })' },
+				{ code: '({...baz, bar: 1, foo})' },
+			].map(addES6)
+		),
 
 		invalid: [
 			{
@@ -66,6 +83,17 @@ ruleTester.run(
 				code: '({ ATTRS: {z: 1,\n\nb: {}}})',
 				errors: [ { message: 'Sort properties: z b' } ]
 			}
-		]
+		].concat(
+			[
+				{
+					code: '({[foo]: 1, [bar]: 1})',
+					errors: [ { message: 'Sort properties: [foo] [bar]' } ]
+				},
+				{
+					code: '({a: 1, [str + \'other\']: 1, [bar()]: 1, [foo]: 1, [obj.bar()]: 1, [obj.foo]: 1 })',
+					errors: [ { message: 'Sort properties: [str + \'other\'] [bar()]' } ]
+				},
+			].map(addES6)
+		)
 	}
 );
