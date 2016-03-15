@@ -30,7 +30,9 @@ ruleTester.run(
 		].concat(
 			[
 				{ code: 'const {bar, foo} = refs;' },
-				{ code: 'const [foo, bar] = refs;' }
+				{ code: 'const [foo, bar] = refs;' }/*,
+				Need to add the below as soon as I figure out what to do about es7/babel-eslint, etc
+				{ code: 'const {foo, ...bar} = refs;' }*/
 			].map(addES6)
 		),
 
