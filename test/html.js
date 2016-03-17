@@ -2,6 +2,7 @@ var _ = require('lodash');
 var chai = require('chai');
 var fs = require('fs');
 var path = require('path');
+var Promise = require('bluebird');
 
 var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
@@ -94,12 +95,20 @@ describe(
 
 		it(
 			'should parse script blocks correctly',
-			function() {
+			function(done) {
 				var scriptBlocks = htmlFormatter.parseJs(source);
 
 				assert.isArray(scriptBlocks);
+
 				assert.equal(scriptBlocks.length, 6);
-				scriptBlocks.forEach(assert.isString);
+
+				Promise.all(scriptBlocks).then(
+					function(scriptBlocks) {
+						scriptBlocks.forEach(assert.isString);
+
+						done();
+					}
+				);
 			}
 		);
 
@@ -140,12 +149,19 @@ describe(
 
 		it(
 			'should parse style blocks correctly',
-			function() {
+			function(done) {
 				var styleBlocks = htmlFormatter.parseCSS(source);
 
 				assert.isArray(styleBlocks);
 				assert.equal(styleBlocks.length, 2);
-				styleBlocks.forEach(assert.isString);
+
+				Promise.all(styleBlocks).then(
+					function(styleBlocks) {
+						styleBlocks.forEach(assert.isString);
+
+						done();
+					}
+				);
 			}
 		);
 
