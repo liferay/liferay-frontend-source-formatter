@@ -10,7 +10,8 @@ var ruleTester = new RuleTester();
 var addES6 = function(item, index) {
 	item.parserOptions = {
 		ecmaVersion: 6,
-		ecmaFeatures: {}
+		ecmaFeatures: {},
+		sourceType: 'module'
 	};
 
 	return item;
@@ -30,6 +31,10 @@ ruleTester.run(
 		].concat(
 			[
 				{ code: 'const {bar, foo} = refs;' },
+				{ code: 'import Foo, {bar, baz} from "somefile";' },
+				{ code: 'import Foo, {bar as doo, baz} from "somefile";' },
+				{ code: 'import Foo from "somefile";' },
+				{ code: 'import "somefile";' },
 				{ code: 'const [foo, bar] = refs;' }/*,
 				Need to add the below as soon as I figure out what to do about es7/babel-eslint, etc
 				{ code: 'const {foo, ...bar} = refs;' }*/
@@ -50,6 +55,10 @@ ruleTester.run(
 				{
 					code: 'const {foo, bar} = refs',
 					errors: [ { message: 'Sort variables: foo bar' } ]
+				},
+				{
+					code: 'import Foo, {baz, bar} from "somefile";',
+					errors: [ { message: 'Sort imported members: baz bar' } ]
 				}
 			].map(addES6)
 		)
