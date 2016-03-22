@@ -16,7 +16,8 @@ ruleTester.run(
 			'var DEF = 456;\n\nvar ABC = "FOO" + DEF;',
 			'var DEF = 456;\n\nvar GHI = 789;\n\nvar ABC = DEF;',
 			'var DEF = 456;\n\nvar ABC = some.method[DEF];',
-			'var DEF = function(){};\n\nvar ABC = DEF();'
+			'var DEF = function(){};\n\nvar ABC = DEF();',
+			'var DEF = function(){};\n\nvar ABC = foo(DEF);'
 		],
 
 		invalid: [
