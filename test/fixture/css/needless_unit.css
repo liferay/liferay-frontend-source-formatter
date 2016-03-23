@@ -10,9 +10,9 @@
 
 .needless-unit-2 {
 	@include foo(1, 3);
-  	content: '';
 	@include foo(1, 3);
 	@include test(2, 3);
+
 	@include ml(3, 3) {
 		content: '';
 	};
