@@ -628,5 +628,135 @@ describe(
 				cliInstance.init();
 			}
 		);
+
+		it(
+			'should handle custom config',
+			function(done) {
+				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['foo.js'],
+						cwd: path.join(__dirname, 'fixture/config/flags'),
+						flags: {
+							quiet: false
+						},
+						log: sinon.log,
+						logger: new Logger.constructor()
+					}
+				);
+
+				cliInstance.on(
+					'finish',
+					function() {
+						assert.isTrue(cliInstance.flags.quiet);
+
+						done();
+					}
+				);
+
+				cliInstance.init();
+			}
+		);
+
+		it(
+			'should handle custom config misc',
+			function(done) {
+				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
+
+				var log = sandbox.spy();
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['foo.js'],
+						cwd: path.join(__dirname, 'fixture/config/filenames'),
+						flags: {
+							filenames: true
+						},
+						log: log,
+						logger: new Logger.constructor()
+					}
+				);
+
+				cliInstance.on(
+					'finish',
+					function() {
+						assert.isNotTrue(cliInstance.flags.quiet);
+						assert.isUndefined(log.args[0]);
+
+						done();
+					}
+				);
+
+				cliInstance.init();
+			}
+		);
+
+		it(
+			'should handle invalid config',
+			function(done) {
+				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
+
+				var log = sandbox.spy();
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['foo.js'],
+						cwd: path.join(__dirname, 'fixture/config/bad_config'),
+						flags: {
+							verbose: false
+						},
+						log: log,
+						logger: new Logger.constructor()
+					}
+				);
+
+				cliInstance.on(
+					'finish',
+					function() {
+						assert.isFalse(cliInstance.flags.verbose);
+						assert.notStartsWith(log.args[0][0], 'Could not resolve any local config');
+
+						done();
+					}
+				);
+
+				cliInstance.init();
+			}
+		);
+
+		it(
+			'should handle invalid config logging',
+			function(done) {
+				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
+
+				var log = sandbox.spy();
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['foo.js'],
+						cwd: path.join(__dirname, 'fixture/config/bad_config'),
+						flags: {
+							quiet: false,
+							verbose: true
+						},
+						log: log,
+						logger: new Logger.constructor()
+					}
+				);
+
+				cliInstance.on(
+					'finish',
+					function() {
+						assert.isTrue(cliInstance.flags.verbose);
+						assert.startsWith(log.args[0][0], 'Could not resolve any local config');
+
+						done();
+					}
+				);
+
+				cliInstance.init();
+			}
+		);
 	}
 );

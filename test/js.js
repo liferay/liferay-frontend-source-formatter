@@ -243,6 +243,20 @@ describe(
 	function() {
 		'use strict';
 
+		var sandbox;
+
+		beforeEach(
+			function() {
+				sandbox = sinon.sandbox.create();
+			}
+		);
+
+		afterEach(
+			function() {
+				sandbox.restore();
+			}
+		);
+
 		var esLintConfig = require('../lib/config/eslint');
 
 		var testFilePath = path.join(__dirname, 'fixture', 'test.js');
@@ -251,13 +265,15 @@ describe(
 		var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
 		var source = fs.readFileSync(testFilePath, 'utf-8');
 
-		jsFormatter.format(source, true);
-
-		var jsErrors = jsLogger.getErrors(testFilePath);
+		var lint = require('../lib/lint');
 
 		it(
 			'should find at least one lint error',
 			function() {
+				jsFormatter.format(source, true);
+
+				var jsErrors = jsLogger.getErrors(testFilePath);
+
 				var foundLintErrors = _.reduce(
 					jsErrors,
 					function(res, item, index) {
@@ -280,6 +296,64 @@ describe(
 				);
 
 				assert.isTrue(hasLintError);
+			}
+		);
+
+		it(
+			'should use default configuration properties',
+			function() {
+				var eslint = lint.eslint;
+
+				var verify = function(contents, config, file) {
+					return {
+						line: 1,
+						message: '',
+						column: 0,
+						ruleId: ''
+					}
+				};
+
+				sandbox.stub(eslint.linter, 'verify', verify);
+
+				lint.runLinter(source, testFilePath, {});
+
+				var args = eslint.linter.verify.args[0];
+
+				assert.equal(args[1].parserOptions.ecmaVersion, 5);
+				assert.isUndefined(args[1].plugins);
+			}
+		);
+
+		it(
+			'should merge configuration properties',
+			function() {
+
+				var eslint = lint.eslint;
+
+				var verify = function(contents, config, file) {
+					return {
+						line: 1,
+						message: '',
+						column: 0,
+						ruleId: ''
+					}
+				};
+
+				sandbox.stub(eslint.linter, 'verify', verify);
+
+				jsFormatter.format(
+					source,
+					{
+						parserOptions: {
+							ecmaVersion: 6
+						}
+					}
+				);
+
+				var args = eslint.linter.verify.args[0];
+
+				assert.equal(args[1].parserOptions.ecmaVersion, 6);
+				assert.isArray(args[1].plugins);
 			}
 		);
 	}
