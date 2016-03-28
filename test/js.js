@@ -243,7 +243,7 @@ describe(
 	function() {
 		'use strict';
 
-		var esLintConfig = require('../lib/eslint_config');
+		var esLintConfig = require('../lib/config/eslint');
 
 		var testFilePath = path.join(__dirname, 'fixture', 'test.js');
 
