@@ -166,6 +166,66 @@ You can install it via a couple of steps:
 You can read more on [the project page](https://packagecontrol.io/packages/SublimeLinter-contrib-check-source-formatting).
 Thanks to [Drew Brokke](https://github.com/drewbrokke) for writing the plugin and publishing it.
 
+## Custom configuration
+Starting in version 2, you can now customize the configuration of the engine in a few different ways.
+Here are the items you can currently customize:
+ - CLI Flags
+ - ESLint rules
+
+I'm planning on expanding this into more areas, but currently those are the two sections that can be modified.
+
+How do you define a custom configuration?
+
+We are currently using [cosmiconfig](https://github.com/davidtheclark/cosmiconfig) to look for configuration files, which means you can define custom configuration by adding any one of the following files somewhere in the current working directory or one of the parent directories:
+- Inside of `package.json`, using a custom key of `csfConfig`
+- `csf.config.js`
+- `.csfrc` in JSON or YAML format
+
+Also note, the configuration will stop searching after it finds the first file it can find and that configurations are *NOT* merged (I may change this in the future).
+
+What does the structure of the configuration look like?
+
+Let's say we create a `.csf.config.js` file, our configuration, at the very least, should export a JSON object like so:
+```
+	module.exports = {};
+```
+
+Here is an example of a config with all keys defined:
+```
+	module.exports = {
+		flags: {},
+		js: {
+			lint: {}
+		},
+		html: {
+			js: {
+				lint: {}
+			}
+		},
+		'path:**/*.something.js': {
+			js: {
+				lint: {}
+			}
+		}
+	};
+```
+
+(please note, if using one of the JSON files, you'll need to quote the Object keys, however, there are some benefits to using a plain JS file, which I'll mention below).
+And here are the descriptions of what they do:
+- `flags` - This will default any of the flags listed above to whatever option you specify (.e.g. `quiet`). You *must* use the long form the flag, however.
+- `lint` - These accept any option that can be passed to [ESLint](http://eslint.org/docs/user-guide/configuring), you can set here. This includes any environment or globals you wish to define, rules you wish to define, etc.<br />
+This means anywhere the lint object is called, you can set the rules.
+
+The `html.js.lint` property is only applied for script blocks inside of HTML-like files that go through the HTML formatter. This property is merged on top of anything specified in `js.lint`.
+
+You'll also notice that a key there of `path:**/*.something.js`. This allows you to specify a configuration to a specific file path, or a glob referencing a file path.
+Any files matching that glob will apply those rules on top of the ones inside of `js.lint`, and `html.js.lint`.
+
+#### Benefits to using `.js` over `.json`?
+As I mentioned before, there are some benefits to using a `.js` file, but mainly is that it's less strict about what can go inside of the file, so you can use comments, and unquoted keys.
+But also, any configuration you define with a function as the value, that function will be executed, and anything you return from there will be used as the value.
+This means you can dynamically configure the script at runtime.
+
 ## Known issues
 The following are known issues where it will say there's an error, but there's not (or where there should be an error but there's not)
 
