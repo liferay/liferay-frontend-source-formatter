@@ -37,18 +37,18 @@ describe(
 			);
 		};
 
-		// it(
-		// 	'should detect lower case hex codes',
-		// 	function() {
-		// 		return testFile(getFilePath('hex_lower_case.css')).spread(
-		// 			function(errors) {
-		// 				assert.equal(errors.length, 1);
+		it(
+			'should detect lower case hex codes',
+			function() {
+				return testFile(getFilePath('hex_lower_case.css')).spread(
+					function(errors) {
+						assert.equal(errors.length, 1);
 
-		// 				assert.startsWith(errors[0].msg, 'Hex code should be all uppercase');
-		// 			}
-		// 		);
-		// 	}
-		// );
+						assert.startsWith(errors[0].msg, 'Hex code should be all uppercase');
+					}
+				);
+			}
+		);
 
 		it(
 			'should detect redundant hex codes',
