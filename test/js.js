@@ -265,7 +265,7 @@ describe(
 		var jsFormatter = new Formatter.JS(testFilePath, jsLogger);
 		var source = fs.readFileSync(testFilePath, 'utf-8');
 
-		var lint = require('../lib/lint');
+		var lint = require('../lib/lint_js');
 
 		it(
 			'should find at least one lint error',

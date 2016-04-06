@@ -1,7 +1,7 @@
 var path = require('path');
 var sub = require('string-sub');
 
-var lint = require('../../lib/lint');
+var lint = require('../../lib/lint_js');
 
 var linter = lint.linter;
 var RuleTester = lint.eslint.RuleTester;
@@ -16,7 +16,7 @@ var addES6 = function(item, index) {
 
 ruleTester.run(
 	path.basename(__filename, '.js'),
-	require('../../lib/lint_rules/' + path.basename(__filename)),
+	require('../../lib/lint_js_rules/' + path.basename(__filename)),
 	{
 		valid: [
 			'var FOO1;',

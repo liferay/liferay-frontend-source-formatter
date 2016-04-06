@@ -1,6 +1,6 @@
 var path = require('path');
 
-var lint = require('../../lib/lint');
+var lint = require('../../lib/lint_js');
 
 var linter = lint.linter;
 var RuleTester = lint.eslint.RuleTester;
@@ -11,7 +11,7 @@ var STR_ERROR = 'Array items should be separated by exactly one space:';
 
 ruleTester.run(
 	path.basename(__filename, '.js'),
-	require('../../lib/lint_rules/' + path.basename(__filename)),
+	require('../../lib/lint_js_rules/' + path.basename(__filename)),
 	{
 		valid: [
 			'[1, 2, 3]',
