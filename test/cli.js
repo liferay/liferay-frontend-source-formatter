@@ -212,7 +212,7 @@ describe(
 					function() {
 						assert.isTrue(checkMeta.called, 'metaChecker.check should have been called, it was instead called ' + checkMeta.callCount + ' times');
 					}
-				)
+				);
 			}
 		);
 
