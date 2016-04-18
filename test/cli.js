@@ -3,6 +3,7 @@ var chai = require('chai');
 var fs = require('fs');
 var path = require('path');
 var sinon = require('sinon');
+var Promise = require('bluebird');
 
 var cli = require('../lib/cli');
 var File = require('../lib/file');
@@ -24,7 +25,19 @@ describe(
 		};
 
 		var invalidContentStub = function(path, encoding, callback) {
-			callback(null, MAP_CONTENT[path][0]);
+			var file = MAP_CONTENT[path];
+
+			if (file) {
+				callback(null, file[0]);
+			}
+			else {
+				var err = new Error('File missing');
+
+				err.errno = 34;
+				err.code = 'ENOENT';
+
+				callback(err);
+			}
 		};
 
 		var validContentStub = function(path, contents, callback) {
@@ -60,8 +73,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(fs.readFile.calledThrice, 'fs.readFile should have been called 3 times, it was instead called ' + fs.readFile.callCount + ' times');
 						assert.isTrue(fs.readFile.calledWith('foo.js'), 'foo.js should have been read');
@@ -71,8 +83,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -97,8 +107,7 @@ describe(
 
 				sandbox.spy(cliInstance, 'logResults');
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(fs.writeFile.calledThrice, 'fs.writeFile should have been called 3 times, it was instead called ' + fs.writeFile.callCount + ' times');
 						assert.isTrue(fs.writeFile.calledWith('foo.js'), 'foo.js should have been written to');
@@ -119,8 +128,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -143,8 +150,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(fs.writeFile.calledOnce, 'fs.writeFile should have been called once, it was instead called ' + fs.writeFile.callCount + ' times');
 						assert.isTrue(File.handleFileWriteError.calledOnce, 'File.handleFileWriteError should have been called once, it was instead called ' + File.handleFileWriteError.callCount + ' times');
@@ -152,8 +158,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -174,16 +178,13 @@ describe(
 
 				cliInstance.processFileData = processFileData;
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isFalse(processFileData.called, 'processFileData should not have been called for a non-recognized file, it was instead called ' + processFileData.callCount + ' times');
 
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -210,18 +211,14 @@ describe(
 
 				var metaChecker = require(metaCheckerPath);
 
-				var checkMeta = sandbox.stub(metaChecker, 'check').yieldsTo('done');
+				var checkMeta = sandbox.stub(metaChecker, 'check');
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(checkMeta.called, 'metaChecker.check should have been called, it was instead called ' + checkMeta.callCount + ' times');
-
-						done();
 					}
-				);
-
-				cliInstance.init();
+				)
+				.done(done);
 			}
 		);
 
@@ -248,18 +245,13 @@ describe(
 
 				var metaChecker = require(metaCheckerPath);
 
-				var checkMeta = sandbox.stub(metaChecker, 'check').yieldsTo('done');
+				var checkMeta = sandbox.stub(metaChecker, 'check');
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(checkMeta.notCalled, 'metaChecker.check should not have been called, it was instead called ' + metaChecker.check.callCount + ' times');
-
-						done();
 					}
-				);
-
-				cliInstance.init();
+				).done(done);
 			}
 		);
 
@@ -278,8 +270,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledOnce, 'log should have been called only once, it was instead called ' + log.callCount + ' times');
 
@@ -292,8 +283,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -317,16 +306,13 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledTwice, 'log should have been called twice, it was instead called ' + log.callCount + ' times');
 
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -356,8 +342,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledThrice, 'log should have been called 3 times, it was instead called ' + log.callCount + ' times');
 						assert.equal(args.join(), log.args.join());
@@ -365,8 +350,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -410,8 +393,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledThrice, 'log should have been called 3 times, it was instead called ' + log.callCount + ' times');
 						assert.equal(relativeArgs.join(), log.args.join());
@@ -419,8 +401,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -441,8 +421,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledThrice, 'log should have been called 3 times, it was instead called ' + log.callCount + ' times');
 						assert.isTrue(File.handleFileReadError.calledOnce, 'File.handleFileReadError should have been called, it was instead called ' + File.handleFileReadError.callCount + ' times');
@@ -450,8 +429,37 @@ describe(
 						done();
 					}
 				);
+			}
+		);
 
-				cliInstance.init();
+		it(
+			'should not write missing files',
+			function(done) {
+				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'writeFile').callsArgWith(2, null);
+
+				sandbox.stub(File, 'handleFileReadError').returns('Missing file');
+
+				var log = sandbox.spy();
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['foo.js', 'bar.html', 'not_a_file.css'],
+						flags: {
+							inlineEdit: true
+						},
+						log: log,
+						logger: new Logger.constructor()
+					}
+				);
+
+				cliInstance.init().then(
+					function() {
+						assert.isTrue(fs.writeFile.calledTwice, 'writeFile should have been called only 2 times, it was instead called ' + fs.writeFile.callCount + ' times');
+
+						done();
+					}
+				);
 			}
 		);
 
@@ -477,8 +485,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(log.notCalled, 'log should not have been called, it was instead called ' + log.callCount + ' times');
 						assert.isTrue(File.handleFileReadError.returned(''), 'File.handleFileReadError should have returned nothing');
@@ -486,8 +493,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -541,8 +546,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledOnce, 'log should have been called only once, it was instead called ' + log.callCount + ' times');
 						assert.isTrue(cliModule.exec.calledTwice, 'cliModule.exec should have been called 2 times, it was instead called ' + cliModule.exec.callCount + ' times');
@@ -550,8 +554,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -601,7 +603,7 @@ describe(
 
 				var junit = sandbox.spy(junitReporter);
 
-				sandbox.stub(junit.prototype, 'generate').callsArg(0);
+				sandbox.stub(junit.prototype, 'generate').returns(Promise.resolve());
 
 				var cliInstance = new cli.CLI(
 					{
@@ -615,17 +617,12 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(junit.calledWithNew(), 'junit should have been instantiated');
 						assert.isTrue(junit.prototype.generate.called, 'junit.prototype.generate should have been called, it was instead called ' + junit.prototype.generate.callCount + ' times');
-
-						done();
 					}
-				);
-
-				cliInstance.init();
+				).done(done);
 			}
 		);
 
@@ -646,16 +643,13 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(cliInstance.flags.quiet);
 
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -678,8 +672,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isNotTrue(cliInstance.flags.quiet);
 						assert.isUndefined(log.args[0]);
@@ -687,8 +680,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -711,8 +702,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isFalse(cliInstance.flags.verbose);
 						assert.notStartsWith(log.args[0][0], 'Could not resolve any local config');
@@ -720,8 +710,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 
@@ -745,8 +733,7 @@ describe(
 					}
 				);
 
-				cliInstance.on(
-					'finish',
+				cliInstance.init().then(
 					function() {
 						assert.isTrue(cliInstance.flags.verbose);
 						assert.startsWith(log.args[0][0], 'Could not resolve any local config');
@@ -754,8 +741,6 @@ describe(
 						done();
 					}
 				);
-
-				cliInstance.init();
 			}
 		);
 	}

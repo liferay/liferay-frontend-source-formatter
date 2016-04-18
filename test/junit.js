@@ -32,7 +32,7 @@ describe(
 
 		it(
 			'should generate a JUnit report',
-			function() {
+			function(done) {
 				var logger = new Logger.constructor();
 
 				logger.log(1, 'Content is not valid', 'foo.js');
@@ -65,20 +65,19 @@ describe(
 					}
 				);
 
-				var cb = sandbox.spy();
-
 				var reporter = new junit(
 					{
 						logger: logger
 					}
 				);
 
-				reporter.generate(cb);
+				reporter.generate().then(
+					function(results) {
+						assert.isTrue(fs.writeFile.called, 'writeFile should have been called');
 
-				assert.isTrue(fs.writeFile.called, 'writeFile should have been called');
-				assert.isTrue(cb.called, 'cb should have been executed');
-
-				assert.equal(cb.args[0][1], fs.readFileSync(path.join(__dirname, 'fixture', 'result.xml'), 'utf-8'), 'The result should match what we expect');
+						assert.equal(results, fs.readFileSync(path.join(__dirname, 'fixture', 'result.xml'), 'utf-8'), 'The result should match what we expect');
+					}
+				).done(done);
 			}
 		);
 
@@ -117,22 +116,23 @@ describe(
 
 				this.timeout(5000);
 
-				var cb = sandbox.spy();
-
 				var reporter = new junit(
 					{
 						logger: logger
 					}
 				);
 
-				reporter.generate(cb);
+				reporter.generate().then(
+					function(results) {
+						xsd.validateXML(
+							results,
+							path.join(__dirname, 'fixture', 'junit-4.xsd'),
+							function(err, result) {
+								assert.isTrue(result.valid, err);
 
-				xsd.validateXML(
-					cb.args[0][1],
-					path.join(__dirname, 'fixture', 'junit-4.xsd'),
-					function(err, result) {
-						assert.isTrue(result.valid, err);
-						done();
+								done();
+							}
+						);
 					}
 				);
 			}
@@ -153,14 +153,11 @@ describe(
 					function(path, content, callback) {
 						callback(null, content);
 
-						assert.isTrue(cb.called, 'cb should have been executed');
 						assert.equal(path, 'custom_result.xml');
 
 						done();
 					}
 				);
-
-				var cb = sandbox.spy();
 
 				var reporter = new junit(
 					{
@@ -170,7 +167,7 @@ describe(
 					}
 				);
 
-				reporter.generate(cb);
+				reporter.generate();
 			}
 		);
 	}
