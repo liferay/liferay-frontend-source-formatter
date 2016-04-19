@@ -39,6 +39,11 @@ alert(function() {
 
 alert(function() {alert('foo');}, 1);
 alert({x: 1}, 1);
+firstFn(arg1)(
+     secondFn(arg2)(
+          thirdFn()
+     )
+)
 */
 ruleTester.run(
 	path.basename(__filename, '.js'),
@@ -51,7 +56,9 @@ ruleTester.run(
 			'alert(\nfunction() {\n},\n1\n);',
 			'(function foo(){\n}());',
 			'(function(){\n}(\n));',
-			'alert(\n{\nx: 1\n}\n)(foo);'
+			'alert(\n{\nx: 1\n}\n)(foo);',
+			'firstFn(arg1)(\nsecondFn(arg2)(\nthirdFn(\nfourthFn(arg3)(\nfifthFn()\n)\n)\n)\n)',
+			'firstFn(arg1)(\nsecondFn(\n{\nx: 1\n}\n)(\nthirdFn()\n)\n)'
 		],
 
 		invalid: [
@@ -102,6 +109,18 @@ ruleTester.run(
 			{
 				code: 'alert()(foo, {\nx: 1\n});',
 				errors: [ { message: 'Args should each be on their own line (args on same line): alert(...)' } ]
+			},
+			{
+				code: 'firstFn(arg1)(secondFn(arg2)(\nthirdFn(\nfourthFn(arg3)(\nfifthFn()\n)\n)\n)\n)',
+				errors: [ { message: 'Args should each be on their own line (args on start line): firstFn(...)' } ]
+			},
+			{
+				code: 'firstFn(arg1)(\nsecondFn(arg2)(\nthirdFn(\nfourthFn(arg3)(\nfifthFn()\n)\n)\n))',
+				errors: [ { message: 'Args should each be on their own line (args on end line): firstFn(...)' } ]
+			},
+			{
+				code: 'firstFn(arg1)(\nsecondFn(arg2)(\nthirdFn(\nfourthFn(\n{\nx: 1\n})(\nfifthFn()\n)\n)\n)\n)',
+				errors: [ { message: 'Args should each be on their own line (args on end line): fourthFn(...)' } ]
 			}
 		]
 	}
