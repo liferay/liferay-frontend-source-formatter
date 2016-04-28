@@ -2,6 +2,8 @@ var path = require('path');
 
 var lint = require('../../lib/lint_js');
 
+var nl = require('../test_utils').nl;
+
 var linter = lint.linter;
 var RuleTester = lint.eslint.RuleTester;
 
@@ -45,6 +47,7 @@ firstFn(arg1)(
      )
 )
 */
+
 ruleTester.run(
 	path.basename(__filename, '.js'),
 	require('../../lib/lint_js_rules/' + path.basename(__filename)),
@@ -53,47 +56,96 @@ ruleTester.run(
 			'alert();',
 			'alert({}, 1);',
 			'alert(function() {}, 1);',
-			'alert(\nfunction() {\n},\n1\n);',
-			'(function foo(){\n}());',
-			'(function(){\n}(\n));',
-			'alert(\n{\nx: 1\n}\n)(foo);',
-			'firstFn(arg1)(\nsecondFn(arg2)(\nthirdFn(\nfourthFn(arg3)(\nfifthFn()\n)\n)\n)\n)',
-			'firstFn(arg1)(\nsecondFn(\n{\nx: 1\n}\n)(\nthirdFn()\n)\n)',
+
+			nl('alert(',
+				'function() {',
+				'},',
+				'1',
+			');'),
+
+			nl('(function foo(){',
+			'}());'),
+
+			nl('(function(){',
+				'}(',
+				'));'),
+
+			nl('alert(',
+				'{',
+					'x: 1',
+				'}',
+			')(foo);'),
+			nl('firstFn(arg1)(',
+				'secondFn(arg2)(',
+				'thirdFn(',
+					'fourthFn(arg3)(',
+						'fifthFn()',
+					')',
+				')',
+				')',
+			')'),
+			nl('firstFn(arg1)(',
+				'secondFn(',
+					'{',
+						'x: 1',
+					'}',
+				')(',
+					'thirdFn()',
+				')',
+			')'),
 			// I need to come back to this test...
 			// It passes if the identifier is the last argument,
 			// but fails when it's the first.
 			// I also wonder about variations of this, like (var, fn, var) or (fn, var, obj, var), etc
 			// UPDATE: (var, obj), (fn, var, fn), and (fn, var, obj) fail as well
-			// '(function(arg1) {\nreturn function(){\n};\n})(\nobj,\nfunction(exp){\nreturn "";\n}\n);'
+			// nl('(function(arg1) {',
+			// 		'return function(){',
+			// 		'};',
+			// 	'})(',
+			// 		'obj,',
+			// 		'function(exp){',
+			// 			'return "";',
+			// 		'}',
+			// ');')
 		],
 
 		invalid: [
 			{
-				code: 'alert(function() {\n}, 1, 2);',
+				code: nl('alert(function() {',
+						'}, 1, 2);'),
 				errors: [ { message: 'Args should each be on their own line (args on same line): alert(...)' } ]
 			},
 			{
-				code: 'alert(\n1, 2, 3\n);',
+				code: nl('alert(',
+							'1, 2, 3',
+						');'),
 				errors: [ { message: 'Function call can be all on one line: alert(...)' } ]
 			},
 			{
-				code: 'alert(\n);',
+				code: nl('alert(',
+						');'),
 				errors: [ { message: 'Function call without arguments should be on one line: alert()' } ]
 			},
 			{
-				code: 'alert(function() {\n},\n1);',
+				code: nl('alert(function() {',
+						'},',
+						'1);'),
 				errors: [ { message: 'Args should each be on their own line (args on end line): alert(...)' } ]
 			},
 			{
-				code: 'alert(function() {\n},\n1\n);',
+				code: nl('alert(function() {',
+							'},',
+						'1',
+						');'),
 				errors: [ { message: 'Args should each be on their own line (args on start line): alert(...)' } ]
 			},
 			{
-				code: 'alert(function() {\n});',
+				code: nl('alert(function() {',
+						'});'),
 				errors: [ { message: 'Args should each be on their own line (args on start line): alert(...)' } ]
 			},
 			{
-				code: 'alert(function() {alert(\'foo\');}, 1);',
+				code: nl('alert(function() {alert(\'foo\');}, 1);'),
 				errors: [ { message: 'Args should each be on their own line (args on same line): alert(...)' } ]
 			},
 			{
@@ -101,35 +153,71 @@ ruleTester.run(
 				errors: [ { message: 'Args should each be on their own line (args on same line): alert(...)' } ]
 			},
 			{
-				code: 'AUI()[\'add\'](function(){\n});',
+				code: nl('AUI()[\'add\'](function(){',
+						'});'),
 				errors: [ { message: 'Args should each be on their own line (args on start line): AUI(...)' } ]
 			},
 			{
-				code: '(function(){\n}(\n{x: 1},2,3\n));',
+				code: nl('(function(){',
+						'}(',
+							'{x: 1},2,3',
+						'));'),
 				errors: [ { message: 'Args should each be on their own line (args on same line): <anonymous>(...)' } ]
 			},
 			{
-				code: 'alert({\nx: 1\n})(foo);',
+				code: nl('alert({',
+							'x: 1',
+						'})(foo);'),
 				errors: [ { message: 'Args should each be on their own line (args on start line): alert(...)' } ]
 			},
 			{
-				code: 'alert()(foo, {\nx: 1\n});',
+				code: nl('alert()(foo, {',
+							'x: 1',
+						'});'),
 				errors: [ { message: 'Args should each be on their own line (args on same line): alert(...)' } ]
 			},
 			{
-				code: 'firstFn(arg1)(secondFn(arg2)(\nthirdFn(\nfourthFn(arg3)(\nfifthFn()\n)\n)\n)\n)',
+				code: nl('firstFn(arg1)(secondFn(arg2)(',
+							'thirdFn(',
+								'fourthFn(arg3)(',
+									'fifthFn()',
+								')',
+							')',
+						')',
+					')'),
 				errors: [ { message: 'Args should each be on their own line (args on start line): firstFn(...)' } ]
 			},
 			{
-				code: 'firstFn(arg1)(\nsecondFn(arg2)(\nthirdFn(\nfourthFn(arg3)(\nfifthFn()\n)\n)\n))',
+				code: nl('firstFn(arg1)(',
+							'secondFn(arg2)(',
+								'thirdFn(',
+									'fourthFn(arg3)(',
+										'fifthFn()',
+									')',
+								')',
+						'))'),
 				errors: [ { message: 'Args should each be on their own line (args on end line): firstFn(...)' } ]
 			},
 			{
-				code: 'firstFn(arg1)(\nsecondFn(arg2)(\nthirdFn(\nfourthFn(\n{\nx: 1\n})(\nfifthFn()\n)\n)\n)\n)',
+				code: nl('firstFn(arg1)(',
+							'secondFn(arg2)(',
+								'thirdFn(',
+									'fourthFn(',
+										'{',
+											'x: 1',
+									'})(',
+										'fifthFn()',
+									')',
+								')',
+							')',
+						')'),
 				errors: [ { message: 'Args should each be on their own line (args on end line): fourthFn(...)' } ]
 			},
 			{
-				code: '(function(arg1) {\nreturn function(){};\n})(obj, function(exp){\n});',
+				code: nl('(function(arg1) {',
+							'return function(){};',
+						'})(obj, function(exp){',
+					'});'),
 				errors: [ { message: 'Args should each be on their own line (args on same line): <anonymous>(...)' } ]
 			}
 		]
