@@ -58,7 +58,13 @@ ruleTester.run(
 			'(function(){\n}(\n));',
 			'alert(\n{\nx: 1\n}\n)(foo);',
 			'firstFn(arg1)(\nsecondFn(arg2)(\nthirdFn(\nfourthFn(arg3)(\nfifthFn()\n)\n)\n)\n)',
-			'firstFn(arg1)(\nsecondFn(\n{\nx: 1\n}\n)(\nthirdFn()\n)\n)'
+			'firstFn(arg1)(\nsecondFn(\n{\nx: 1\n}\n)(\nthirdFn()\n)\n)',
+			// I need to come back to this test...
+			// It passes if the identifier is the last argument,
+			// but fails when it's the first.
+			// I also wonder about variations of this, like (var, fn, var) or (fn, var, obj, var), etc
+			// UPDATE: (var, obj), (fn, var, fn), and (fn, var, obj) fail as well
+			// '(function(arg1) {\nreturn function(){\n};\n})(\nobj,\nfunction(exp){\nreturn "";\n}\n);'
 		],
 
 		invalid: [
@@ -121,6 +127,10 @@ ruleTester.run(
 			{
 				code: 'firstFn(arg1)(\nsecondFn(arg2)(\nthirdFn(\nfourthFn(\n{\nx: 1\n})(\nfifthFn()\n)\n)\n)\n)',
 				errors: [ { message: 'Args should each be on their own line (args on end line): fourthFn(...)' } ]
+			},
+			{
+				code: '(function(arg1) {\nreturn function(){};\n})(obj, function(exp){\n});',
+				errors: [ { message: 'Args should each be on their own line (args on same line): <anonymous>(...)' } ]
 			}
 		]
 	}
