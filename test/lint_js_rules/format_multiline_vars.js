@@ -8,11 +8,7 @@ var RuleTester = lint.eslint.RuleTester;
 
 var ruleTester = new RuleTester();
 
-var addES6 = function(item, index) {
-	item.parserOptions = { ecmaVersion: 6 };
-
-	return item;
-};
+var addES6 = require('../test_utils').addES6();
 
 ruleTester.run(
 	path.basename(__filename, '.js'),
