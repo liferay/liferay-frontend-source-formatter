@@ -2,7 +2,11 @@ var path = require('path');
 
 var lint = require('../../lib/lint_js');
 
-var nl = require('../test_utils').nl;
+var testUtils = require('../test_utils');
+
+var nl = testUtils.nl;
+
+var addES6 = testUtils.addES6();
 
 var linter = lint.linter;
 var RuleTester = lint.eslint.RuleTester;
@@ -107,7 +111,16 @@ ruleTester.run(
 			// 			'return "";',
 			// 		'}',
 			// ');')
-		],
+		].concat(
+			[
+				{ code: nl(
+					'doSomethingPromisable()',
+					'.then((foo) => doSomethingMorePromisable(foo))',
+					'.then((bar) => finish(bar))'
+					)
+				}
+			].map(addES6)
+		),
 
 		invalid: [
 			{
