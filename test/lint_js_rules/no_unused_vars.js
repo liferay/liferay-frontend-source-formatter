@@ -23,6 +23,10 @@ ruleTester.run(
 				code: '(function(){ function _PN_xyz(){} })',
 				options: options
 			},
+			{
+				code: '(function(){ function _SCRIPTLET_xyz(){} })',
+				options: options
+			},
 		],
 
 		invalid: [
