@@ -2,6 +2,9 @@ var _ = require('lodash');
 var chai = require('chai');
 var fs = require('fs');
 var path = require('path');
+var sinon = require('sinon');
+
+var Promise = require('bluebird');
 
 var Promise = require('bluebird');
 
@@ -253,6 +256,133 @@ describe(
 						);
 					}
 				);
+			}
+		);
+	}
+);
+
+describe(
+	'Formatter.CSS Lint',
+	function() {
+		'use strict';
+
+		var sandbox;
+
+		beforeEach(
+			function() {
+				sandbox = sinon.sandbox.create();
+			}
+		);
+
+		afterEach(
+			function() {
+				sandbox.restore();
+			}
+		);
+
+		var lintConfig = require('../lib/config/stylelint');
+
+		var testFilePath = path.join(__dirname, 'fixture', 'css', 'at_rule_empty_line.css');
+
+		var cssLogger = new Logger.constructor();
+		var cssFormatter = new Formatter.CSS(testFilePath, cssLogger);
+		var source = fs.readFileSync(testFilePath, 'utf-8');
+
+		var lint = require('../lib/lint_css');
+
+		it(
+			'should find at least one lint error',
+			function(done) {
+				var response = cssFormatter.format(source, true);
+
+				Promise.resolve(response).then(
+					function(results) {
+						var cssErrors = cssLogger.getErrors(testFilePath);
+
+						var foundLintErrors = _.reduce(
+							cssErrors,
+							function(res, item, index) {
+								if (item.type) {
+									res[item.type] = true;
+								}
+
+								return res;
+							},
+							{}
+						);
+
+						var hasLintError = _.some(
+							lintConfig.rules,
+							function(item, index) {
+								var val = _.isArray(item) ? item[0] : item;
+
+								return val !== false && foundLintErrors[index];
+							}
+						);
+
+						assert.isTrue(hasLintError);
+					}
+				).done(done);
+			}
+		);
+
+		it(
+			'should use default configuration properties',
+			function() {
+				var stylelint = lint.stylelint;
+
+				var cssLint = function(contents, config, file) {
+					return Promise.resolve(
+						{
+							line: 1,
+							message: '',
+							column: 0,
+							ruleId: ''
+						}
+					);
+				};
+
+				sandbox.stub(stylelint, 'lint', cssLint);
+
+				lint.runLinter(source, testFilePath, {});
+
+				var args = stylelint.lint.args[0];
+
+				assert.equal(args[0].config.rules['at-rule-no-vendor-prefix'], true);
+			}
+		);
+
+		it(
+			'should merge configuration properties',
+			function() {
+
+				var stylelint = lint.stylelint;
+
+				var cssLint = function(contents, config, file) {
+					return Promise.resolve(
+						{
+							line: 1,
+							message: '',
+							column: 0,
+							ruleId: ''
+						}
+					);
+				};
+
+				sandbox.stub(stylelint, 'lint', cssLint);
+
+				cssFormatter.format(
+					source,
+					{
+						rules: {
+							'at-rule-no-vendor-prefix': false
+						}
+					}
+				);
+
+				var args = stylelint.lint.args[0];
+
+				assert.equal(args[0].config.rules['at-rule-no-vendor-prefix'], false);
 			}
 		);
 	}

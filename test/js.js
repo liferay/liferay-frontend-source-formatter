@@ -257,7 +257,7 @@ describe(
 			}
 		);
 
-		var esLintConfig = require('../lib/config/eslint');
+		var lintConfig = require('../lib/config/eslint');
 
 		var testFilePath = path.join(__dirname, 'fixture', 'test.js');
 
@@ -287,7 +287,7 @@ describe(
 				);
 
 				var hasLintError = _.some(
-					esLintConfig.rules,
+					lintConfig.rules,
 					function(item, index) {
 						var val = _.isArray(item) ? item[0] : item;
 

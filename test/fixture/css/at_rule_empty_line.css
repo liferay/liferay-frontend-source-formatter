@@ -1,0 +1,5 @@
+.at-rules {
+	background: red;
+	@include fakemixin();
+	color: white;
+}
