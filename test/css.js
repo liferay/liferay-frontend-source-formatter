@@ -221,6 +221,30 @@ describe(
 				);
 			}
 		);
+
+		it(
+			'should use a custom lint log filter',
+			function(done) {
+				var testFilePath = path.join(__dirname, 'fixture', 'css', 'at_rule_empty_line.css');
+
+				var source = fs.readFileSync(testFilePath, 'utf-8');
+
+				var cssLoggerFilter = new Logger.constructor();
+				var cssFormatterFilter = new Formatter.CSS(testFilePath, cssLoggerFilter);
+
+				var lintLogFilter = sinon.stub().returnsArg(0);
+
+				cssFormatterFilter.lintLogFilter = lintLogFilter;
+
+				var result = cssFormatterFilter.format(source);
+
+				Promise.resolve(result).then(
+					function(result) {
+						assert.isTrue(lintLogFilter.called);
+					}
+				).done(done);
+			}
+		);
 	}
 );
 

@@ -42,7 +42,7 @@
     "optimist": "^0.6.1",
     "roolz": "^1.0.2",
     "string-sub": "0.0.1",
-    "stylelint": "^5.1.0",
+    "stylelint": "^6.5.1",
     "update-notifier": "^2.1.0"
   },
   "devDependencies": {
