@@ -24,6 +24,7 @@ ruleTester.run(
 			'var abc = 123; var def = 456;',
 			'var cde = 123;\nvar def = 123;\n\nvar abc = 456;',
 			'var cde = 123;\nvar def = foo();\n\nvar abc = bar(def);',
+			'var cde = 123;\nvar def = window.foo();\n\nvar abc = window.bar(def);',
 			'for (var i = 0; i < 10; i++) {\nvar current = 1;\n}',
 			'for (var i in obj) {\nvar current = 1;\n}'
 		].concat(
@@ -50,6 +51,18 @@ ruleTester.run(
 			},
 			{
 				code: 'var def = 456;\n\nvar def_xyz = foo();\nvar abc = def_xyz.bar();',
+				errors: [ { message: 'Sort variables: def_xyz abc' } ]
+			},
+			{
+				code: 'var def = 456;\n\nvar def_xyz = window.foo;\nvar abc = def_xyz.bar;',
+				errors: [ { message: 'Sort variables: def_xyz abc' } ]
+			},
+			{
+				code: 'var def = 456;\n\nvar def_xyz =[];\nvar abc = [];',
+				errors: [ { message: 'Sort variables: def_xyz abc' } ]
+			},
+			{
+				code: 'var def = 456;\n\nvar def_xyz ={};\nvar abc = {};',
 				errors: [ { message: 'Sort variables: def_xyz abc' } ]
 			}
 		].concat(
