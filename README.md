@@ -166,6 +166,12 @@ You can install it via a couple of steps:
 You can read more on [the project page](https://packagecontrol.io/packages/SublimeLinter-contrib-check-source-formatting).
 Thanks to [Drew Brokke](https://github.com/drewbrokke) for writing the plugin and publishing it.
 
+### As an Atom Linter plugin
+- Install [liferay-linter](https://atom.io/packages/linter-liferay) via `apm install linter linter-liferay`
+
+You can read more on [the github page](https://github.com/mthadley/linter-liferay).
+Thanks to [Michael Hadley](https://github.com/mthadley) for writing the plugin and publishing it.
+
 ## Custom configuration
 Starting in version 2, you can now customize the configuration of the engine in a few different ways.
 Here are the items you can currently customize:
