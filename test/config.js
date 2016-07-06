@@ -24,8 +24,8 @@ describe(
 			function() {
 				var config = new Config();
 
-				assert.isTrue(JSON.stringify(config) === "{}");
-				assert.isTrue(typeof config._paths === 'object');
+				assert.isTrue(JSON.stringify(config) === '{}', 'Should be an empty object {}');
+				assert.isTrue(typeof config._paths === 'object', '_paths should still exists in config');
 			}
 		);
 
