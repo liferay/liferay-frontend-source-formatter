@@ -98,7 +98,7 @@ describe(
 				var scriptBlocks = htmlFormatter.parseJs(source);
 
 				assert.isArray(scriptBlocks);
-				assert.equal(scriptBlocks.length, 4);
+				assert.equal(scriptBlocks.length, 5);
 				scriptBlocks.forEach(assert.isString);
 			}
 		);
@@ -119,7 +119,7 @@ describe(
 				var scriptBlocks = htmlFormatter.extractJs(source);
 
 				assert.isArray(scriptBlocks);
-				assert.equal(scriptBlocks.length, 4);
+				assert.equal(scriptBlocks.length, 5);
 				scriptBlocks.forEach(assert.isObject);
 
 				scriptBlocks = htmlFormatter.extractJs('<html></html>');
@@ -144,7 +144,7 @@ describe(
 				var styleBlocks = htmlFormatter.parseCSS(source);
 
 				assert.isArray(styleBlocks);
-				assert.equal(styleBlocks.length, 1);
+				assert.equal(styleBlocks.length, 2);
 				styleBlocks.forEach(assert.isString);
 			}
 		);
@@ -165,7 +165,7 @@ describe(
 				var styleBlocks = htmlFormatter.extractCSS(source);
 
 				assert.isArray(styleBlocks);
-				assert.equal(styleBlocks.length, 1);
+				assert.equal(styleBlocks.length, 2);
 				styleBlocks.forEach(assert.isObject);
 
 				styleBlocks = htmlFormatter.extractCSS('<html></html>');
