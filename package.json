@@ -21,7 +21,6 @@
   },
   "preferGlobal": "true",
   "dependencies": {
-    "async": "^1.5.2",
     "babel-eslint": "6.0.2",
     "bluebird": "^3.3.5",
     "cli": "^0.11.2",
