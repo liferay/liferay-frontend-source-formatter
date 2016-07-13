@@ -55,7 +55,7 @@ describe(
 		it(
 			'should find extra newlines at end',
 			function() {
-				var endingNewLine = ['foo', '', ''];
+				var endingNewLine = ['foo', ''];
 
 				endingNewLine.forEach(
 					function(item, index, collection) {
