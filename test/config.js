@@ -1,4 +1,3 @@
-var async = require('async');
 var chai = require('chai');
 
 var Config = require('../lib/config');

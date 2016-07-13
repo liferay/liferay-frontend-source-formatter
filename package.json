@@ -13,7 +13,7 @@
   "author": "Nate Cavanaugh",
   "license": "BSD",
   "engines": {
-    "node": ">=0.10.0"
+    "node": ">=4"
   },
   "repository": {
     "type": "git",
@@ -30,7 +30,7 @@
     "content-logger-handlebars-helpers": "0.0.1",
     "cosmiconfig": "^1.1.0",
     "drip": "^1.4.0",
-    "eslint": "^2.10.2",
+    "eslint": "^3.0.1",
     "eslint-plugin-react": "^5.1.1",
     "falafel": "^1.2.0",
     "getobject": "^0.1.0",

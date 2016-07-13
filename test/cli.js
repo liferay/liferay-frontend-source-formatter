@@ -1,4 +1,3 @@
-var async = require('async');
 var chai = require('chai');
 var fs = require('fs');
 var path = require('path');
