@@ -7,6 +7,8 @@ var RuleTester = lint.eslint.RuleTester;
 
 var ruleTester = new RuleTester();
 
+var addES6 = require('../test_utils').addES6();
+
 ruleTester.run(
 	path.basename(__filename, '.js'),
 	require('../../lib/lint_js_rules/' + path.basename(__filename)),
@@ -16,9 +18,15 @@ ruleTester.run(
 			'var DEF = 456;\n\nvar ABC = "FOO" + DEF;',
 			'var DEF = 456;\n\nvar GHI = 789;\n\nvar ABC = DEF;',
 			'var DEF = 456;\n\nvar ABC = some.method[DEF];',
+			'var DEF = 456;\n\nvar ABC = {key: DEF};',
+			'var DEF = 456;\n\nvar ABC = {key: {someOtherKey: DEF}};',
 			'var DEF = function(){};\n\nvar ABC = DEF();',
 			'var DEF = function(){};\n\nvar ABC = foo(DEF);'
-		],
+		].concat(
+			[
+				{code: 'var DEF = "Hello";\n\nvar ABC = {[DEF]: 1};'},
+			].map(addES6)
+		),
 
 		invalid: [
 			{
