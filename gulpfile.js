@@ -33,9 +33,11 @@ gulp.task('test-file', function() {
 	else {
 		file = ['test/**/*.js', '!test/fixture/*.js'];
 	}
+
 	process.argv.push('--display-raw');
 
 	return gulp.src(file)
+		// .pipe(plugins.debug())
 		.pipe(plugins.mocha());
 });
 
