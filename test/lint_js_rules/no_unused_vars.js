@@ -32,7 +32,7 @@ ruleTester.run(
 		invalid: [
 			{
 				code: '(function(){ var _PN_xyz = 1; });',
-				errors: [ { message: "'_PN_xyz' is defined but never used" } ],
+				errors: [ { message: "'_PN_xyz' is defined but never used." } ],
 				options: options
 			}
 		]
