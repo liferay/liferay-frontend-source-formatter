@@ -2,6 +2,7 @@ var _ = require('lodash');
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
+var inquirer = require('inquirer');
 
 gulp.task('coveralls', function () {
 	gulp.src('coverage/**/lcov.info')
@@ -74,3 +75,61 @@ gulp.task('toc', function(done) {
 	)
 	.pipe(gulp.dest('./'));
 });
+
+gulp.task(
+	'new-rule',
+	function(done) {
+		inquirer.prompt(
+			[
+				{
+					type: 'list',
+					choices: ['ESLint'/*, 'Stylelint'*/],
+					message: 'What kind of linting rule do you wish to create?',
+					name: 'type'
+				},
+				{
+					type: 'input',
+					default: 'my-new-rule',
+					filter: _.snakeCase,
+					message: 'What do you want to name it?',
+					name: 'name'
+				},
+				{
+					type: 'input',
+					default: 'Checks for this issue.',
+					message: 'Type a short description',
+					name: 'description'
+				}
+			]
+		)
+		.then(
+			function(res) {
+				var srcDir = 'js';
+				var destDir = 'lint_js_rules';
+
+				if (res.type !== 'ESLint') {
+					srcDir = 'css';
+					destDir = 'lint_css_rules';
+				}
+
+				gulp.src('./lib/tpl/lint_rules/' + srcDir + '/*.js')
+				// .pipe(plugins.debug())
+				.pipe(
+					plugins.rename(
+						function(path) {
+							var baseDir = path.basename === 'rule' ? 'lib' : 'test';
+
+							path.dirname = './' + baseDir + '/lint_' + srcDir + '_rules';
+
+							path.basename = res.name;
+						}
+					)
+				)
+				.pipe(plugins.template(res))
+				.pipe(gulp.dest('./'));
+
+				done();
+			}
+		);
+	}
+);
