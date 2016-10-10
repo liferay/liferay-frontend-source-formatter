@@ -79,5 +79,12 @@
 
 	<aui:script>
 		window.foo = 'foo';</aui:script>
+
+	<aui:script>
+		var SOME_OBJ = {
+			'${foo}': 'bar',
+			'${bar}': 'baz'
+		};
+	</aui:script>
 </body>
 </html>

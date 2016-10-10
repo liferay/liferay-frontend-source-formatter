@@ -98,7 +98,7 @@ describe(
 				var scriptBlocks = htmlFormatter.parseJs(source);
 
 				assert.isArray(scriptBlocks);
-				assert.equal(scriptBlocks.length, 5);
+				assert.equal(scriptBlocks.length, 6);
 				scriptBlocks.forEach(assert.isString);
 			}
 		);
@@ -119,7 +119,7 @@ describe(
 				var scriptBlocks = htmlFormatter.extractJs(source);
 
 				assert.isArray(scriptBlocks);
-				assert.equal(scriptBlocks.length, 5);
+				assert.equal(scriptBlocks.length, 6);
 				scriptBlocks.forEach(assert.isObject);
 
 				scriptBlocks = htmlFormatter.extractJs('<html></html>');

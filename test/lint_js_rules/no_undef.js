@@ -15,7 +15,8 @@ ruleTester.run(
 			'_PN_foo()',
 			'_PN_()',
 			'_PN_.foo',
-			'var a = _PN_;'
+			'var a = _PN_;',
+			'var b = _EL_EXPRESSION_1'
 		],
 
 		invalid: [
