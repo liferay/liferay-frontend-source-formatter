@@ -4,11 +4,9 @@ var chai = require('chai');
 chai.use(require('chai-string'));
 
 var assert = chai.assert;
-var sinon = require('sinon');
+
 function assertEquality(processCss, context) {
 	const describeFn = (context.only) ? describe.only : describe;
-
-	sinon.spy(it);
 
 	describeFn(
 		context.caseDescription,
@@ -33,8 +31,6 @@ function assertEquality(processCss, context) {
 					).catch(done)
 				}
 			);
-
-			console.log(it.called);
 		}
 	);
 }

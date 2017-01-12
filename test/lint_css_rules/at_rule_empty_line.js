@@ -9,6 +9,15 @@ var sub = require('string-sub');
 
 var stylelintRule = require('stylelint/dist/rules/at-rule-empty-line-before');
 
+var path = require('path');
+var fs = require('fs');
+var chai = require('chai');
+var _ = require('lodash');
+
+chai.use(require('chai-string'));
+
+var assert = chai.assert;
+
 testRule(
 	rule,
 	{
