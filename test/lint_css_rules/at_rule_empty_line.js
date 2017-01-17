@@ -7,7 +7,7 @@ var stylelint = testRule.stylelint;
 var rule = require('../../lib/lint_css_rules/' + path.basename(__filename));
 var sub = require('string-sub');
 
-var stylelintRule = require('stylelint/dist/rules/at-rule-empty-line-before');
+var stylelintRule = require('stylelint/lib/rules/at-rule-empty-line-before');
 
 var path = require('path');
 var fs = require('fs');
