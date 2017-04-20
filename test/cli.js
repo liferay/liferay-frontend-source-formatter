@@ -633,9 +633,7 @@ describe(
 
 				var junitReporter = require('../lib/junit');
 
-				var junit = sandbox.spy(junitReporter);
-
-				sandbox.stub(junit.prototype, 'generate').returns(Promise.resolve());
+				sandbox.stub(junitReporter.prototype, 'generate').returns(Promise.resolve());
 
 				var cliInstance = new cli.CLI(
 					{
@@ -643,7 +641,7 @@ describe(
 						flags: {
 							junit: true
 						},
-						junit: junit,
+						junit: junitReporter,
 						log: _.noop,
 						logger: new Logger.constructor()
 					}
@@ -651,8 +649,7 @@ describe(
 
 				cliInstance.init().then(
 					function() {
-						assert.isTrue(junit.calledWithNew(), 'junit should have been instantiated');
-						assert.isTrue(junit.prototype.generate.called, 'junit.prototype.generate should have been called, it was instead called ' + junit.prototype.generate.callCount + ' times');
+						assert.isTrue(junitReporter.prototype.generate.called, 'junit.prototype.generate should have been called, it was instead called ' + junitReporter.prototype.generate.callCount + ' times');
 					}
 				).done(done);
 			}
