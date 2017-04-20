@@ -313,7 +313,7 @@ describe(
 					}
 				};
 
-				sandbox.stub(eslint.linter, 'verify', verify);
+				sandbox.stub(eslint.linter, 'verify').callsFake(verify);
 
 				lint.runLinter(source, testFilePath, {});
 
@@ -339,7 +339,7 @@ describe(
 					}
 				};
 
-				sandbox.stub(eslint.linter, 'verify', verify);
+				sandbox.stub(eslint.linter, 'verify').callsFake(verify);
 
 				jsFormatter.format(
 					source,

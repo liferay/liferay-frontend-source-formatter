@@ -64,7 +64,7 @@ describe(
 		it(
 			'should read files correctly',
 			function(done) {
-				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var logger = new Logger.constructor();
 
@@ -92,7 +92,7 @@ describe(
 		it(
 			'should write files correctly',
 			function(done) {
-				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 				sandbox.stub(fs, 'writeFile').callsArgWith(2, null);
 
 				var log = sandbox.spy();
@@ -137,7 +137,7 @@ describe(
 		it(
 			'should handle file write errors',
 			function(done) {
-				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 				sandbox.stub(fs, 'writeFile').callsArgWith(2, new Error('Something went wrong'));
 
 				sandbox.stub(File, 'handleFileWriteError');
@@ -261,7 +261,7 @@ describe(
 		it(
 			'should log results properly',
 			function(done) {
-				sandbox.stub(fs, 'readFile', validContentStub);
+				sandbox.stub(fs, 'readFile').callsFake(validContentStub);
 
 				var log = sandbox.spy();
 
@@ -323,9 +323,7 @@ describe(
 		it(
 			'should log filenames properly',
 			function(done) {
-				sandbox.stub(
-					fs,
-					'readFile',
+				sandbox.stub(fs, 'readFile').callsFake(
 					function(filePath, encoding, callback) {
 						callback(null, MAP_CONTENT[path.basename(filePath)][0]);
 					}
@@ -360,9 +358,7 @@ describe(
 		it(
 			'should log relative filenames properly',
 			function(done) {
-				sandbox.stub(
-					fs,
-					'readFile',
+				sandbox.stub(fs, 'readFile').callsFake(
 					function(filePath, encoding, callback) {
 						callback(null, MAP_CONTENT[path.basename(filePath)][0]);
 					}
@@ -439,7 +435,7 @@ describe(
 		it(
 			'should not write missing files',
 			function(done) {
-				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 				sandbox.stub(fs, 'writeFile').callsArgWith(2, null);
 
 				sandbox.stub(File, 'handleFileReadError').returns('Missing file');
@@ -523,13 +519,11 @@ describe(
 		it(
 			'should open files properly',
 			function(done) {
-				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var cliModule = require('cli');
 
-				sandbox.stub(
-					cliModule,
-					'exec',
+				sandbox.stub(cliModule, 'exec').callsFake(
 					function(command, callback) {
 						if (callback) {
 							callback(['sublime']);
@@ -564,13 +558,11 @@ describe(
 		it(
 			'should not log without arguments',
 			function() {
-				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var cliModule = require('cli');
 
-				sandbox.stub(
-					cliModule,
-					'exec',
+				sandbox.stub(cliModule, 'exec').callsFake(
 					function(command, callback) {
 						if (callback) {
 							callback(['sublime']);
@@ -637,7 +629,7 @@ describe(
 		it(
 			'should call junit generate',
 			function(done) {
-				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var junitReporter = require('../lib/junit');
 
@@ -806,7 +798,7 @@ describe(
 		it(
 			'should not load a config when config is false',
 			function(done) {
-				sandbox.stub(fs, 'readFile', invalidContentStub);
+				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var log = sandbox.spy();
 
