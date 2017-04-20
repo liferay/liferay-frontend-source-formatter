@@ -1,3 +1,4 @@
+var _ = require('lodash');
 var chai = require('chai');
 var fs = require('fs');
 var path = require('path');
@@ -7,6 +8,9 @@ var Promise = require('bluebird');
 var cli = require('../lib/cli');
 var File = require('../lib/file');
 var Logger = require('../lib/logger');
+var config = require('../lib/config/eslint');
+
+var getRule = require('./test_utils').getRule;
 
 chai.use(require('chai-string'));
 
@@ -67,14 +71,14 @@ describe(
 				var cliInstance = new cli.CLI(
 					{
 						args: ['foo.js', 'bar.html', 'baz.css'],
-						log: sinon.log,
+						log: _.noop,
 						logger: logger
 					}
 				);
 
 				cliInstance.init().then(
 					function() {
-						assert.isTrue(fs.readFile.calledThrice, 'fs.readFile should have been called 3 times, it was instead called ' + fs.readFile.callCount + ' times');
+						assert.isTrue(fs.readFile.callCount >= 3, 'fs.readFile should have been called 3 times, it was instead called ' + fs.readFile.callCount + ' times');
 						assert.isTrue(fs.readFile.calledWith('foo.js'), 'foo.js should have been read');
 						assert.isTrue(fs.readFile.calledWith('bar.html'), 'bar.html should have been read');
 						assert.isTrue(fs.readFile.calledWith('baz.css'), 'baz.css should have been read');
@@ -144,7 +148,7 @@ describe(
 						flags: {
 							inlineEdit: true
 						},
-						log: sinon.log,
+						log: _.noop,
 						logger: new Logger.constructor()
 					}
 				);
@@ -170,7 +174,7 @@ describe(
 				var cliInstance = new cli.CLI(
 					{
 						args: ['foo.NOOP'],
-						log: sinon.log,
+						log: _.noop,
 						logger: new Logger.constructor()
 					}
 				);
@@ -199,7 +203,7 @@ describe(
 						flags: {
 							checkMetadata: true
 						},
-						log: sinon.log,
+						log: _.noop,
 						logger: new Logger.constructor()
 					}
 				);
@@ -233,7 +237,7 @@ describe(
 						flags: {
 							checkMetadata: true
 						},
-						log: sinon.log,
+						log: _.noop,
 						logger: new Logger.constructor()
 					}
 				);
@@ -298,6 +302,7 @@ describe(
 					{
 						args: ['foo.js'],
 						flags: {
+							config: false,
 							verbose: true
 						},
 						log: log,
@@ -594,6 +599,42 @@ describe(
 		);
 
 		it(
+			'should not log files without errors when quiet is set',
+			function(done) {
+				sandbox.stub(fs, 'readFile').callsFake(validContentStub);
+
+				var log = sandbox.spy();
+
+				var logger = new Logger.constructor();
+
+				var filterFileErrors = sandbox.spy(logger, 'filterFileErrors');
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['bar.html'],
+						flags: {
+							// config: false,
+							quiet: true,
+						},
+						log: log,
+						logger: logger
+					}
+				);
+
+				var spy = sandbox.spy(cliInstance, '_loadConfigs');
+
+				cliInstance.init().then(
+					function() {
+						assert.isTrue(log.notCalled, 'log should not have been called');
+						assert.isTrue(filterFileErrors.called, 'filterFileErrors should have been called');
+
+						done();
+					}
+				).catch(done);
+			}
+		);
+
+		it(
 			'should call junit generate',
 			function(done) {
 				sandbox.stub(fs, 'readFile', invalidContentStub);
@@ -611,7 +652,7 @@ describe(
 							junit: true
 						},
 						junit: junit,
-						log: sinon.log,
+						log: _.noop,
 						logger: new Logger.constructor()
 					}
 				);
@@ -628,27 +669,40 @@ describe(
 		it(
 			'should handle custom config',
 			function(done) {
-				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
+				var filePath = path.join(__dirname, 'fixture/config/flags/foo.js');
+
+				var log = sandbox.spy();
 
 				var cliInstance = new cli.CLI(
 					{
-						args: ['foo.js'],
-						cwd: path.join(__dirname, 'fixture/config/flags'),
+						args: [filePath],
 						flags: {
-							quiet: false
+							verbose: true
 						},
-						log: sinon.log,
-						logger: new Logger.constructor()
+						log: log,
+						logger: new Logger.constructor(),
+						read: function() {
+							return new Promise(
+								function(resolve, reject) {
+									resolve('');
+								}
+							);
+						}
 					}
 				);
 
 				cliInstance.init().then(
 					function() {
-						assert.isTrue(cliInstance.flags.quiet);
+						var configs = cliInstance._configs;
+						var config = configs[filePath];
 
-						done();
+						assert.isObject(configs);
+
+						assert.notDeepEqual(getRule(0, false, _.get(config, 'js.lint', {})), getRule(0));
+
+						assert.startsWith(log.args[0][0], 'Using local config from ');
 					}
-				);
+				).done(done);
 			}
 		);
 
@@ -661,8 +715,7 @@ describe(
 
 				var cliInstance = new cli.CLI(
 					{
-						args: ['foo.js'],
-						cwd: path.join(__dirname, 'fixture/config/filenames'),
+						args: [path.join(__dirname, 'fixture/config/filenames/foo.js')],
 						flags: {
 							filenames: true
 						},
@@ -675,10 +728,8 @@ describe(
 					function() {
 						assert.isNotTrue(cliInstance.flags.quiet);
 						assert.isUndefined(log.args[0]);
-
-						done();
 					}
-				);
+				).done(done);
 			}
 		);
 
@@ -689,22 +740,62 @@ describe(
 
 				var log = sandbox.spy();
 
+				var filePath = path.join(__dirname, 'fixture/config/bad_config/foo.js');
+
 				var cliInstance = new cli.CLI(
 					{
-						args: ['foo.js'],
-						cwd: path.join(__dirname, 'fixture/config/bad_config'),
-						flags: {
-							verbose: false
-						},
+						args: [filePath],
 						log: log,
-						logger: new Logger.constructor()
+						logger: new Logger.constructor(),
+						read: function() {
+							return Promise.resolve('');
+						}
 					}
 				);
 
 				cliInstance.init().then(
 					function() {
-						assert.isFalse(cliInstance.flags.verbose);
-						assert.notStartsWith(log.args[0][0], 'Could not resolve any local config');
+						assert.lengthOf(Object.keys(cliInstance._configs[filePath]), 0);
+					}
+				)
+				.done(done);
+			}
+		);
+
+		it(
+			'should handle invalid config logging',
+			function(done) {
+				var log = sandbox.spy();
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['foo.js'],
+						cwd: path.join(__dirname, 'fixture/config/bad_config'),
+						flags: {
+							quiet: true,
+							verbose: true
+						},
+						log: log,
+						logger: new Logger.constructor(),
+						read: function(file, options) {
+							var retVal;
+
+							if (file === 'foo.js') {
+								retVal = Promise.resolve('');
+							}
+							else {
+								retVal = fs.readFileAsync(file, options);
+							}
+
+							return retVal;
+						}
+					}
+				);
+
+				cliInstance.init().then(
+					function() {
+						assert.isTrue(cliInstance.flags.verbose);
+						assert.startsWith(log.args[0][0], 'Could not resolve any local config');
 
 						done();
 					}
@@ -713,9 +804,9 @@ describe(
 		);
 
 		it(
-			'should handle invalid config logging',
+			'should not load a config when config is false',
 			function(done) {
-				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
+				sandbox.stub(fs, 'readFile', invalidContentStub);
 
 				var log = sandbox.spy();
 
@@ -724,7 +815,6 @@ describe(
 						args: ['foo.js'],
 						cwd: path.join(__dirname, 'fixture/config/bad_config'),
 						flags: {
-							quiet: false,
 							verbose: true
 						},
 						log: log,
@@ -735,7 +825,7 @@ describe(
 				cliInstance.init().then(
 					function() {
 						assert.isTrue(cliInstance.flags.verbose);
-						assert.startsWith(log.args[0][0], 'Could not resolve any local config');
+						assert.notStartsWith(log.args[0][0], 'Could not resolve any local config');
 
 						done();
 					}

@@ -31,7 +31,7 @@ describe(
 			function(done) {
 				var cwd = path.join(__dirname, 'fixture/config/path_configs');
 
-				Config.load(cwd).then(
+				(new Config.Loader).load(cwd).then(
 					function(config) {
 						var formatter = Formatter.get('foo.css', logger, {quiet: true});
 

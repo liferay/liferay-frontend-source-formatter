@@ -1,5 +1,7 @@
+var getRule = require('../../../test_utils').getRule;
+
 module.exports = {
-	flags: {
-		quiet: true
+	js: {
+		lint: getRule(0, true)
 	}
 };

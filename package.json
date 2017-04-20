@@ -28,7 +28,7 @@
     "content-formatter": "^1.1.0",
     "content-logger": "^0.0.3",
     "content-logger-handlebars-helpers": "0.0.1",
-    "cosmiconfig": "^1.1.0",
+    "cosmiconfig": "^2.1.0",
     "drip": "^1.4.0",
     "eslint": "^3.3.1",
     "eslint-plugin-react": "^6.1.2",
@@ -62,7 +62,7 @@
     "istanbul": "^0.4.4",
     "mocha": "^3.0.2",
     "run-sequence": "^1.2.2",
-    "sinon": "^1.17.5",
+    "sinon": "^2.1.0",
     "xsd-schema-validator": "^0.3.1"
   }
 }
