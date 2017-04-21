@@ -1,3 +1,5 @@
+require('harmonize')();
+
 var _ = require('lodash');
 var gulp = require('gulp');
 var plugins = require('gulp-load-plugins')();
