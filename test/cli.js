@@ -752,43 +752,75 @@ describe(
 		);
 
 		it(
-			'should handle invalid config logging',
+			'should handle config logging',
 			function(done) {
-				var log = sandbox.spy();
+				var read = function(file, options) {
+					var retVal;
 
-				var cliInstance = new cli.CLI(
+					if (file === 'foo.js') {
+						retVal = Promise.resolve('');
+					}
+					else {
+						retVal = fs.readFileAsync(file, options);
+					}
+
+					return retVal;
+				};
+
+				var files = ['filenames/foo.js', 'flags/bar.js'];
+
+				var cwd = path.join(__dirname, 'fixture/config');
+
+				var configs = [
 					{
-						args: ['foo.js'],
-						cwd: path.join(__dirname, 'fixture/config/bad_config'),
-						flags: {
-							quiet: true,
-							verbose: true
+						config: {
+							args: files.slice(0, 1)
 						},
-						log: log,
-						logger: new Logger.constructor(),
-						read: function(file, options) {
-							var retVal;
-
-							if (file === 'foo.js') {
-								retVal = Promise.resolve('');
+						msg: 'Using local config from ' + path.join(cwd, 'filenames/csf.config.js') + '\n'
+					},
+					{
+						config: {
+							args: files
+						},
+						msg: 'Using local config from 2 files. Pass -v to see all locations\n'
+					},
+					{
+						config: {
+							args: files,
+							flags: {
+								verbose: true
 							}
-							else {
-								retVal = fs.readFileAsync(file, options);
+						},
+						msg: 'Using local config from: \n' + files.map(file => path.join(cwd, path.dirname(file), 'csf.config.js')).join('\n') + '\n'
+					}
+				];
+
+				Promise.map(
+					configs,
+					function(item, index) {
+						var log = sandbox.spy();
+
+						var cfg = _.defaults(
+							item.config,
+							{
+								cwd: cwd,
+								log: log,
+								logger: new Logger.constructor(),
+								read: read
 							}
+						);
 
-							return retVal;
-						}
+						var cliInstance = new cli.CLI(cfg);
+
+						return cliInstance.init().then(
+							function() {
+								assert.equal(log.args[0][0], item.msg);
+							}
+						);
 					}
-				);
-
-				cliInstance.init().then(
-					function() {
-						assert.isTrue(cliInstance.flags.verbose);
-						assert.startsWith(log.args[0][0], 'Could not resolve any local config');
-
-						done();
-					}
-				);
+				)
+				.then(_.ary(done, 0))
+				.catch(done);
 			}
 		);
 
