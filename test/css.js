@@ -312,6 +312,25 @@ describe(
 		var cssFormatter = new Formatter.CSS(testFilePath, cssLogger);
 		var source = fs.readFileSync(testFilePath, 'utf-8');
 
+		var cssLint = function(contents, config, file) {
+			return Promise.resolve(
+				{
+					results: [
+						{
+							warnings: [
+								{
+									line: 1,
+									message: '',
+									column: 0,
+									ruleId: ''
+								}
+							]
+						}
+					]
+				}
+			);
+		};
+
 		var lint = require('../lib/lint_css');
 
 		it(
@@ -351,22 +370,40 @@ describe(
 		);
 
 		it(
+			'should be able to disable linting',
+			function(done) {
+				var testFilePath = path.join(__dirname, 'fixture', 'css', 'at_rule_empty_line.css');
+
+				var source = fs.readFileSync(testFilePath, 'utf-8');
+
+				var cssLoggerFilter = new Logger.constructor();
+				var cssFormatterFilter = new Formatter.CSS(testFilePath, cssLoggerFilter);
+
+				var result = cssFormatterFilter.format(source, false);
+
+				Promise.resolve(result).then(
+					function(result) {
+						var errors = cssLoggerFilter.getErrors()[testFilePath];
+
+						var hasRuleId = errors.some(
+							function(item, index) {
+								return !!item.ruleId;
+							}
+						);
+
+						assert.isFalse(hasRuleId);
+						assert.equal(errors.length, 1);
+					}
+				).done(done);
+			}
+		);
+
+		it(
 			'should use default configuration properties',
 			function() {
 				var stylelint = lint.stylelint;
 
-				var cssLint = function(contents, config, file) {
-					return Promise.resolve(
-						{
-							line: 1,
-							message: '',
-							column: 0,
-							ruleId: ''
-						}
-					);
-				};
-
-				sandbox.stub(stylelint, 'lint', cssLint);
+				sandbox.stub(stylelint, 'lint').callsFake(cssLint);
 
 				lint.runLinter(source, testFilePath, {});
 
@@ -382,18 +419,7 @@ describe(
 
 				var stylelint = lint.stylelint;
 
-				var cssLint = function(contents, config, file) {
-					return Promise.resolve(
-						{
-							line: 1,
-							message: '',
-							column: 0,
-							ruleId: ''
-						}
-					);
-				};
-
-				sandbox.stub(stylelint, 'lint', cssLint);
+				sandbox.stub(stylelint, 'lint').callsFake(cssLint);
 
 				cssFormatter.format(
 					source,
