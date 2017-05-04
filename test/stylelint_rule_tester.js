@@ -13,8 +13,8 @@ function assertEquality(processCss, context) {
 		function() {
 			it(
 				context.completeAssertionDescription,
-				function(done) {
-					processCss.then(
+				function() {
+					return processCss.then(
 						function(comparisons) {
 							comparisons.forEach(
 								function(item, index) {
@@ -25,10 +25,8 @@ function assertEquality(processCss, context) {
 									assert.equal(actual, expected, description);
 								}
 							);
-
-							done();
 						}
-					).catch(done)
+					);
 				}
 			);
 		}

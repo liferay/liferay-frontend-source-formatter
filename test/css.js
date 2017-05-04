@@ -383,7 +383,7 @@ describe(
 
 				Promise.resolve(result).then(
 					function(result) {
-						var errors = cssLoggerFilter.getErrors()[testFilePath];
+						var errors = cssLoggerFilter.getErrors()[testFilePath] || [];
 
 						var hasRuleId = errors.some(
 							function(item, index) {
@@ -392,7 +392,7 @@ describe(
 						);
 
 						assert.isFalse(hasRuleId);
-						assert.equal(errors.length, 1);
+						assert.equal(errors.length, 0);
 					}
 				).done(done);
 			}

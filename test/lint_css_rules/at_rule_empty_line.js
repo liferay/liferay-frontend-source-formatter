@@ -38,3 +38,18 @@ testRule(
 		syntax: 'scss',
 	}
 );
+
+testRule(
+	rule,
+	{
+		description: 'should handle invalid options',
+		config: [],
+		skipBasicChecks: true,
+		reject: [
+			{
+				code: 'a {\n}',
+				message: 'Expected option value for rule "' + rule.ruleName + '"'
+			}
+		],
+	}
+);
