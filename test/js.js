@@ -319,7 +319,6 @@ describe(
 
 				var args = eslint.linter.verify.args[0];
 
-				assert.equal(args[1].parserOptions.ecmaVersion, 5);
 				assert.isUndefined(args[1].plugins);
 			}
 		);
