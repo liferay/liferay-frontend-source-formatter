@@ -25,10 +25,10 @@
     "bluebird": "^3.4.1",
     "cli": "^1.0.0",
     "cli-color-keywords": "0.0.1",
-    "content-formatter": "^2.0.1",
+    "content-formatter": "^2.0.2",
     "content-logger": "^1.0.1",
     "content-logger-handlebars-helpers": "0.0.1",
-    "cosmiconfig": "^2.1.0",
+    "cosmiconfig": "^2.1.3",
     "drip": "^1.4.0",
     "eslint": "^3.3.1",
     "eslint-plugin-react": "^6.1.2",
@@ -38,7 +38,7 @@
     "lodash": "^4.15.0",
     "lodash-bindright": "^1.0.1",
     "lodash-namespace": "^1.0.0",
-    "minimatch": "^3.0.3",
+    "minimatch": "^3.0.4",
     "optimist": "^0.6.1",
     "roolz": "^1.0.2",
     "string-sub": "0.0.1",
@@ -47,7 +47,7 @@
   "devDependencies": {
     "chai": "^3.5.0",
     "chai-string": "^1.2.0",
-    "coveralls": "^2.11.12",
+    "coveralls": "^2.13.1",
     "eslint-plugin-dollar-sign": "^1.0.0",
     "gulp": "^3.9.1",
     "gulp-complexity": "^0.3.2",
@@ -62,9 +62,9 @@
     "harmonize": "^2.0.0",
     "inquirer": "^1.1.3",
     "istanbul": "^0.4.4",
-    "mocha": "^3.0.2",
+    "mocha": "^3.3.0",
     "run-sequence": "^1.2.2",
-    "sinon": "^2.1.0",
+    "sinon": "^2.2.0",
     "xsd-schema-validator": "^0.3.1"
   }
 }
