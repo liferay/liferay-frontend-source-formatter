@@ -25,13 +25,34 @@ testRule(
 		config: ['always', {except: ['first-nested']}],
 		accept: [
 			{
-				code: 'a {\n  @include foo;\n  color: pink;\n}',
+				code: `a {
+					@include foo;
+					color: pink;
+				}`,
 				description: 'always at rule empty line no first-nested'
+			},
+			{
+				code: `
+					@if $foo != null {
+						div {
+							color: blue;
+						}
+					}
+					@else {
+						div {
+							color: red;
+						}
+					}
+				`,
+				description: 'ignore @else blocks'
 			}
 		],
 		reject: [
 			{
-				code: 'a {\n color: blue;\n @include foo;\n}',
+				code: `a {
+					color: blue;
+					@include foo;
+				}`,
 				message: stylelintRule.messages.expected
 			}
 		],
