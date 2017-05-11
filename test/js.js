@@ -326,7 +326,6 @@ describe(
 		it(
 			'should merge configuration properties',
 			function() {
-
 				var eslint = lint.eslint;
 
 				var verify = function(contents, config, file) {
@@ -353,6 +352,98 @@ describe(
 
 				assert.equal(args[1].parserOptions.ecmaVersion, 6);
 				assert.isArray(args[1].plugins);
+			}
+		);
+
+		it(
+			'load a custom eslint plugin',
+			function() {
+				var eslint = lint.eslint;
+
+				sandbox.spy(eslint.linter, 'verify');
+
+				lint.runLinter(
+					source,
+					testFilePath,
+					{
+						fileConfig: {
+							_paths: {
+								obj: {
+									filepath: path.join(__dirname, '../package.json')
+								}
+							}
+						},
+						lintConfig: {
+							parserOptions: {
+								ecmaVersion: 7
+							},
+							plugins: ['dollar-sign']
+						}
+					}
+				);
+
+				var linterRules = eslint.linter.getRules();
+
+				assert.isTrue(linterRules.has('dollar-sign/dollar-sign'));
+			}
+		);
+
+		it(
+			'load a custom eslint plugin via path',
+			function() {
+				var eslint = lint.eslint;
+
+				var linterRulesPrev = eslint.linter.getRules();
+
+				lint.runLinter(
+					source,
+					testFilePath,
+					{
+						fileConfig: {
+							_paths: {
+								obj: {
+									filepath: path.join(__dirname, '../package.json')
+								}
+							}
+						},
+						lintConfig: {
+							parserOptions: {
+								ecmaVersion: 7
+							},
+							plugins: ['./test/fixture/eslint-plugin-custom-lint']
+						}
+					}
+				);
+
+				var linterRules = eslint.linter.getRules();
+
+				assert.isTrue(linterRules.has('custom-lint/foo'));
+			}
+		);
+
+		it(
+			'ignore non-existent rules',
+			function() {
+				var eslint = lint.eslint;
+
+				var linterRulesPrev = eslint.linter.getRules();
+
+				lint.runLinter(
+					source,
+					testFilePath,
+					{
+						lintConfig: {
+							parserOptions: {
+								ecmaVersion: 7
+							},
+							plugins: ['non-existent-plugin', './other-non-existent-plugin']
+						}
+					}
+				);
+
+				var linterRules = eslint.linter.getRules();
+
+				assert.equal(linterRulesPrev.size, linterRules.size);
 			}
 		);
 	}
