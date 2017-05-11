@@ -196,7 +196,7 @@ describe(
 			function() {
 				var msg = getErrorMsgByLine(64, htmlErrors);
 
-				assert.startsWith(msg, 'You should use "border-width: 0;": border: none;');
+				assert.startsWith(msg, 'Expected indentation of 1 tab');
 			}
 		);
 

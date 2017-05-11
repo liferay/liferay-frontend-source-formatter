@@ -35,7 +35,12 @@ describe(
 				function(contents) {
 					var newContents = cssFormatter.format(contents);
 
-					return [cssLogger.fileErrors[filePath], contents, newContents];
+					return Promise.all([contents, newContents]);
+				}
+			)
+			.then(
+				function(arr) {
+					return [cssLogger.fileErrors[filePath]].concat(arr);
 				}
 			);
 		};
@@ -47,7 +52,7 @@ describe(
 					function(errors) {
 						assert.equal(errors.length, 1);
 
-						assert.startsWith(errors[0].msg, 'Hex code should be all uppercase');
+						assert.startsWith(errors[0].msg, 'Expected "#fff" to be "#FFF"');
 					}
 				);
 			}
@@ -60,7 +65,7 @@ describe(
 					function(errors) {
 						assert.equal(errors.length, 1);
 
-						assert.startsWith(errors[0].msg, 'Hex code can be reduced to');
+						assert.startsWith(errors[0].msg, 'Expected "#FFFFFF" to be "#FFF"');
 					}
 				);
 			}
@@ -72,14 +77,6 @@ describe(
 				return testFile(getFilePath('invalid_border_reset.css')).spread(
 					function(errors, contents, newContents) {
 						assert.isAbove(errors.length, 0);
-
-						var borderErrors = errors.filter(
-							function(item, index) {
-								return item.line <= 11 && item.msg.indexOf('You should use "border-') === 0;
-							}
-						);
-
-						assert.equal(borderErrors.length, errors.length);
 
 						assert.notEqual(contents, newContents);
 					}
@@ -94,13 +91,7 @@ describe(
 					function(errors, contents, newContents) {
 						assert.isAbove(errors.length, 0);
 
-						var formatErrors = errors.filter(
-							function(item, index) {
-								return item.line <= 3 && item.msg.indexOf('There should be one space after ":"') === 0;
-							}
-						);
-
-						assert.equal(formatErrors.length, errors.length);
+						assert.notEqual(contents, newContents);
 					}
 				);
 			}
@@ -111,9 +102,9 @@ describe(
 			function() {
 				return testFile(getFilePath('missing_integer.css')).spread(
 					function(errors, contents, newContents) {
-						assert.equal(errors.length, 1);
+						assert.isAbove(errors.length, 0);
 
-						assert.startsWith(errors[0].msg, 'Missing integer');
+						assert.notEqual(contents, newContents);
 					}
 				);
 			}
@@ -124,9 +115,9 @@ describe(
 			function() {
 				return testFile(getFilePath('missing_list_values_space.css')).spread(
 					function(errors, contents, newContents) {
-						assert.equal(errors.length, 1);
+						assert.isAbove(errors.length, 0);
 
-						assert.startsWith(errors[0].msg, 'Needs space between comma-separated values');
+						assert.notEqual(contents, newContents);
 					}
 				);
 			}
@@ -139,13 +130,7 @@ describe(
 					function(errors, contents, newContents) {
 						assert.isAbove(errors.length, 0);
 
-						var formatErrors = errors.filter(
-							function(item, index) {
-								return item.msg.indexOf('There should be a newline between') === 0;
-							}
-						);
-
-						assert.equal(formatErrors.length, errors.length);
+						assert.notEqual(contents, newContents);
 					}
 				);
 			}
@@ -156,9 +141,9 @@ describe(
 			function() {
 				return testFile(getFilePath('missing_selector_space.css')).spread(
 					function(errors, contents, newContents) {
-						assert.equal(errors.length, 1);
+						assert.isAbove(errors.length, 0);
 
-						assert.startsWith(errors[0].msg, 'Missing space between selector and bracket');
+						assert.startsWith(errors[0].msg, 'Expected single space before "{"');
 					}
 				);
 			}
@@ -171,13 +156,7 @@ describe(
 					function(errors, contents, newContents) {
 						assert.isAbove(errors.length, 0);
 
-						var formatErrors = errors.filter(
-							function(item, index) {
-								return item.msg.indexOf('Needless quotes') === 0;
-							}
-						);
-
-						assert.equal(formatErrors.length, errors.length);
+						assert.notEqual(contents, newContents);
 					}
 				);
 			}
@@ -188,9 +167,9 @@ describe(
 			function() {
 				return testFile(getFilePath('needless_unit.css')).spread(
 					function(errors, contents, newContents) {
-						assert.equal(errors.length, 1);
+						assert.isAbove(errors.length, 0);
 
-						assert.startsWith(errors[0].msg, 'Needless unit');
+						assert.notEqual(contents, newContents);
 					}
 				);
 			}
@@ -201,9 +180,7 @@ describe(
 			function() {
 				return testFile(getFilePath('property_sort.css')).spread(
 					function(errors, contents, newContents) {
-						assert.equal(errors.length, 1);
-
-						assert.startsWith(errors[0].msg, 'Sort');
+						assert.startsWith(errors[0].msg, 'Expected background to come before padding');
 					}
 				);
 			}
@@ -214,9 +191,11 @@ describe(
 			function() {
 				return testFile(getFilePath('trailing_comma.css')).spread(
 					function(errors, contents, newContents) {
-						assert.equal(errors.length, 1);
+						assert.isAbove(errors.length, 0);
 
 						assert.startsWith(errors[0].msg, 'Trailing comma in selector');
+
+						assert.notEqual(contents, newContents);
 					}
 				);
 			}
