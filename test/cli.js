@@ -63,7 +63,7 @@ describe(
 
 		it(
 			'should read files correctly',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var logger = new Logger.constructor();
@@ -76,14 +76,12 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(fs.readFile.callCount >= 3, 'fs.readFile should have been called 3 times, it was instead called ' + fs.readFile.callCount + ' times');
 						assert.isTrue(fs.readFile.calledWith('foo.js'), 'foo.js should have been read');
 						assert.isTrue(fs.readFile.calledWith('bar.html'), 'bar.html should have been read');
 						assert.isTrue(fs.readFile.calledWith('baz.css'), 'baz.css should have been read');
-
-						done();
 					}
 				);
 			}
@@ -91,7 +89,7 @@ describe(
 
 		it(
 			'should write files correctly',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 				sandbox.stub(fs, 'writeFile').callsArgWith(2, null);
 
@@ -110,7 +108,7 @@ describe(
 
 				sandbox.spy(cliInstance, 'logResults');
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(fs.writeFile.calledThrice, 'fs.writeFile should have been called 3 times, it was instead called ' + fs.writeFile.callCount + ' times');
 						assert.isTrue(fs.writeFile.calledWith('foo.js'), 'foo.js should have been written to');
@@ -127,8 +125,6 @@ describe(
 						);
 
 						assert.equal(log.callCount, 6, '.log should have been called 6 times, it was instead called ' + log.callCount + ' times');
-
-						done();
 					}
 				);
 			}
@@ -136,7 +132,7 @@ describe(
 
 		it(
 			'should handle file write errors',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 				sandbox.stub(fs, 'writeFile').callsArgWith(2, new Error('Something went wrong'));
 
@@ -153,12 +149,10 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(fs.writeFile.calledOnce, 'fs.writeFile should have been called once, it was instead called ' + fs.writeFile.callCount + ' times');
 						assert.isTrue(File.handleFileWriteError.calledOnce, 'File.handleFileWriteError should have been called once, it was instead called ' + File.handleFileWriteError.callCount + ' times');
-
-						done();
 					}
 				);
 			}
@@ -166,7 +160,7 @@ describe(
 
 		it(
 			'should ignore unrecognized files',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
 
 				var processFileData = sinon.spy();
@@ -181,11 +175,9 @@ describe(
 
 				cliInstance.processFileData = processFileData;
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isFalse(processFileData.called, 'processFileData should not have been called for a non-recognized file, it was instead called ' + processFileData.callCount + ' times');
-
-						done();
 					}
 				);
 			}
@@ -193,7 +185,7 @@ describe(
 
 		it(
 			'should check metadata',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
 				sandbox.stub(fs, 'existsSync').returns(true);
 
@@ -216,18 +208,17 @@ describe(
 
 				var checkMeta = sandbox.stub(metaChecker, 'check');
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(checkMeta.called, 'metaChecker.check should have been called, it was instead called ' + checkMeta.callCount + ' times');
 					}
 				)
-				.done(done);
 			}
 		);
 
 		it(
 			'should not check metadata',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
 				sandbox.stub(fs, 'existsSync').returns(true);
 
@@ -250,17 +241,17 @@ describe(
 
 				var checkMeta = sandbox.stub(metaChecker, 'check');
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(checkMeta.notCalled, 'metaChecker.check should not have been called, it was instead called ' + metaChecker.check.callCount + ' times');
 					}
-				).done(done);
+				);
 			}
 		);
 
 		it(
 			'should log results properly',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(validContentStub);
 
 				var log = sandbox.spy();
@@ -273,7 +264,7 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledOnce, 'log should have been called only once, it was instead called ' + log.callCount + ' times');
 
@@ -282,8 +273,6 @@ describe(
 						cliInstance.logResults(null, 'foo.js');
 
 						assert.isTrue(log.notCalled, 'log should not have been called when logResults gets no input, it was instead called ' + log.callCount + ' times');
-
-						done();
 					}
 				);
 			}
@@ -291,7 +280,7 @@ describe(
 
 		it(
 			'should log verbose details properly',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsArgWith(2, null, 'var x = ;');
 
 				var log = sandbox.spy();
@@ -310,11 +299,9 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledTwice, 'log should have been called twice, it was instead called ' + log.callCount + ' times');
-
-						done();
 					}
 				);
 			}
@@ -322,7 +309,7 @@ describe(
 
 		it(
 			'should log filenames properly',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(
 					function(filePath, encoding, callback) {
 						callback(null, MAP_CONTENT[path.basename(filePath)][0]);
@@ -344,12 +331,10 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledThrice, 'log should have been called 3 times, it was instead called ' + log.callCount + ' times');
 						assert.equal(args.join(), log.args.join());
-
-						done();
 					}
 				);
 			}
@@ -357,7 +342,7 @@ describe(
 
 		it(
 			'should log relative filenames properly',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(
 					function(filePath, encoding, callback) {
 						callback(null, MAP_CONTENT[path.basename(filePath)][0]);
@@ -393,12 +378,10 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledThrice, 'log should have been called 3 times, it was instead called ' + log.callCount + ' times');
 						assert.equal(relativeArgs.join(), log.args.join());
-
-						done();
 					}
 				);
 			}
@@ -406,7 +389,7 @@ describe(
 
 		it(
 			'should log missing files properly',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsArgWith(2, new Error());
 
 				sandbox.stub(File, 'handleFileReadError').returns('Missing file');
@@ -421,12 +404,10 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledThrice, 'log should have been called 3 times, it was instead called ' + log.callCount + ' times');
 						assert.isTrue(File.handleFileReadError.calledOnce, 'File.handleFileReadError should have been called, it was instead called ' + File.handleFileReadError.callCount + ' times');
-
-						done();
 					}
 				);
 			}
@@ -434,7 +415,7 @@ describe(
 
 		it(
 			'should not write missing files',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 				sandbox.stub(fs, 'writeFile').callsArgWith(2, null);
 
@@ -453,11 +434,9 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(fs.writeFile.calledTwice, 'writeFile should have been called only 2 times, it was instead called ' + fs.writeFile.callCount + ' times');
-
-						done();
 					}
 				);
 			}
@@ -465,7 +444,7 @@ describe(
 
 		it(
 			'should ignore directories properly',
-			function(done) {
+			function() {
 				var err = new Error();
 
 				err.errno = -21;
@@ -485,12 +464,10 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(log.notCalled, 'log should not have been called, it was instead called ' + log.callCount + ' times');
 						assert.isTrue(File.handleFileReadError.returned(''), 'File.handleFileReadError should have returned nothing');
-
-						done();
 					}
 				);
 			}
@@ -518,7 +495,7 @@ describe(
 
 		it(
 			'should open files properly',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var cliModule = require('cli');
@@ -544,12 +521,10 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(log.calledOnce, 'log should have been called only once, it was instead called ' + log.callCount + ' times');
 						assert.isTrue(cliModule.exec.calledTwice, 'cliModule.exec should have been called 2 times, it was instead called ' + cliModule.exec.callCount + ' times');
-
-						done();
 					}
 				);
 			}
@@ -592,7 +567,7 @@ describe(
 
 		it(
 			'should not log files without errors when quiet is set',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(validContentStub);
 
 				var log = sandbox.spy();
@@ -615,20 +590,18 @@ describe(
 
 				var spy = sandbox.spy(cliInstance, '_loadConfigs');
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(log.notCalled, 'log should not have been called');
 						assert.isTrue(filterFileErrors.called, 'filterFileErrors should have been called');
-
-						done();
 					}
-				).catch(done);
+				);
 			}
 		);
 
 		it(
 			'should call junit generate',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var junitReporter = require('../lib/junit');
@@ -647,17 +620,17 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(junitReporter.prototype.generate.called, 'junit.prototype.generate should have been called, it was instead called ' + junitReporter.prototype.generate.callCount + ' times');
 					}
-				).done(done);
+				);
 			}
 		);
 
 		it(
 			'should handle custom config',
-			function(done) {
+			function() {
 				var filePath = path.join(__dirname, 'fixture/config/flags/foo.js');
 
 				var log = sandbox.spy();
@@ -680,7 +653,7 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						var configs = cliInstance._configs;
 						var config = configs[filePath];
@@ -691,13 +664,13 @@ describe(
 
 						assert.startsWith(log.args[0][0], 'Using local config from ');
 					}
-				).done(done);
+				);
 			}
 		);
 
 		it(
 			'should handle custom config misc',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
 
 				var log = sandbox.spy();
@@ -713,18 +686,18 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isNotTrue(cliInstance.flags.quiet);
 						assert.isUndefined(log.args[0]);
 					}
-				).done(done);
+				);
 			}
 		);
 
 		it(
 			'should handle invalid config',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
 
 				var log = sandbox.spy();
@@ -742,18 +715,17 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.lengthOf(Object.keys(cliInstance._configs[filePath]), 0);
 					}
-				)
-				.done(done);
+				);
 			}
 		);
 
 		it(
 			'should handle config logging',
-			function(done) {
+			function() {
 				var read = function(file, options) {
 					var retVal;
 
@@ -795,7 +767,7 @@ describe(
 					}
 				];
 
-				Promise.map(
+				return Promise.map(
 					configs,
 					function(item, index) {
 						var log = sandbox.spy();
@@ -818,15 +790,13 @@ describe(
 							}
 						);
 					}
-				)
-				.then(_.ary(done, 0))
-				.catch(done);
+				);
 			}
 		);
 
 		it(
 			'should not load a config when config is false',
-			function(done) {
+			function() {
 				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var log = sandbox.spy();
@@ -843,12 +813,10 @@ describe(
 					}
 				);
 
-				cliInstance.init().then(
+				return cliInstance.init().then(
 					function() {
 						assert.isTrue(cliInstance.flags.verbose);
 						assert.notStartsWith(log.args[0][0], 'Could not resolve any local config');
-
-						done();
 					}
 				);
 			}

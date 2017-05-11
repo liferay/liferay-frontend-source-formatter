@@ -3,6 +3,10 @@ var chai = require('chai');
 var fs = require('fs');
 var path = require('path');
 
+var Promise = require('bluebird');
+
+Promise.promisifyAll(fs);
+
 var Formatter = require('../lib/formatter');
 var Logger = require('../lib/logger');
 
@@ -21,61 +25,48 @@ describe(
 
 		var getFilePath = path.join.bind(path, cssTestsPath);
 
-		var testFile = function(filePath, cb, done) {
+		var testFile = function(filePath) {
 			var cssFormatter = new Formatter.CSS(filePath, cssLogger);
 
-			fs.readFile(
-				filePath,
-				'utf-8',
-				function(err, contents) {
-					if (!err) {
-						var newContents = cssFormatter.format(contents);
+			return fs.readFileAsync(filePath,'utf-8').then(
+				function(contents) {
+					var newContents = cssFormatter.format(contents);
 
-						cb(cssLogger.fileErrors[filePath], contents, newContents);
-					}
-
-					if (done) {
-						done();
-					}
+					return [cssLogger.fileErrors[filePath], contents, newContents];
 				}
 			);
 		};
 
 		it(
 			'should detect lower case hex codes',
-			function(done) {
-				testFile(
-					getFilePath('hex_lower_case.css'),
+			function() {
+				return testFile(getFilePath('hex_lower_case.css')).spread(
 					function(errors) {
 						assert.equal(errors.length, 1);
 
 						assert.startsWith(errors[0].msg, 'Hex code should be all uppercase');
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect redundant hex codes',
-			function(done) {
-				testFile(
-					getFilePath('hex_redundant.css'),
+			function() {
+				return testFile(getFilePath('hex_redundant.css')).spread(
 					function(errors) {
 						assert.equal(errors.length, 1);
 
 						assert.startsWith(errors[0].msg, 'Hex code can be reduced to');
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect invalid border resets',
-			function(done) {
-				testFile(
-					getFilePath('invalid_border_reset.css'),
+			function() {
+				return testFile(getFilePath('invalid_border_reset.css')).spread(
 					function(errors, contents, newContents) {
 						assert.isAbove(errors.length, 0);
 
@@ -88,17 +79,15 @@ describe(
 						assert.equal(borderErrors.length, errors.length);
 
 						assert.notEqual(contents, newContents);
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect invalid formatting in property rules',
-			function(done) {
-				testFile(
-					getFilePath('invalid_format.css'),
+			function() {
+				return testFile(getFilePath('invalid_format.css')).spread(
 					function(errors, contents, newContents) {
 						assert.isAbove(errors.length, 0);
 
@@ -109,47 +98,41 @@ describe(
 						);
 
 						assert.equal(formatErrors.length, errors.length);
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect missing integers',
-			function(done) {
-				testFile(
-					getFilePath('missing_integer.css'),
+			function() {
+				return testFile(getFilePath('missing_integer.css')).spread(
 					function(errors, contents, newContents) {
 						assert.equal(errors.length, 1);
 
 						assert.startsWith(errors[0].msg, 'Missing integer');
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect missing spaces in list values',
-			function(done) {
-				testFile(
-					getFilePath('missing_list_values_space.css'),
+			function() {
+				return testFile(getFilePath('missing_list_values_space.css')).spread(
 					function(errors, contents, newContents) {
 						assert.equal(errors.length, 1);
 
 						assert.startsWith(errors[0].msg, 'Needs space between comma-separated values');
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect missing newlines',
-			function(done) {
-				testFile(
-					getFilePath('missing_newlines.css'),
+			function() {
+				return testFile(getFilePath('missing_newlines.css')).spread(
 					function(errors, contents, newContents) {
 						assert.isAbove(errors.length, 0);
 
@@ -160,32 +143,28 @@ describe(
 						);
 
 						assert.equal(formatErrors.length, errors.length);
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect missing spaces in selectors',
-			function(done) {
-				testFile(
-					getFilePath('missing_selector_space.css'),
+			function() {
+				return testFile(getFilePath('missing_selector_space.css')).spread(
 					function(errors, contents, newContents) {
 						assert.equal(errors.length, 1);
 
 						assert.startsWith(errors[0].msg, 'Missing space between selector and bracket');
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect needless quotes',
-			function(done) {
-				testFile(
-					getFilePath('needless_quotes.css'),
+			function() {
+				return testFile(getFilePath('needless_quotes.css')).spread(
 					function(errors, contents, newContents) {
 						assert.isAbove(errors.length, 0);
 
@@ -196,53 +175,46 @@ describe(
 						);
 
 						assert.equal(formatErrors.length, errors.length);
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect needless units',
-			function(done) {
-				testFile(
-					getFilePath('needless_unit.css'),
+			function() {
+				return testFile(getFilePath('needless_unit.css')).spread(
 					function(errors, contents, newContents) {
 						assert.equal(errors.length, 1);
 
 						assert.startsWith(errors[0].msg, 'Needless unit');
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect property sort',
-			function(done) {
-				testFile(
-					getFilePath('property_sort.css'),
+			function() {
+				return testFile(getFilePath('property_sort.css')).spread(
 					function(errors, contents, newContents) {
 						assert.equal(errors.length, 1);
 
 						assert.startsWith(errors[0].msg, 'Sort');
-					},
-					done
+					}
 				);
 			}
 		);
 
 		it(
 			'should detect trailing commas in selectors',
-			function(done) {
-				testFile(
-					getFilePath('trailing_comma.css'),
+			function() {
+				return testFile(getFilePath('trailing_comma.css')).spread(
 					function(errors, contents, newContents) {
 						assert.equal(errors.length, 1);
 
 						assert.startsWith(errors[0].msg, 'Trailing comma in selector');
-					},
-					done
+					}
 				);
 			}
 		);

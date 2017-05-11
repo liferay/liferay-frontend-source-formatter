@@ -28,18 +28,16 @@ describe(
 
 		it(
 			'should get merged config by path',
-			function(done) {
+			function() {
 				var cwd = path.join(__dirname, 'fixture/config/path_configs');
 
-				(new Config.Loader).load(cwd).then(
+				return (new Config.Loader).load(cwd).then(
 					function(config) {
 						var formatter = Formatter.get('foo.css', logger, {quiet: true});
 
 						formatter._config = config;
 
 						assert.isFalse(formatter.config('flags.quiet'));
-
-						done();
 					}
 				);
 			}

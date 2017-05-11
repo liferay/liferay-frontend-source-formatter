@@ -32,7 +32,7 @@ describe(
 
 		it(
 			'should generate a JUnit report',
-			function(done) {
+			function() {
 				var logger = new Logger.constructor();
 
 				logger.log(1, 'Content is not valid', 'foo.js');
@@ -67,19 +67,19 @@ describe(
 					}
 				);
 
-				reporter.generate().then(
+				return reporter.generate().then(
 					function(results) {
 						assert.isTrue(fs.writeFile.called, 'writeFile should have been called');
 
 						assert.equal(results, fs.readFileSync(path.join(__dirname, 'fixture', 'result.xml'), 'utf-8'), 'The result should match what we expect');
 					}
-				).done(done);
+				);
 			}
 		);
 
 		it(
 			'should generate a valid JUnit report',
-			function(done) {
+			function() {
 				var logger = new Logger.constructor();
 
 				logger.log(1, 'Content is not valid', 'foo.js');
@@ -114,15 +114,13 @@ describe(
 					}
 				);
 
-				reporter.generate().then(
+				return reporter.generate().then(
 					function(results) {
 						xsd.validateXML(
 							results,
 							path.join(__dirname, 'fixture', 'junit-4.xsd'),
 							function(err, result) {
 								assert.isTrue(result.valid, err);
-
-								done();
 							}
 						);
 					}
