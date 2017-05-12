@@ -6,30 +6,26 @@ var plugins = require('gulp-load-plugins')();
 var runSequence = require('run-sequence');
 var inquirer = require('inquirer');
 
-gulp.task('coveralls', function () {
+gulp.task('coveralls', () => {
 	gulp.src('coverage/**/lcov.info')
 		.pipe(plugins.coveralls());
 });
 
-gulp.task('test', function(done) {
-	return runSequence('test-unit', done);
-});
+gulp.task('test', done => runSequence('test-unit', done));
 
-gulp.task('test-complexity', function() {
-	return gulp.src(['lib/**/*.js'])
-		.pipe(plugins.complexity({
-			cyclomatic: [4, 7, 12],
-			halstead: [15, 15, 20]
-		}));
-});
+gulp.task('test-complexity', () => gulp.src(['lib/**/*.js'])
+	.pipe(plugins.complexity({
+		cyclomatic: [4, 7, 12],
+		halstead: [15, 15, 20]
+	})));
 
-gulp.task('test-file', function() {
+gulp.task('test-file', () => {
 	var file = process.argv.slice(3).pop();
 
 	if (file) {
 		file = file.slice(2);
-		file = !_.startsWith(file, 'test/') ? 'test/' + file : file;
-		file = !_.endsWith(file, '.js') ? file + '.js' : file;
+		file = !_.startsWith(file, 'test/') ? `test/${file}` : file;
+		file = !_.endsWith(file, '.js') ? `${file}.js` : file;
 
 		file = [file];
 	}
@@ -44,20 +40,18 @@ gulp.task('test-file', function() {
 		.pipe(plugins.mocha());
 });
 
-gulp.task('test-unit', function() {
+gulp.task('test-unit', () => {
 	process.argv.push('--display-raw');
 
 	return gulp.src(['test/**/*.js', '!test/fixture/*.js'])
 		.pipe(plugins.mocha());
 });
 
-gulp.task('test-cover', function() {
-	return gulp.src(['lib/**/*.js'])
-		.pipe(plugins.istanbul())
-		.pipe(plugins.istanbul.hookRequire());
-});
+gulp.task('test-cover', () => gulp.src(['lib/**/*.js'])
+	.pipe(plugins.istanbul())
+	.pipe(plugins.istanbul.hookRequire()));
 
-gulp.task('test-coverage', ['test-cover'], function() {
+gulp.task('test-coverage', ['test-cover'], () => {
 	process.argv.push('--display-raw');
 
 	return gulp.src(['test/**/*.js', '!test/fixture/*.js'])
@@ -65,7 +59,7 @@ gulp.task('test-coverage', ['test-cover'], function() {
 		.pipe(plugins.istanbul.writeReports());
 });
 
-gulp.task('toc', function(done) {
+gulp.task('toc', done => {
 	gulp.src('./README.md')
 	.pipe(
 		plugins.doctoc(
@@ -80,7 +74,7 @@ gulp.task('toc', function(done) {
 
 gulp.task(
 	'new-rule',
-	function(done) {
+	done => {
 		inquirer.prompt(
 			[
 				{
@@ -105,7 +99,7 @@ gulp.task(
 			]
 		)
 		.then(
-			function(res) {
+			res => {
 				var srcDir = 'js';
 				var destDir = 'lint_js_rules';
 
@@ -114,14 +108,14 @@ gulp.task(
 					destDir = 'lint_css_rules';
 				}
 
-				gulp.src('./lib/tpl/lint_rules/' + srcDir + '/*.js')
+				gulp.src(`./lib/tpl/lint_rules/${srcDir}/*.js`)
 				// .pipe(plugins.debug())
 				.pipe(
 					plugins.rename(
-						function(path) {
+						path => {
 							var baseDir = path.basename === 'rule' ? 'lib' : 'test';
 
-							path.dirname = './' + baseDir + '/lint_' + srcDir + '_rules';
+							path.dirname = `./${baseDir}/lint_${srcDir}_rules`;
 
 							path.basename = res.name;
 						}
