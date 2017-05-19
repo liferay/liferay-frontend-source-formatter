@@ -4,7 +4,8 @@
   "description": "Check the source formatting of HTML/JS/CSS",
   "main": "lib/cli.js",
   "bin": {
-    "check_sf": "./bin/index.js"
+    "check_sf": "./bin/index.js",
+    "csf": "./bin/index.js"
   },
   "scripts": {
     "coveralls": "gulp coveralls",
@@ -25,6 +26,7 @@
     "bluebird": "^3.4.1",
     "cli": "^1.0.0",
     "cli-color-keywords": "0.0.1",
+    "configstore": "^3.1.0",
     "content-formatter": "^2.0.2",
     "content-logger": "^1.0.1",
     "content-logger-handlebars-helpers": "0.0.1",
