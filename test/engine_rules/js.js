@@ -155,7 +155,7 @@ describe(
 						var lineNum = 1;
 
 						assert.isTrue(result);
-						assert.startsWith(re.getMessage(result, rule, context), 'Debugging statement');
+						assert.isUndefined(re.getMessage(result, rule, context));
 						assert.equal(content, re.replaceItem(result, rule, context));
 					}
 				);

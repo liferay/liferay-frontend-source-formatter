@@ -77,13 +77,6 @@ describe(
 		);
 
 		it(
-			'should recognize debugging statements',
-			function() {
-				assert.startsWith(getErrorMsgByLine(21, jsErrors), 'Debugging statement:');
-			}
-		);
-
-		it(
 			'should recognize variable line spacing',
 			function() {
 				assert.startsWith(getErrorMsgByLine(23, jsErrors), 'Variable declaration needs a new line after it:');
