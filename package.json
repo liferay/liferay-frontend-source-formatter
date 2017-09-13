@@ -22,7 +22,7 @@
   },
   "preferGlobal": "true",
   "dependencies": {
-    "babel-eslint": "^7.2.3",
+    "babel-eslint": "^8.0.0",
     "bluebird": "^3.4.1",
     "cli": "^1.0.0",
     "cli-color-keywords": "0.0.1",
@@ -32,7 +32,7 @@
     "content-logger-handlebars-helpers": "0.0.1",
     "cosmiconfig": "^2.2.2",
     "drip": "^1.4.0",
-    "eslint": "^3.3.1",
+    "eslint": "^4.6.1",
     "eslint-plugin-react": "^7.3.0",
     "falafel": "^1.2.0",
     "getobject": "^0.1.0",
