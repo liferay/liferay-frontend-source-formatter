@@ -329,7 +329,7 @@ then it will still flag that as an error
 
 [npm-image]: https://img.shields.io/npm/v/check-source-formatting.svg?style=flat-square
 [npm-url]: https://npmjs.org/package/check-source-formatting
-[travis-image]: https://img.shields.io/travis/natecavanaugh/check-source-formatting/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/natecavanaugh/check-source-formatting
-[coveralls-image]: https://img.shields.io/coveralls/natecavanaugh/check-source-formatting/master.svg?style=flat-square
-[coveralls-url]: https://coveralls.io/r/natecavanaugh/check-source-formatting?branch=master
+[travis-image]: https://img.shields.io/travis/liferay/liferay-frontend-source-formatter/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/liferay/liferay-frontend-source-formatter
+[coveralls-image]: https://img.shields.io/coveralls/liferay/liferay-frontend-source-formatter/master.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/r/liferay/liferay-frontend-source-formatter?branch=master
