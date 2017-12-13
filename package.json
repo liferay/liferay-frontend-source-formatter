@@ -14,7 +14,7 @@
   "author": "Nate Cavanaugh",
   "license": "BSD",
   "engines": {
-    "node": ">=4"
+    "node": ">=6"
   },
   "repository": {
     "type": "git",
