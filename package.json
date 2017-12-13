@@ -30,7 +30,7 @@
     "content-formatter": "^2.0.2",
     "content-logger": "^1.0.1",
     "content-logger-handlebars-helpers": "0.0.1",
-    "cosmiconfig": "^2.2.2",
+    "cosmiconfig": "^3.1.0",
     "drip": "^1.4.0",
     "eslint": "^4.13.1",
     "eslint-plugin-react": "^7.5.1",
