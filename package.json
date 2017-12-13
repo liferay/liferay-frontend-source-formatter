@@ -23,7 +23,7 @@
   "preferGlobal": "true",
   "dependencies": {
     "babel-eslint": "^8.0.0",
-    "bluebird": "^3.4.1",
+    "bluebird": "^3.5.1",
     "cli": "^1.0.0",
     "cli-color-keywords": "0.0.1",
     "configstore": "^3.1.1",
