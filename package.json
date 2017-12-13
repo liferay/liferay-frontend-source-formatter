@@ -64,7 +64,7 @@
     "gulp-rename": "^1.2.2",
     "gulp-template": "^4.0.0",
     "harmonize": "^2.0.0",
-    "inquirer": "^3.2.2",
+    "inquirer": "^4.0.1",
     "istanbul": "^0.4.4",
     "mocha": "^3.3.0",
     "run-sequence": "^1.2.2",
