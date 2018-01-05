@@ -184,6 +184,48 @@ describe(
 		);
 
 		it(
+			'should resolve globs correctly',
+			function() {
+				var logger = new Logger.constructor();
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['./test/**/*/*.css', 'bar.html', 'baz.css'],
+						log: _.noop,
+						logger: logger
+					}
+				);
+
+				return cliInstance.init().then(
+					function() {
+						assert.startsWith(cliInstance._args[0], './test/fixture/css');
+					}
+				);
+			}
+		);
+
+		it(
+			'should default to the passed argument if a glob result is empty',
+			function() {
+				var logger = new Logger.constructor();
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['./test/*/*.css', 'bar.html', 'baz.css'],
+						log: _.noop,
+						logger: logger
+					}
+				);
+
+				return cliInstance.init().then(
+					function() {
+						assert.equal(cliInstance._args[0], './test/*/*.css');
+					}
+				);
+			}
+		);
+
+		it(
 			'should check metadata',
 			function() {
 				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
