@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env sh
 ":" //# http://sambal.org/?p=1014 ; exec /usr/bin/env node --harmony "$0" "$@"
 
 var ConfigStore = require('configstore');
