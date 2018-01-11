@@ -1,5 +1,4 @@
-#!/usr/bin/env sh
-":" //# http://sambal.org/?p=1014 ; exec /usr/bin/env node --harmony "$0" "$@"
+#!/usr/bin/env node
 
 var ConfigStore = require('configstore');
 var updateNotifier = require('update-notifier');
