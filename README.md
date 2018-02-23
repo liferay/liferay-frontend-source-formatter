@@ -3,6 +3,8 @@ check-source-formatting
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![Test coverage][coveralls-image]][coveralls-url]
+[![Build status][appveyor-image]][appveyor-url]
+
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -333,3 +335,5 @@ then it will still flag that as an error
 [travis-url]: https://travis-ci.org/liferay/liferay-frontend-source-formatter
 [coveralls-image]: https://img.shields.io/coveralls/liferay/liferay-frontend-source-formatter/master.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/liferay/liferay-frontend-source-formatter?branch=master
+[appveyor-url]: https://ci.appveyor.com/project/natecavanaugh/liferay-frontend-source-formatter
+[appveyor-image]: https://ci.appveyor.com/api/projects/status/3kfcj0hui12v7t91?svg=true
