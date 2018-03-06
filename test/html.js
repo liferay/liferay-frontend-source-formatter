@@ -408,7 +408,7 @@ describe(
 					style: ['color: #F00; border: 1px solid;', 'border: 1px solid; color: #F00;']
 				};
 
-				var doesNotNeedSortArr = ['<p onClick="fn(val1, val2);" />', '<aui:input label="foo bar" />'];
+				var doesNotNeedSortArr = ['<p onClick="fn(val1, val2);" />', '<aui:input label="foo bar" />', '<aui:script require="metal-dom/src/all/dom as dom"></aui:script>'];
 
 				_.forEach(
 					needsSortObj,
