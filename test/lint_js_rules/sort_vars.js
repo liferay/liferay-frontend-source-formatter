@@ -51,11 +51,15 @@ ruleTester.run(
 			},
 			{
 				code: 'var def = 456;\n\nvar def_xyz = foo();\nvar abc = def_xyz.bar();',
-				errors: [ { message: 'Sort variables: def_xyz abc' } ]
+				errors: [ { message: 'Sort variables: def_xyz abc. If you\'re using "def_xyz" in assigning a value to "abc", add a newline between them.' } ]
 			},
 			{
 				code: 'var def = 456;\n\nvar def_xyz = window.foo;\nvar abc = def_xyz.bar;',
-				errors: [ { message: 'Sort variables: def_xyz abc' } ]
+				errors: [ { message: 'Sort variables: def_xyz abc. If you\'re using "def_xyz" in assigning a value to "abc", add a newline between them.' } ]
+			},
+			{
+				code: 'var def = 456;\nvar abc = def++;',
+				errors: [ { message: 'Sort variables: def abc. If you\'re using "def" in assigning a value to "abc", add a newline between them.' } ]
 			},
 			{
 				code: 'var def = 456;\n\nvar def_xyz =[];\nvar abc = [];',
