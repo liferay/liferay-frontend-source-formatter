@@ -100,7 +100,7 @@ describe(
 
 				assert.isArray(scriptBlocks);
 
-				assert.equal(scriptBlocks.length, 6);
+				assert.equal(scriptBlocks.length, 8);
 
 				Promise.all(scriptBlocks).then(
 					function(scriptBlocks) {
@@ -128,7 +128,7 @@ describe(
 				var scriptBlocks = htmlFormatter.extractJs(source);
 
 				assert.isArray(scriptBlocks);
-				assert.equal(scriptBlocks.length, 6);
+				assert.equal(scriptBlocks.length, 8);
 				scriptBlocks.forEach(assert.isObject);
 
 				scriptBlocks = htmlFormatter.extractJs('<html></html>');
@@ -468,6 +468,21 @@ describe(
 				contents = privHTMLFormatter._jsHandleScriptletWhitespace(scriptBlock).contents;
 
 				assert.equal(contents, '\nvoid 0;\n/* scriptlet block\nvoid 0; */\nvoid 0;\n');
+			}
+		);
+
+		it(
+			'should convert module paths to proper variable names',
+			function() {
+				var modules = privHTMLFormatter._getRequiredAliases('foo/bar/baz, baz/foo_bar, bar/baz/foo as FooBar');
+
+				var expected = ['fooBarBaz', 'bazFoo_bar', 'FooBar'];
+
+				modules.forEach(
+					function(item, index) {
+						assert.equal(item, expected[index]);
+					}
+				);
 			}
 		);
 
