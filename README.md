@@ -159,6 +159,33 @@ If you pass `--no-color` it will overwrite the default and give you plain text.
 
 If you pass `-v`, it will give you the lines in each file, as well as a merged version (useful for copy/pasting to update the metadata).
 
+`--fail-on-errors` If this is passed, and *any* files report errors, this will send a non-zero exit code. This is useful if you're using it from the command line, and wish to halt the execution of any other actions.
+If you are using the Node API instead of the CLI, then the results array returned from the Promise will have a property of `EXIT_WITH_FAILURE` set to true.
+Examples of how you might use this (though, probably not often, at least until I have time to distinguish errors from warnings).
+
+**CLI**
+```
+csf some_file_with_errors.css --fail-on-errors && do_some_new_build_task
+```
+**Node API**
+```javascript
+var cliInstance = new cli.CLI(
+	{
+		args: ['some_file_with_errors.js'],
+		flags: {
+			failOnErrors: true
+		}
+	}
+);
+
+cliInstance.init().then(
+	function(results) {
+		console.log(results.EXIT_WITH_FAILURE); // logs out 'true'
+	}
+);
+```
+
+
 ## Sublime Text Integration
 There are now two ways you can integrate this module with Sublime Text:
 

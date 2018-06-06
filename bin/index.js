@@ -22,7 +22,7 @@ var config = new ConfigStore(
 );
 
 var cli = require('../lib/cli').init().then(
-	function() {
+	function(results) {
 		var deprecated = deprecationCheck(
 			{
 				config,
@@ -33,6 +33,10 @@ var cli = require('../lib/cli').init().then(
 
 		if (deprecated) {
 			console.log(deprecated);
+		}
+
+		if (results.EXIT_WITH_FAILURE === true) {
+			process.exitCode = 1;
 		}
 	}
 );

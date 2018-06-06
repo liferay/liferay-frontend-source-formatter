@@ -671,6 +671,32 @@ describe(
 		);
 
 		it(
+			'should indicate if the process should should fail on stdout',
+			function() {
+				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
+
+				var logger = new Logger.constructor();
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['foo.js'],
+						flags: {
+							failOnErrors: true
+						},
+						log: _.noop,
+						logger: logger
+					}
+				);
+
+				return cliInstance.init().then(
+					function(results) {
+						assert.isTrue(results.EXIT_WITH_FAILURE, 'files that output errors should have a non-zero exitCode when --fail-on-errors is passed');
+					}
+				);
+			}
+		);
+
+		it(
 			'should handle custom config',
 			function() {
 				var filePath = path.join(__dirname, 'fixture/config/flags/foo.js');
