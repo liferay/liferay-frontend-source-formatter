@@ -310,7 +310,7 @@ describe(
 					function() {
 						assert.isTrue(log.calledOnce, 'log should have been called only once, it was instead called ' + log.callCount + ' times');
 
-						log.reset();
+						log.resetHistory();
 
 						cliInstance.logResults(null, 'foo.js');
 
