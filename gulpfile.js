@@ -33,18 +33,24 @@ gulp.task('test-file', () => {
 		file = ['test/**/*.js', '!test/fixture/*.js'];
 	}
 
-	process.argv.push('--display-raw');
-
 	return gulp.src(file)
 		// .pipe(plugins.debug())
-		.pipe(plugins.mocha());
+		.pipe(plugins.mocha(
+				{
+					'display-raw': true
+				}
+			)
+		);
 });
 
 gulp.task('test-unit', () => {
-	process.argv.push('--display-raw');
-
 	return gulp.src(['test/**/*.js', '!test/fixture/*.js'])
-		.pipe(plugins.mocha());
+		.pipe(plugins.mocha(
+				{
+					'display-raw': true
+				}
+			)
+		);
 });
 
 gulp.task('test-cover', () => gulp.src(['lib/**/*.js'])
@@ -52,10 +58,13 @@ gulp.task('test-cover', () => gulp.src(['lib/**/*.js'])
 	.pipe(plugins.istanbul.hookRequire()));
 
 gulp.task('test-coverage', ['test-cover'], () => {
-	process.argv.push('--display-raw');
-
 	return gulp.src(['test/**/*.js', '!test/fixture/*.js'])
-		.pipe(plugins.mocha())
+		.pipe(plugins.mocha(
+				{
+					'display-raw': true
+				}
+			)
+		)
 		.pipe(plugins.istanbul.writeReports());
 });
 
