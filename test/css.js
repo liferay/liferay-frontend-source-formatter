@@ -269,17 +269,15 @@ describe(
 	function() {
 		'use strict';
 
-		var sandbox;
-
 		beforeEach(
 			function() {
-				sandbox = sinon.sandbox.create();
+				sinon.createSandbox();
 			}
 		);
 
 		afterEach(
 			function() {
-				sandbox.restore();
+				sinon.restore();
 			}
 		);
 
@@ -382,7 +380,7 @@ describe(
 			function() {
 				var stylelint = lint.stylelint;
 
-				sandbox.stub(stylelint, 'lint').callsFake(cssLint);
+				sinon.stub(stylelint, 'lint').callsFake(cssLint);
 
 				lint.runLinter(source, testFilePath, {});
 
@@ -398,7 +396,7 @@ describe(
 
 				var stylelint = lint.stylelint;
 
-				sandbox.stub(stylelint, 'lint').callsFake(cssLint);
+				sinon.stub(stylelint, 'lint').callsFake(cssLint);
 
 				cssFormatter.format(
 					source,
