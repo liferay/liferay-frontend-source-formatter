@@ -130,7 +130,14 @@ gulp.task(
 						}
 					)
 				)
-				.pipe(plugins.template(res))
+				.pipe(
+					plugins.template(
+						res,
+						{
+							interpolate: /<%=([\s\S]+?)%>/g
+						}
+					)
+				)
 				.pipe(gulp.dest('./'));
 
 				done();
