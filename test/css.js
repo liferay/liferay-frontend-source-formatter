@@ -6,8 +6,6 @@ var sinon = require('sinon');
 
 var Promise = require('bluebird');
 
-var Promise = require('bluebird');
-
 Promise.promisifyAll(fs);
 
 var Formatter = require('../lib/formatter');
