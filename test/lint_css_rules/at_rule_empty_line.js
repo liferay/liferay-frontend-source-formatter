@@ -18,10 +18,14 @@ chai.use(require('chai-string'));
 
 var assert = chai.assert;
 
+var ruleName = rule.ruleName;
+
+rule = rule.rule;
+
 testRule(
 	rule,
 	{
-		ruleName: rule.ruleName,
+		ruleName: ruleName,
 		config: ['always', {except: ['first-nested']}],
 		accept: [
 			{
@@ -69,7 +73,7 @@ testRule(
 		reject: [
 			{
 				code: 'a {\n}',
-				message: 'Expected option value for rule "' + rule.ruleName + '"'
+				message: 'Expected option value for rule "' + ruleName + '"'
 			}
 		],
 	}
