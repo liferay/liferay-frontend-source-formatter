@@ -24,17 +24,15 @@ describe(
 	function() {
 		'use strict';
 
-		var sandbox;
-
 		beforeEach(
 			function() {
-				sandbox = sinon.sandbox.create();
+				sinon.createSandbox();
 			}
 		);
 
 		afterEach(
 			function() {
-				sandbox.restore();
+				sinon.restore();
 			}
 		);
 
@@ -236,17 +234,15 @@ describe(
 	function() {
 		'use strict';
 
-		var sandbox;
-
 		beforeEach(
 			function() {
-				sandbox = sinon.sandbox.create();
+				sinon.createSandbox();
 			}
 		);
 
 		afterEach(
 			function() {
-				sandbox.restore();
+				sinon.restore();
 			}
 		);
 
@@ -306,7 +302,7 @@ describe(
 					}
 				};
 
-				sandbox.stub(eslint.linter, 'verify').callsFake(verify);
+				sinon.stub(eslint.linter, 'verify').callsFake(verify);
 
 				lint.runLinter(source, testFilePath, {});
 
@@ -330,7 +326,7 @@ describe(
 					}
 				};
 
-				sandbox.stub(eslint.linter, 'verify').callsFake(verify);
+				sinon.stub(eslint.linter, 'verify').callsFake(verify);
 
 				jsFormatter.format(
 					source,
@@ -353,7 +349,7 @@ describe(
 			function() {
 				var eslint = lint.eslint;
 
-				sandbox.spy(eslint.linter, 'verify');
+				sinon.spy(eslint.linter, 'verify');
 
 				lint.runLinter(
 					source,

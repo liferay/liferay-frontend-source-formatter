@@ -16,17 +16,15 @@ describe(
 	function() {
 		'use strict';
 
-		var sandbox;
-
 		beforeEach(
 			function() {
-				sandbox = sinon.sandbox.create();
+				sinon.createSandbox();
 			}
 		);
 
 		afterEach(
 			function() {
-				sandbox.restore();
+				sinon.restore();
 			}
 		);
 
@@ -45,7 +43,7 @@ describe(
 				logger.log(1, 'Content is not valid', 'baz.css', 'error');
 				logger.log('N/A', 'This file was ignored. Pass the "force" flag if you wish to have it included.', 'bar.min.js', 'ignored');
 
-				sandbox.stub(fs, 'readFile').callsFake(
+				sinon.stub(fs, 'readFile').callsFake(
 					function(path, encoding, callback) {
 						if (path.indexOf('junit_report.tpl') > -1) {
 							return callback(null, fs.readFileSync(path, encoding));
@@ -55,7 +53,7 @@ describe(
 					}
 				);
 
-				sandbox.stub(fs, 'writeFile').callsFake(
+				sinon.stub(fs, 'writeFile').callsFake(
 					function(path, content, callback) {
 						callback(null, content);
 					}
@@ -87,7 +85,7 @@ describe(
 				logger.log(39, '<fooo', 'xmlentity.css', 'error');
 				logger.log(141, 'Sort attribute values: javascript:�0�removeGroup(', 'unicode.css', 'error');
 
-				sandbox.stub(fs, 'readFile').callsFake(
+				sinon.stub(fs, 'readFile').callsFake(
 					function(path, encoding, callback) {
 						if (path.indexOf('junit_report.tpl') > -1) {
 							return callback(null, fs.readFileSync(path, encoding));
@@ -97,7 +95,7 @@ describe(
 					}
 				);
 
-				sandbox.stub(fs, 'writeFile').callsFake(
+				sinon.stub(fs, 'writeFile').callsFake(
 					function(path, content, callback) {
 						callback(null, content);
 					}
@@ -131,13 +129,13 @@ describe(
 		it(
 			'should generate a JUnit report to a custom path',
 			function(done) {
-				sandbox.stub(Logger);
+				sinon.stub(Logger);
 
 				Logger.log(1, 'Content is not valid', 'foo.js');
 
-				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
+				sinon.stub(fs, 'readFile').callsArgWith(2, null, '');
 
-				sandbox.stub(fs, 'writeFile').callsFake(
+				sinon.stub(fs, 'writeFile').callsFake(
 					function(path, content, callback) {
 						callback(null, content);
 

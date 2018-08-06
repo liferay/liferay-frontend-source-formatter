@@ -1,5 +1,4 @@
-#!/bin/sh
-":" //# http://sambal.org/?p=1014 ; exec /usr/bin/env node --harmony "$0" "$@"
+#!/usr/bin/env node
 
 var ConfigStore = require('configstore');
 var updateNotifier = require('update-notifier');
@@ -23,7 +22,7 @@ var config = new ConfigStore(
 );
 
 var cli = require('../lib/cli').init().then(
-	function() {
+	function(results) {
 		var deprecated = deprecationCheck(
 			{
 				config,
@@ -34,6 +33,10 @@ var cli = require('../lib/cli').init().then(
 
 		if (deprecated) {
 			console.log(deprecated);
+		}
+
+		if (results.EXIT_WITH_FAILURE === true) {
+			process.exitCode = 1;
 		}
 	}
 );

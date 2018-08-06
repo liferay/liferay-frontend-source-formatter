@@ -6,8 +6,6 @@ var sinon = require('sinon');
 
 var Promise = require('bluebird');
 
-var Promise = require('bluebird');
-
 Promise.promisifyAll(fs);
 
 var Formatter = require('../lib/formatter');
@@ -269,17 +267,15 @@ describe(
 	function() {
 		'use strict';
 
-		var sandbox;
-
 		beforeEach(
 			function() {
-				sandbox = sinon.sandbox.create();
+				sinon.createSandbox();
 			}
 		);
 
 		afterEach(
 			function() {
-				sandbox.restore();
+				sinon.restore();
 			}
 		);
 
@@ -382,7 +378,7 @@ describe(
 			function() {
 				var stylelint = lint.stylelint;
 
-				sandbox.stub(stylelint, 'lint').callsFake(cssLint);
+				sinon.stub(stylelint, 'lint').callsFake(cssLint);
 
 				lint.runLinter(source, testFilePath, {});
 
@@ -398,7 +394,7 @@ describe(
 
 				var stylelint = lint.stylelint;
 
-				sandbox.stub(stylelint, 'lint').callsFake(cssLint);
+				sinon.stub(stylelint, 'lint').callsFake(cssLint);
 
 				cssFormatter.format(
 					source,

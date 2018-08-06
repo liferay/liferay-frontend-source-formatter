@@ -47,24 +47,22 @@ describe(
 			callback(null, MAP_CONTENT[path][1]);
 		};
 
-		var sandbox;
-
 		beforeEach(
 			function() {
-				sandbox = sinon.sandbox.create();
+				sinon.createSandbox();
 			}
 		);
 
 		afterEach(
 			function() {
-				sandbox.restore();
+				sinon.restore();
 			}
 		);
 
 		it(
 			'should read files correctly',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
+				sinon.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var logger = new Logger.constructor();
 
@@ -90,10 +88,10 @@ describe(
 		it(
 			'should write files correctly',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
-				sandbox.stub(fs, 'writeFile').callsArgWith(2, null);
+				sinon.stub(fs, 'readFile').callsFake(invalidContentStub);
+				sinon.stub(fs, 'writeFile').callsArgWith(2, null);
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -106,7 +104,7 @@ describe(
 					}
 				);
 
-				sandbox.spy(cliInstance, 'logResults');
+				sinon.spy(cliInstance, 'logResults');
 
 				return cliInstance.init().then(
 					function() {
@@ -133,10 +131,10 @@ describe(
 		it(
 			'should handle file write errors',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
-				sandbox.stub(fs, 'writeFile').callsArgWith(2, new Error('Something went wrong'));
+				sinon.stub(fs, 'readFile').callsFake(invalidContentStub);
+				sinon.stub(fs, 'writeFile').callsArgWith(2, new Error('Something went wrong'));
 
-				sandbox.stub(File, 'handleFileWriteError');
+				sinon.stub(File, 'handleFileWriteError');
 
 				var cliInstance = new cli.CLI(
 					{
@@ -161,7 +159,7 @@ describe(
 		it(
 			'should ignore unrecognized files',
 			function() {
-				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
+				sinon.stub(fs, 'readFile').callsArgWith(2, null, '');
 
 				var processFileData = sinon.spy();
 
@@ -228,8 +226,8 @@ describe(
 		it(
 			'should check metadata',
 			function() {
-				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
-				sandbox.stub(fs, 'existsSync').returns(true);
+				sinon.stub(fs, 'readFile').callsArgWith(2, null, '');
+				sinon.stub(fs, 'existsSync').returns(true);
 
 				var cliInstance = new cli.CLI(
 					{
@@ -248,7 +246,7 @@ describe(
 
 				var metaChecker = require(metaCheckerPath);
 
-				var checkMeta = sandbox.stub(metaChecker, 'check');
+				var checkMeta = sinon.stub(metaChecker, 'check');
 
 				return cliInstance.init().then(
 					function() {
@@ -261,8 +259,8 @@ describe(
 		it(
 			'should not check metadata',
 			function() {
-				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
-				sandbox.stub(fs, 'existsSync').returns(true);
+				sinon.stub(fs, 'readFile').callsArgWith(2, null, '');
+				sinon.stub(fs, 'existsSync').returns(true);
 
 				var cliInstance = new cli.CLI(
 					{
@@ -281,7 +279,7 @@ describe(
 
 				var metaChecker = require(metaCheckerPath);
 
-				var checkMeta = sandbox.stub(metaChecker, 'check');
+				var checkMeta = sinon.stub(metaChecker, 'check');
 
 				return cliInstance.init().then(
 					function() {
@@ -294,9 +292,9 @@ describe(
 		it(
 			'should log results properly',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(validContentStub);
+				sinon.stub(fs, 'readFile').callsFake(validContentStub);
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -310,7 +308,7 @@ describe(
 					function() {
 						assert.isTrue(log.calledOnce, 'log should have been called only once, it was instead called ' + log.callCount + ' times');
 
-						log.reset();
+						log.resetHistory();
 
 						cliInstance.logResults(null, 'foo.js');
 
@@ -323,9 +321,9 @@ describe(
 		it(
 			'should log verbose details properly',
 			function() {
-				sandbox.stub(fs, 'readFile').callsArgWith(2, null, 'var x = ;');
+				sinon.stub(fs, 'readFile').callsArgWith(2, null, 'var x = ;');
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var logger = new Logger.constructor();
 
@@ -352,13 +350,13 @@ describe(
 		it(
 			'should log filenames properly',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(
+				sinon.stub(fs, 'readFile').callsFake(
 					function(filePath, encoding, callback) {
 						callback(null, MAP_CONTENT[path.basename(filePath)][0]);
 					}
 				);
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var args = ['foo.js', 'bar.html', 'baz.css'];
 
@@ -385,13 +383,13 @@ describe(
 		it(
 			'should log relative filenames properly',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(
+				sinon.stub(fs, 'readFile').callsFake(
 					function(filePath, encoding, callback) {
 						callback(null, MAP_CONTENT[path.basename(filePath)][0]);
 					}
 				);
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var args = ['foo.js', 'bar.html', 'baz.css'];
 
@@ -432,11 +430,11 @@ describe(
 		it(
 			'should log missing files properly',
 			function() {
-				sandbox.stub(fs, 'readFile').callsArgWith(2, new Error());
+				sinon.stub(fs, 'readFile').callsArgWith(2, new Error());
 
-				sandbox.stub(File, 'handleFileReadError').returns('Missing file');
+				sinon.stub(File, 'handleFileReadError').returns('Missing file');
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -458,12 +456,12 @@ describe(
 		it(
 			'should not write missing files',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
-				sandbox.stub(fs, 'writeFile').callsArgWith(2, null);
+				sinon.stub(fs, 'readFile').callsFake(invalidContentStub);
+				sinon.stub(fs, 'writeFile').callsArgWith(2, null);
 
-				sandbox.stub(File, 'handleFileReadError').returns('Missing file');
+				sinon.stub(File, 'handleFileReadError').returns('Missing file');
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -492,11 +490,11 @@ describe(
 				err.errno = -21;
 				err.code = 'EISDIR';
 
-				sandbox.stub(fs, 'readFile').callsArgWith(2, err);
+				sinon.stub(fs, 'readFile').callsArgWith(2, err);
 
-				sandbox.spy(File, 'handleFileReadError');
+				sinon.spy(File, 'handleFileReadError');
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -518,7 +516,7 @@ describe(
 		it(
 			'should log general errors properly',
 			function() {
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -538,11 +536,11 @@ describe(
 		it(
 			'should open files properly',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
+				sinon.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var cliModule = require('cli');
 
-				sandbox.stub(cliModule, 'exec').callsFake(
+				sinon.stub(cliModule, 'exec').callsFake(
 					function(command, callback) {
 						if (callback) {
 							callback(['sublime']);
@@ -550,7 +548,7 @@ describe(
 					}
 				);
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -575,11 +573,11 @@ describe(
 		it(
 			'should not log without arguments',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
+				sinon.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var cliModule = require('cli');
 
-				sandbox.stub(cliModule, 'exec').callsFake(
+				sinon.stub(cliModule, 'exec').callsFake(
 					function(command, callback) {
 						if (callback) {
 							callback(['sublime']);
@@ -587,7 +585,7 @@ describe(
 					}
 				);
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -610,13 +608,13 @@ describe(
 		it(
 			'should not log files without errors when quiet is set',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(validContentStub);
+				sinon.stub(fs, 'readFile').callsFake(validContentStub);
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var logger = new Logger.constructor();
 
-				var filterFileErrors = sandbox.spy(logger, 'filterFileErrors');
+				var filterFileErrors = sinon.spy(logger, 'filterFileErrors');
 
 				var cliInstance = new cli.CLI(
 					{
@@ -630,7 +628,7 @@ describe(
 					}
 				);
 
-				var spy = sandbox.spy(cliInstance, '_loadConfigs');
+				var spy = sinon.spy(cliInstance, '_loadConfigs');
 
 				return cliInstance.init().then(
 					function() {
@@ -644,11 +642,11 @@ describe(
 		it(
 			'should call junit generate',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
+				sinon.stub(fs, 'readFile').callsFake(invalidContentStub);
 
 				var junitReporter = require('../lib/junit');
 
-				sandbox.stub(junitReporter.prototype, 'generate').returns(Promise.resolve());
+				sinon.stub(junitReporter.prototype, 'generate').returns(Promise.resolve());
 
 				var cliInstance = new cli.CLI(
 					{
@@ -671,11 +669,37 @@ describe(
 		);
 
 		it(
+			'should indicate if the process should should fail on stdout',
+			function() {
+				sinon.stub(fs, 'readFile').callsFake(invalidContentStub);
+
+				var logger = new Logger.constructor();
+
+				var cliInstance = new cli.CLI(
+					{
+						args: ['foo.js'],
+						flags: {
+							failOnErrors: true
+						},
+						log: _.noop,
+						logger: logger
+					}
+				);
+
+				return cliInstance.init().then(
+					function(results) {
+						assert.isTrue(results.EXIT_WITH_FAILURE, 'files that output errors should have a non-zero exitCode when --fail-on-errors is passed');
+					}
+				);
+			}
+		);
+
+		it(
 			'should handle custom config',
 			function() {
 				var filePath = path.join(__dirname, 'fixture/config/flags/foo.js');
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -713,9 +737,9 @@ describe(
 		it(
 			'should handle custom config misc',
 			function() {
-				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
+				sinon.stub(fs, 'readFile').callsArgWith(2, null, '');
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{
@@ -740,9 +764,9 @@ describe(
 		it(
 			'should handle invalid config',
 			function() {
-				sandbox.stub(fs, 'readFile').callsArgWith(2, null, '');
+				sinon.stub(fs, 'readFile').callsArgWith(2, null, '');
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var filePath = path.join(__dirname, 'fixture/config/bad_config/foo.js');
 
@@ -812,7 +836,7 @@ describe(
 				return Promise.map(
 					configs,
 					function(item, index) {
-						var log = sandbox.spy();
+						var log = sinon.spy();
 
 						var cfg = _.defaults(
 							item.config,
@@ -839,9 +863,9 @@ describe(
 		it(
 			'should not load a config when config is false',
 			function() {
-				sandbox.stub(fs, 'readFile').callsFake(invalidContentStub);
+				sinon.stub(fs, 'readFile').callsFake(invalidContentStub);
 
-				var log = sandbox.spy();
+				var log = sinon.spy();
 
 				var cliInstance = new cli.CLI(
 					{

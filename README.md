@@ -3,6 +3,8 @@ check-source-formatting
 [![NPM version][npm-image]][npm-url]
 [![build status][travis-image]][travis-url]
 [![Test coverage][coveralls-image]][coveralls-url]
+[![Build status][appveyor-image]][appveyor-url]
+
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
@@ -156,6 +158,33 @@ If you pass `--no-color` it will overwrite the default and give you plain text.
 `--show-columns` If this is passed, it will show the column where the error has taken place. At this time, it only works on JavaScript, since ESLint will give us column information, but I may work something out for this in the future. This one is added mainly for Sublime Linter and other scripts that may wish use the information. It defaults to false, since it's not super useful in regular usage (at least I haven't found it to be).
 
 If you pass `-v`, it will give you the lines in each file, as well as a merged version (useful for copy/pasting to update the metadata).
+
+`--fail-on-errors` If this is passed, and *any* files report errors, this will send a non-zero exit code. This is useful if you're using it from the command line, and wish to halt the execution of any other actions.
+If you are using the Node API instead of the CLI, then the results array returned from the Promise will have a property of `EXIT_WITH_FAILURE` set to true.
+Examples of how you might use this (though, probably not often, at least until I have time to distinguish errors from warnings).
+
+**CLI**
+```
+csf some_file_with_errors.css --fail-on-errors && do_some_new_build_task
+```
+**Node API**
+```javascript
+var cliInstance = new cli.CLI(
+	{
+		args: ['some_file_with_errors.js'],
+		flags: {
+			failOnErrors: true
+		}
+	}
+);
+
+cliInstance.init().then(
+	function(results) {
+		console.log(results.EXIT_WITH_FAILURE); // logs out 'true'
+	}
+);
+```
+
 
 ## Sublime Text Integration
 There are now two ways you can integrate this module with Sublime Text:
@@ -333,3 +362,5 @@ then it will still flag that as an error
 [travis-url]: https://travis-ci.org/liferay/liferay-frontend-source-formatter
 [coveralls-image]: https://img.shields.io/coveralls/liferay/liferay-frontend-source-formatter/master.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/r/liferay/liferay-frontend-source-formatter?branch=master
+[appveyor-url]: https://ci.appveyor.com/project/natecavanaugh/liferay-frontend-source-formatter
+[appveyor-image]: https://ci.appveyor.com/api/projects/status/3kfcj0hui12v7t91?svg=true

@@ -86,5 +86,14 @@
 			'${bar}': 'baz'
 		};
 	</aui:script>
+
+	<aui:script require="foo/bar/baz, baz/foo_bar, bar/baz/foo as FooBar">
+		alert(fooBarBaz);
+		alert(bazFoo_bar);
+		alert(FooBar);
+	</aui:script>
+
+	<aui:script require="">
+	</aui:script>
 </body>
 </html>

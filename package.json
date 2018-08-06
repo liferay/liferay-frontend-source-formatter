@@ -1,6 +1,6 @@
 {
   "name": "check-source-formatting",
-  "version": "2.0.2",
+  "version": "2.0.10",
   "description": "Check the source formatting of HTML/JS/CSS",
   "main": "lib/cli.js",
   "bin": {
@@ -29,8 +29,8 @@
     "configstore": "^3.1.1",
     "content-formatter": "^2.0.2",
     "content-logger": "^1.0.1",
-    "content-logger-handlebars-helpers": "0.0.1",
-    "cosmiconfig": "^3.1.0",
+    "content-logger-handlebars-helpers": "0.0.3",
+    "cosmiconfig": "^5.0.5",
     "drip": "^1.4.0",
     "eslint": "^4.13.1",
     "eslint-plugin-react": "^7.5.1",
@@ -44,7 +44,7 @@
     "optimist": "^0.6.1",
     "roolz": "^1.0.2",
     "string-sub": "0.0.1",
-    "stylelint": "^8.3.1",
+    "stylelint": "^9.2.1",
     "stylelint-order": "^0.8.0",
     "update-notifier": "^2.3.0"
   },
@@ -56,19 +56,19 @@
     "gulp": "^3.9.1",
     "gulp-complexity": "^0.3.2",
     "gulp-coveralls": "^0.1.4",
-    "gulp-debug": "^3.1.0",
+    "gulp-debug": "^4.0.0",
     "gulp-doctoc": "^0.1.4",
     "gulp-istanbul": "^1.1.2",
     "gulp-load-plugins": "^1.2.4",
-    "gulp-mocha": "^3.0.1",
+    "gulp-mocha": "^6.0.0",
     "gulp-rename": "^1.2.2",
-    "gulp-template": "^4.0.0",
+    "gulp-template": "^5.0.0",
     "harmonize": "^2.0.0",
-    "inquirer": "^4.0.1",
+    "inquirer": "^6.0.0",
     "istanbul": "^0.4.4",
-    "mocha": "^3.3.0",
+    "mocha": "^5.2.0",
     "run-sequence": "^2.2.0",
-    "sinon": "^4.1.3",
-    "xsd-schema-validator": "^0.5.0"
+    "sinon": "^6.0.0",
+    "xsd-schema-validator": "^0.6.0"
   }
 }
