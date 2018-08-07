@@ -121,20 +121,30 @@ describe(
 			function() {
 				var rule = re.rules.js.keywordFormat;
 
-				var input = 'while() {';
-				var output = 'while () {';
-				var expectedResult = ['while(', 'while', '('];
+				var input = ['while() {', ' try {', 'catch() { ', '.catch ('];
+				var output = ['while () {', 'try {', 'catch() {', '.catch('];
+				var expectedResult = [
+					['while(', 'while', '('],
+					['try(', 'try', '{'],
+					['catch(', 'catch', '('],
+					['catch(', 'catch', '(']
+				];
 
-				var context = {
-					content: input
-				};
+				_.each(
+					function(item, index) {
+						var context = {
+							content: item
+						};
 
-				var result = re.testContent(rule, context);
-				var lineNum = 1;
+						var result = re.testContent(rule, context);
+						var lineNum = 1;
 
-				assert.deepEqual(expectedResult, _.toArray(result));
+						assert.deepEqual(expectedResult[index], _.toArray(result), 'expectedResult not the same');
 
-				assert.equal(output, re.replaceItem(result, rule, context));
+						assert.equal(output[index], re.replaceItem(result, rule, context), 'output not equal');
+
+					}
+				);
 			}
 		);
 
