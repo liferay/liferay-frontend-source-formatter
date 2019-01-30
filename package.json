@@ -34,6 +34,7 @@
     "drip": "^1.4.0",
     "eslint": "^4.13.1",
     "eslint-plugin-react": "^7.5.1",
+    "eslint-plugin-sort-imports-es6-autofix": "^0.3.0",
     "falafel": "^1.2.0",
     "getobject": "^0.1.0",
     "glob": "^7.1.2",
