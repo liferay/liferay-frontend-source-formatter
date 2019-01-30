@@ -121,16 +121,17 @@ describe(
 			function() {
 				var rule = re.rules.js.keywordFormat;
 
-				var input = ['while() {', ' try {', 'catch() { ', '.catch ('];
-				var output = ['while () {', 'try {', 'catch() {', '.catch('];
+				var input = ['while() {', ' try {', 'catch() { ', '.catch(', 'instance._updateDataSetEntry(key)'];
+				var output = ['while () {', ' try {', 'catch () { ', '.catch(', 'instance._updateDataSetEntry(key)'];
 				var expectedResult = [
 					['while(', 'while', '('],
-					['try(', 'try', '{'],
+					null,
 					['catch(', 'catch', '('],
-					['catch(', 'catch', '(']
+					null,
+					null
 				];
 
-				_.each(
+				input.forEach(
 					function(item, index) {
 						var context = {
 							content: item
@@ -139,7 +140,7 @@ describe(
 						var result = re.testContent(rule, context);
 						var lineNum = 1;
 
-						assert.deepEqual(expectedResult[index], _.toArray(result), 'expectedResult not the same');
+						assert.deepEqual(expectedResult[index], result ? _.toArray(result) : null, 'expectedResult not the same');
 
 						assert.equal(output[index], re.replaceItem(result, rule, context), 'output not equal');
 
