@@ -28,7 +28,7 @@
     "cli-color-keywords": "0.0.1",
     "configstore": "^3.1.1",
     "content-formatter": "^2.0.2",
-    "content-logger": "^1.0.1",
+    "content-logger": "^2.0.0",
     "content-logger-handlebars-helpers": "0.0.3",
     "cosmiconfig": "^5.0.5",
     "drip": "^1.4.0",
