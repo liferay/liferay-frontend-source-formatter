@@ -8,6 +8,7 @@
     "csf": "./bin/index.js"
   },
   "scripts": {
+    "bundle": "webpack",
     "coveralls": "gulp coveralls",
     "test": "gulp test-coverage"
   },
@@ -69,7 +70,10 @@
     "istanbul": "^0.4.4",
     "mocha": "^5.2.0",
     "run-sequence": "^2.2.0",
+    "shebang-loader": "0.0.1",
     "sinon": "^6.0.0",
+    "webpack": "4.39.3",
+    "webpack-cli": "3.3.7",
     "xsd-schema-validator": "^0.6.0"
   }
 }
