@@ -1,3 +1,5 @@
+> :warning: This project is effectively deprecated, superseded by [liferay-npm-scripts](https://github.com/liferay/liferay-npm-tools/tree/master/packages/liferay-npm-scripts), which acts as a wrapper around [Prettier](Prettier), [ESLint](ESLint), [stylelint](https://stylelint.io/), and some custom Liferay-specific rules.
+
 check-source-formatting
 =======================
 [![NPM version][npm-image]][npm-url]
